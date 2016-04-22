@@ -32,7 +32,7 @@ class Adhesion_parti(models.Model):
 	parti = models.ForeignKey(Parti)
 	nature = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
-	creation_date() = models.DateTimeField()
+	creation_date = models.DateTimeField()
 	
 class Adhesion_cellule(models.Model):
 	ROLE_CHOICE = (
@@ -50,7 +50,7 @@ class Adhesion_cellule(models.Model):
 	cellule = models.ForeignKey(Cellule)
 	nature = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
-	creation_date() = models.DateTimeField()
+	creation_date = models.DateTimeField()
 
 class Selection(models.Model):
 	TYPE_CHOICE = (
@@ -72,4 +72,4 @@ class Selection(models.Model):
 	
 	type = models.CharField(max_length = 30, choices = TYPE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
-	creation_date() = models.DateTimeField()
+	creation_date = models.DateTimeField()
