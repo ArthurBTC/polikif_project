@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	{% load staticfiles %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}">
+	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
+	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/gdpcore/index">Polimik</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="/gdpcore/index">Accueil</a></li>
+		<li><a href="/gdpcore/selection_cycle">Cycles</a></li>
+		<li><a href="/gdpcore/search_proposition">Chercher proposition</a></li>
+		
+      </ul>
+
+	  
+	  
+	  
+	  
+      <ul class="nav navbar-nav navbar-right">
+	  
+		<li><a href="/gdpcore/tobedone"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="color:red"></span></a></li>
+	 
+		<li><a href="#"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a></li>	
+		
+        <li><a href="#">{{ user }}</a></li>
+        <li>      {% if user.is_anonymous %}
+      <a href="{% url 'django.contrib.auth.views.login' %}">login</a>
+      {% else %}
+      <a href="{% url 'django.contrib.auth.views.logout' %}">logout</a>
+      {% endif %}</li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+
+
+<div>
+      
+
+	  
+</div>
+
+<div class ="row">
+
+	<div class="col-md-1 nopadding">
+	</div>
+	
+	<div class="col-md-10 nopadding">
+
+	{% block content %}
+	{% endblock %}
+	
+	</div>
+	
+	<div class="col-md-1 nopadding">
+	</div>
+</div>
+
+</body>
+</html>

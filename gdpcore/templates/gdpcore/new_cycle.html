@@ -1,0 +1,67 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+  <!-- Nav tabs -->
+ <div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Proposition de départ existante</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Nouvelle proposition de départ</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">
+	
+		<form class="form" method="post" action="/gdpcore/new_cycle/">
+		{% csrf_token %}
+			<div class="form-group">
+				<label for="description">Description :</label>
+				<input type="text" class="form-control" id="description" name='description' placeholder="Entrez la description du cycle">
+			</div>
+
+			<label for="description">Proposition principale :</label>
+			<select name = "prop_ini" class="form-control">
+				{% for prop in props %}
+				  <option value="{{prop.id}}">{{prop.autor.username}} : {{prop.text}}</option>
+				{% endfor %}
+			</select>
+			
+			<button type="submit" class="btn btn-primary">Créer cycle</button>
+			
+		</form>		
+	</div>
+
+
+
+    <div role="tabpanel" class="tab-pane" id="profile">
+	
+			<form class="form" method="post" action="/gdpcore/new_starting_proposition/">
+		 {% csrf_token %}
+		 
+				<div class="form-group">
+					<label for="description">Description :</label>
+					<input type="text" class="form-control" id="description" name='description' placeholder="Entrez la description du cycle">
+				</div>
+		 
+				<div class="form-group">
+					<label for="description">Proposition :</label>
+					<input type="text" class="form-control" id="proposition" name='proposition' placeholder="Entrez la proposition">
+				</div>
+
+			<button type="submit" class="btn btn-primary">Créer proposition + Cycle</button>
+			
+		</form>
+	
+	
+	</div>
+ </div>
+
+</div>
+
+
+
+
+{% endblock %}

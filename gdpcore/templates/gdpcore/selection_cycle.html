@@ -1,0 +1,50 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+
+<table id="cycles" class="table">
+	<thead>
+        <tr>
+            <th>Description</th>
+			<th>Nombre de prop</th>
+			<th>Auteur</th>
+			<th>Dernière activité</th>		
+        </tr>
+    </thead>
+	<tbody>
+	
+
+	{% for cycle in cycles %}
+		<tr>
+			<td><a href="/gdpcore/graph_browser/{{cycle.id}}/{{cycle.proposition_initiale}}">{{cycle.text}}</a></td>
+			<td>{{cycle.nb}}</td>
+			<td>{{cycle.autor.username}}</td>	
+			<td>{{cycle.last_prop_date|timesince}}</td>				
+		</tr>
+	{% endfor %}
+	
+	</tbody>
+</table>
+
+
+<form action="/gdpcore/new_cycle">
+    <button type="button submit" class="btn btn-primary">Créer un nouveau cycle</button>
+</form>
+
+<div id="example">example</div>
+
+<script>
+$(document).ready(function() {
+    $("#example").popover({
+        placement: 'left',
+        html: 'true',
+        title : '<span class="text-info"><strong>title</strong></span>'+
+                '<button type="button" id="close" class="close" onclick="$(&quot;#example&quot;).popover(&quot;hide&quot;);">&times;</button>',
+        content : 'test'
+    });
+});  
+
+</script>
+
+{% endblock %}

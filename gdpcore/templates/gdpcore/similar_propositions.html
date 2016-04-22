@@ -1,0 +1,13 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+		
+	<div>Proposition initiale : {{text}}</div>
+	<div>Ressemblances :</div>
+	
+			{% for prop in props %}
+				  <div>{{prop.simil}} {{prop.text}}</div>
+			{% endfor %}	
+
+
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<form>
+    <input type="text" id="recherche" />
+</form>
+
+<script>
+
+var liste = [
+    {% for prop in props %}{ value : '{{prop.id}}', label : '{{prop.text}}', desc : '{{prop.text}}'},{% endfor %}
+    { value : 'n/a', label : 'n/a', desc : 'n/a'}
+];
+
+$(function(){
+
+	$('#recherche').autocomplete({
+		source : liste,
+		select : function(event, ui){ // lors de la sélection d'une proposition
+			$('#description').append( ui.item.desc ); // on ajoute la description de l'objet dans un bloc
+			window.location.replace("/gdpcore/graph_browser_free/"+ui.item.value)
+		}
+	});
+});
+
+</script>
+
+{% endblock %}

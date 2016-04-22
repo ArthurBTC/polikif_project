@@ -1,0 +1,108 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#notifications" aria-controls="notifications" role="tab" data-toggle="tab">Notifications</a></li>
+	<li role="presentation"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Demandes</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Dernières propositions ajoutées</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane" id="home">
+	
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+			<h3 class="panel-title">Precision</h3>
+		  </div>
+		  <div class="panel-body">
+			{% for prop in props_precision %}
+				  <div>{{prop.text}}</div>
+				{% endfor %}
+		  </div>
+		</div>
+			
+		<div class="panel panel-default">
+		  <div class="panel-heading">
+			<h3 class="panel-title">Supplement</h3>
+		  </div>
+		  <div class="panel-body">
+			{% for prop in props_supplement %}
+				  <div><a href="/gdpcore/graph_browser/{{id_cycle}}/{{prop.id}}">{{prop.text}}</a></div>
+				{% endfor %}
+		  </div>
+		</div>		
+	
+	</div>
+	
+
+    <div role="tabpanel" class="tab-pane active" id="notifications">
+	
+	<div class ="row top-buffer">	
+		<div class="col-md-6">
+		
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+				<h3 class="panel-title">Non vues</h3>
+			  </div>
+			  <div class="panel-body">
+				  <ul class="">
+					{% for notif in notifs %}
+						{% if notif.viewed == False %}
+					<li><a href="/gdpcore/notif_viewer/{{notif.id}}"> {{notif.creation_date|timesince}} - {{notif.get_nature_display}} ({{notif.proposition.text}})</a></li>
+						{% endif %}
+					{% endfor %}
+				  </ul>
+			  </div>
+			</div>	
+		</div>
+	
+		<div class="col-md-6">
+		
+			<div class="panel panel-default">
+			  <div class="panel-heading">
+				<h3 class="panel-title">Vues</h3>
+			  </div>
+			  <div class="panel-body">
+				  <ul class="">
+					{% for notif in notifs %}
+						{% if notif.viewed == True %}
+					<li><a href="/gdpcore/graph_browser/{{id_cycle}}/{{notif.proposition.id}}"> {{notif.creation_date|timesince}} - {{notif.get_nature_display}} ({{notif.proposition.text}})</a></li>
+						{% endif %}
+					{% endfor %}
+				  </ul>
+			  </div>
+			</div>	
+		</div>
+	</div>	
+	
+	
+	
+	
+	
+	
+
+	</div>
+	
+    <div role="tabpanel" class="tab-pane" id="profile">
+	
+	{% for prop in last_props %}
+		<div><a href="/gdpcore/graph_browser/{{id_cycle}}/{{prop.id}}">{{prop.text}}</a></div>
+	{% endfor %}	
+	
+	
+	
+	</div>
+  </div>
+
+</div>
+
+	
+
+
+
+{% endblock %}
