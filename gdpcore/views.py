@@ -411,6 +411,7 @@ def new_starting_proposition(request):
 		cycle = Cycle(autor = request.user,
 					text = request.POST['description'],
 					creation_date = datetime.now(),
+					last_prop_date = datetime.now(),
 					proposition_initiale = 0					
 					)
 		cycle.save()
