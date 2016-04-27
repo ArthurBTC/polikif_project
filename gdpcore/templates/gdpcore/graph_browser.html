@@ -30,7 +30,10 @@
 				  <div class="panel-body">
 					<ul>
 					{% for car in cars %}
-					<li><a id="Con{{car.id}}}" href="/gdpcore/link_browser/{{id_cycle}}/{{car.id}}"data-toggle="tooltip" data-placement="left" title="{{donc.autor.username}}">Car</a> <a href="/gdpcore/graph_browser/{{id_cycle}}/{{car.left_prop.id}}">{{car.left_prop.text}} ({{car.left_prop.autor.username}})</a></li>
+						<li>
+							<a class = "autor{{car.autor.id}}" id="Con{{car.id}}}" href="/gdpcore/link_browser/{{id_cycle}}/{{car.id}}"data-toggle="tooltip" data-placement="left" title="{{donc.autor.username}}">Car</a>
+							<a class = "autor{{car.left_prop.autor.id}}" href="/gdpcore/graph_browser/{{id_cycle}}/{{car.left_prop.id}}">{{car.left_prop.text}} ({{car.left_prop.autor.username}})</a>
+						</li>
 					{% endfor %}
 					</ul>
 						
@@ -45,7 +48,10 @@
 				  <div class="panel-body">
 					<ul>
 					{% for donc in doncs %}
-					<li><a id="Con{{donc.id}}}" href="/gdpcore/link_browser/{{id_cycle}}/{{donc.id}}"data-toggle="tooltip" data-placement="left" title="{{donc.autor.username}}">Donc</a> <a href="/gdpcore/graph_browser/{{id_cycle}}/{{donc.right_prop.id}}">{{donc.right_prop.text}} ({{donc.right_prop.autor.username}})</a></li>
+						<li>
+							<a class = "autor{{donc.autor.id}}" id="Con{{donc.id}}}" href="/gdpcore/link_browser/{{id_cycle}}/{{donc.id}}"data-toggle="tooltip" data-placement="left" title="{{donc.autor.username}}">Donc</a>
+							<a class = "autor{{donc.right_prop.id}}" href="/gdpcore/graph_browser/{{id_cycle}}/{{donc.right_prop.id}}">{{donc.right_prop.text}} ({{donc.right_prop.autor.username}})</a>
+						</li>
 					{% endfor %}
 					</ul>				
 				
@@ -153,10 +159,9 @@
 
 				  <div class="panel-body">
 					
-					
-					<div>Precision : {{main_prop.demande_precision}}</div>
-					<div>Supplement : {{main_prop.demande_supplement}}  </div>
-					<div>Attention : {{main_prop.demande_attention}}  </div>
+					<div>{% if main_prop.demande_precision == True %}Demande de précision ouverte{% else %}{% endif %}</div>
+					<div>{% if main_prop.demande_supplement == True %}Demande de supplément ouverte{% else %}{% endif %}</div>
+<!--						<div>Attention : {{main_prop.demande_attention}}  </div> -->
 					
 					{% if user != main_prop.autor %}
 					<div class="dropdown">
@@ -167,7 +172,7 @@
 					  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 						<li><a href="/gdpcore/precision_request/{{id_cycle}}/{{id_prop}}">Précision</a></li>
 						<li><a href="/gdpcore/supplement_request/{{id_cycle}}/{{id_prop}}">Supplement</a></li>
-						<li><a href="/gdpcore/attention_request/{{id_cycle}}/{{id_prop}}">Attention</a></li>
+<!--						<li><a href="/gdpcore/attention_request/{{id_cycle}}/{{id_prop}}">Attention</a></li> -->
 					  </ul>
 					</div>
 					{% endif %}
@@ -465,7 +470,14 @@
 
 
 $( ".newprop" ).change(function() {
-  $( "#logique" ).html( "<div>	{{main_prop.text}}</div><div>"+$('input[name=optionsRadios]:checked').val()+"</div><div>	"+$( "#newprop" ).val()+"</div>" );
+
+var traduc = [];
+traduc["donc"] = "Donc";
+traduc["car"] = "Car";
+traduc["ex"] = "Par exemple :";
+traduc["ccr"] = "est incompatible avec :";
+
+  $( "#logique" ).html( "<div>	{{main_prop.text}}</div><div>"+traduc[$('input[name=optionsRadios]:checked').val()]+"</div><div>	"+$( "#newprop" ).val()+"</div>" );
 });
 
 $("#recherche_but").click(function() {

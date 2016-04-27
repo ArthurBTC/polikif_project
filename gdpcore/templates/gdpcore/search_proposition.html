@@ -2,14 +2,17 @@
 
 {% block content %}
 
-<form>
-    <input type="text" id="recherche" />
-</form>
+<div>Entrez des mots clefs : </div>
+<div>
+	<form>
+		<input type="text" id="recherche" />
+	</form>
+</div>
 
-<script>
+<script charset="UTF-8">
 
 var liste = [
-    {% for prop in props %}{ value : '{{prop.id}}', label : '{{prop.text}}', desc : '{{prop.text}}'},{% endfor %}
+    {% for prop in props %}{ value : '{{prop.id}}', label : "{{prop.text|escapejs}}", desc : "{{prop.text|escapejs}}"},{% endfor %}
     { value : 'n/a', label : 'n/a', desc : 'n/a'}
 ];
 
@@ -17,6 +20,7 @@ $(function(){
 
 	$('#recherche').autocomplete({
 		source : liste,
+		contentType: "application/json; charset=utf-8",
 		select : function(event, ui){ // lors de la sélection d'une proposition
 			$('#description').append( ui.item.desc ); // on ajoute la description de l'objet dans un bloc
 			window.location.replace("/gdpcore/graph_browser_free/"+ui.item.value)

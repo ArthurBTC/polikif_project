@@ -1,0 +1,107 @@
+{% extends 'polikif/base.html' %}
+
+{% block content %}
+
+<div class ="row">
+
+	<div class="col-md-3">
+		<ul class="nav nav-pills nav-stacked">
+			{% for parti in partis %}
+				<li role="presentation"><a href="/polikif/parti_presentation/{{parti.id}}">{{parti.name}}</a></li>
+			{% endfor %}
+		</ul>
+	
+	</div>
+	
+	
+	<div class="col-md-9">	
+		<div class="page-header">
+		  <h1>{{main_parti.name}}<small> {{main_parti.description}}</small></h1>
+		</div>	
+		
+		<div>
+			Voici nos cellules :
+		</div>
+		<ul>
+			{% for cellule in cellules %}		
+				<li>{{cellule.name}}</li>	
+			{% endfor %}
+		</ul>
+			
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalPostuler">
+		  Postuler
+		</button>
+		
+		<a href="/polikif/programme_visualisation/{{main_parti.id}}">
+			<button type="button" class="btn btn-primary">
+				Voir le programme
+			</button>
+		</a>
+		
+		
+		
+		
+	</div>
+
+</div>
+
+
+<!-- Modal postuler -->
+<div class="modal fade" id="myModalPostuler" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Postuler</h4>
+      </div>
+      <div class="modal-body">
+			  
+		<form method="post" action="/polikif/parti_presentation/{{main_parti.id}}">
+		{% csrf_token %}
+		
+		  <div class="form-group">
+			<label for="exampleInputEmail1">Motivations ?</label>
+			<input type="text" class="form-control" id="reponse" name='reponse' placeholder="Quelques mots, pour nous dire pourquoi on vous intéresse :)">
+		  </div>	
+
+
+			<div>Quelles cellules vous intéressent ?</div>
+			{% for cellule in cellules %}		
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox"> {{cellule.name}}
+				</label>
+			  </div>			
+			{% endfor %}	
+
+			<div>Quels sont vos objectifs ?</div>
+	
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox">Pas vraiment d'objectif pour le moment...
+				</label>
+			  </div>					
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox">Aider la communauté
+				</label>
+			  </div>
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox">Devenir président !!
+				</label>
+			  </div>				  
+		  <button type="submit" class="btn btn-default">Submit</button>
+		</form>
+			
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

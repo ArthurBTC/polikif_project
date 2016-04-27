@@ -5,20 +5,35 @@ from .models import Proposition, Link, Cycle, Comment, Notification, Implication
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models import F
-
+from django.contrib.auth.forms import UserCreationForm
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-
+from django.contrib.auth.decorators import login_required
 from difflib import SequenceMatcher
 
 from datetime import datetime  
 
-def index(request):
-	notifs = get_notifs(request)
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return HttpResponseRedirect("/books/")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/register.html", {
+        'form': form,
+    })
 
-	return render(request,'gdpcore/index.html',{'notifs' : notifs})
+
+
+
+
+def index(request):
+	return render(request,'gdpcore/index.html')
 	
 #Pour la selection des cycles :
+@login_required
 def selection_cycle(request):
 	notifs = get_notifs(request)
 
@@ -26,6 +41,7 @@ def selection_cycle(request):
 	return render(request,'gdpcore/selection_cycle.html',{'cycles' : cycles, 'notifs' : notifs})
 
 #Visualisation des choses à faire
+@login_required
 def tobedone(request):
 	notifs = get_notifs(request)
 
@@ -139,6 +155,8 @@ def precision_request(request, id_cycle, id_prop):
 	for usrid in myNewList:
 		if usrid != request.user.id:
 			generate_notification(User.objects.get(id=usrid), prop, 'DP')
+			
+	cycle_updater(id_cycle)
 	
 	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
 	
@@ -158,6 +176,8 @@ def supplement_request(request, id_cycle, id_prop):
 	for usrid in myNewList:
 		if usrid != request.user.id:
 			generate_notification(User.objects.get(id=usrid), prop, 'DS')
+	
+	cycle_updater(id_cycle)
 	
 	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
 	
@@ -184,7 +204,7 @@ def text_request(request, id_cycle, id_prop):
 		if usr.id != request.user.id:
 			generate_notification(usr, prop, 'NC')
 
-
+	cycle_updater(id_cycle)
 	
 	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
 
@@ -280,6 +300,8 @@ def new_proposition(request, id_cycle, id_prop):
 			
 	add_comment(prop.autor, prop, 'TX', 'Proposition créée : '+prop.text)
 	
+	cycle_updater(id_cycle)
+	
 	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
 	
 def new_link(request, id_cycle, id_prop):
@@ -326,6 +348,7 @@ def new_link(request, id_cycle, id_prop):
 	if link.autor.id != prop.autor.id:
 		generate_notification(prop.autor, prop, 'NL')
 	
+	cycle_updater(id_cycle)
 	
 	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))	
 	
@@ -355,6 +378,7 @@ def edit_proposition(request, id_cycle, id_prop):
 		
 			add_comment(prop.autor, prop, 'MP', 'Modification de la proposition : '+prop.text)			
 			
+			cycle_updater(id_cycle)
 			
 			return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
 			
@@ -385,6 +409,7 @@ def edit_proposition(request, id_cycle, id_prop):
 						)
 			new_prop.save()
 			
+			cycle_updater(id_cycle)
 		
 			return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,new_prop.id,)))
 	
@@ -395,7 +420,8 @@ def new_cycle(request):
 		cycle = Cycle(autor = request.user,
 					text = request.POST['description'],
 					creation_date = datetime.now(),
-					proposition_initiale = request.POST['prop_ini']					
+					proposition_initiale = request.POST['prop_ini'],
+					last_prop_date = datetime.now()
 					)
 		cycle.save()
 		
@@ -438,13 +464,7 @@ def new_starting_proposition(request):
 
 	
 	props = Proposition.objects.all()
-	return render(request,'gdpcore/new_cycle.html',{'props':props})
-		
-		
-		
-		
-		
-		
+	return render(request,'gdpcore/new_cycle.html',{'props':props})		
 		
 		
 def link_attack(request,id_cycle, id_link):
@@ -500,8 +520,17 @@ def link_attack(request,id_cycle, id_link):
 		
 		generate_notification(Link.objects.get(id = id_link).autor, prop_imp, 'CL')
 		
-		return HttpResponseRedirect(reverse('link_browser', args=(id_cycle,id_link,)))
+		cycle_updater(id_cycle)
 		
+		return HttpResponseRedirect(reverse('link_browser', args=(id_cycle,id_link,)))
+
+def cycle_updater(id_cycle):
+	cycle = Cycle.objects.get(id = id_cycle)
+	props_cycle = Proposition.objects.filter(cycle = cycle)
+	cycle.nb = props_cycle.count()
+	if props_cycle:
+		cycle.last_prop_date = datetime.now()
+	cycle.save()
 
 def tag_generator(request):
 

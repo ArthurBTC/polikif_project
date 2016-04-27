@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+from gdpcore import models as gdpcore_models
 
 
 class Parti(models.Model):
@@ -30,7 +31,7 @@ class Adhesion_parti(models.Model):
 
 	user = models.ForeignKey(User)
 	parti = models.ForeignKey(Parti)
-	nature = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
+	role = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
 	creation_date = models.DateTimeField()
 	
@@ -48,7 +49,7 @@ class Adhesion_cellule(models.Model):
 
 	user = models.ForeignKey(User)
 	cellule = models.ForeignKey(Cellule)
-	nature = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
+	role = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
 	creation_date = models.DateTimeField()
 
@@ -65,11 +66,18 @@ class Selection(models.Model):
 		('P','Pending'),
 	)
 
+	proposition = models.ForeignKey(gdpcore_models.Proposition)
 	user = models.ForeignKey(User)
-	parti = models.ForeignKey(Cellule)
+	parti = models.ForeignKey(Parti)
 	
 	category = models.CharField(max_length = 100)
 	
 	type = models.CharField(max_length = 30, choices = TYPE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
 	creation_date = models.DateTimeField()
+	
+# class UserProfile(models.Model)
+	# user = models.OneToOneField(User, on_delete=models.CASCADE)
+	# parti = models.ForeignKey(Parti, blank=True, null=True)
+	# cellules = models.ManyToManyField(Cellule, , blank=True, null=True)
+	

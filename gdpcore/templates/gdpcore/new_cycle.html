@@ -21,14 +21,14 @@
 				<label for="description">Description :</label>
 				<input type="text" class="form-control" id="description" name='description' placeholder="Entrez la description du cycle">
 			</div>
-
-			<label for="description">Proposition principale :</label>
-			<select name = "prop_ini" class="form-control">
-				{% for prop in props %}
-				  <option value="{{prop.id}}">{{prop.autor.username}} : {{prop.text}}</option>
-				{% endfor %}
-			</select>
-			
+			<div class="form-group">
+				<label for="description">Proposition principale :</label>
+				<select name = "prop_ini" class="form-control">
+					{% for prop in props %}
+					  <option value="{{prop.id}}">{{prop.autor.username}} : {{prop.text}}</option>
+					{% endfor %}
+				</select>
+			</div>
 			<button type="submit" class="btn btn-primary">Créer cycle</button>
 			
 		</form>		

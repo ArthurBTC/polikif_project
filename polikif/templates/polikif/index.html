@@ -1,5 +1,17 @@
 {% extends 'polikif/base.html' %}
 
 {% block content %}
-   <div>TADA</div>
+
+<iframe src="https://explee.com/fr/embed/video/6gqoe?" width="640" height="360" 
+frameborder="0" allowfullscreen="" mozallowfullscreen="true" webkitallowfullscreen="true" onmousewheel="">
+</iframe>
+
+	{% if member == True %}
+		<div>Bonjour {{user.username}}</div>
+    {% endif %}
+	
+	{% if member == False %}
+	
+    {% endif %}	
+	
 {% endblock %}

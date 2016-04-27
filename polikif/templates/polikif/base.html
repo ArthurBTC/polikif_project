@@ -25,33 +25,31 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/polikif/index">Polikif</a>
+      <a class="navbar-brand" href="/polikif/index"><img src="{% static 'polikif/log_inv.png' %}" style="width:30px;height:30px;"></a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><a href="/polikif/index">Accueil</a></li>
-		<li><a href="/polikif/selection_cycle">Cycles</a></li>
-		<li><a href="#">A propos</a></li>
+		<li><a href="/polikif/parti_accueil">Partis</a></li>
+		<li><a href="/polikif/cellule_accueil">Cellules</a></li>
 		
       </ul>
 
-	  
-	  
-	  
+
 	  
       <ul class="nav navbar-nav navbar-right">
 	  
-		<li><a href="/polikif/tobedone"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="color:red"></span></a></li>
+		<li><a href="/gdpcore/tobedone"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="color:red"></span></a></li>
 	 
 		<li><a href="#"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a></li>	
 		
         <li><a href="#">{{ user }}</a></li>
         <li>      {% if user.is_anonymous %}
-      <a href="{% url 'django.contrib.auth.views.login' %}">login</a>
+      <a href="{% url 'django.contrib.auth.views.login' %}">Connexion</a>
       {% else %}
-      <a href="{% url 'django.contrib.auth.views.logout' %}">logout</a>
+      <a href="{% url 'django.contrib.auth.views.logout' %}">Deconnexion</a>
       {% endif %}</li>
       </ul>
     </div><!-- /.navbar-collapse -->

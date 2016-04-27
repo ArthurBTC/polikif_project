@@ -51,9 +51,9 @@
 		
         <li><a href="#">{{ user }}</a></li>
         <li>      {% if user.is_anonymous %}
-      <a href="{% url 'django.contrib.auth.views.login' %}">login</a>
+      <a href="{% url 'django.contrib.auth.views.login' %}">Connexion</a>
       {% else %}
-      <a href="{% url 'django.contrib.auth.views.logout' %}">logout</a>
+      <a href="{% url 'django.contrib.auth.views.logout' %}">Deconnexion</a>
       {% endif %}</li>
       </ul>
     </div><!-- /.navbar-collapse -->

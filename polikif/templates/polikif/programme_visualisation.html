@@ -1,0 +1,45 @@
+{% extends 'polikif/base.html' %}
+
+{% block content %}
+
+<div>Programme du {{main_parti.name}} :</div>
+
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+{% for category in categories %}
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="heading{{forloop.counter}}">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse{{forloop.counter}}" aria-expanded="true" aria-controls="collapse{{forloop.counter}}">
+          {{category.category}}
+        </a>
+      </h4>
+    </div>
+    <div id="collapse{{forloop.counter}}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{forloop.counter}}">
+      <div class="panel-body">
+		
+		<ul>
+			{% for selection in selections %}
+			
+				{% if selection.category == category.category %}
+			
+				<li><a href ="/gdpcore/graph_browser_free/{{selection.proposition.id}}">{{selection.proposition.text}}</a></li>
+				
+				{% endif %}
+		
+			{% endfor %}
+		</ul>
+		
+		
+      </div>
+    </div>
+  </div>
+ {% endfor %}
+</div>
+
+
+
+
+
+
+{% endblock %}

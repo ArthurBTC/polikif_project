@@ -25,5 +25,7 @@ urlpatterns = [
 	
 	url(r'^search_proposition', views.search_proposition, name='search_proposition'),
 	
+	url(r'^register', views.register, name='register'),	
+	
 	url('^', include('django.contrib.auth.urls')),
 ]

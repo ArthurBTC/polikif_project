@@ -1,13 +1,35 @@
 {% extends 'gdpcore/base.html' %}
 
 {% block content %}
-		
-	<div>Proposition initiale : {{text}}</div>
-	<div>Ressemblances :</div>
 	
-			{% for prop in props %}
-				  <div>{{prop.simil}} {{prop.text}}</div>
-			{% endfor %}	
+<div class="panel panel-primary">
+  <div class="panel-heading">
+    <h3 class="panel-title">Proposition initiale</h3>
+  </div>
+  <div class="panel-body">
+    {{text}}
+  </div>
+</div>
+	
+	
+<table class="table table-bordered">
+	<tr class="active">
+		<td >Ressemblance</td>
+		<td >ID</td>
+		<td >Propos</td>
+		<td >Auteur</td>
+	</tr>
+{% for prop in props %}	
+	<tr>	
+		<td>{{prop.simil}}</td>
+		<td>{{prop.id}}</td>
+		<td><a href="/gdpcore/graph_browser_free/{{prop.id}}">{{prop.text}}</a></td>
+		<td>{{prop.autor.username}}</td>
+	</tr>
+{% endfor %}
+ 
+ 
+</table>
 
 
 {% endblock %}
