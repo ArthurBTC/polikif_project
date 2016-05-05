@@ -17,7 +17,7 @@
 
 	{% for cycle in cycles %}
 		<tr>
-			<td><a href="/gdpcore/graph_browser/{{cycle.id}}/{{cycle.proposition_initiale}}">{{cycle.text}}</a></td>
+			<td><a href="/gdpcore/proposition_browser/{{cycle.proposition_initiale}}">{{cycle.text}}</a></td>
 			<td>{{cycle.nb}}</td>
 			<td>{{cycle.autor.username}}</td>	
 			<td>{{cycle.last_prop_date|timesince}}</td>				

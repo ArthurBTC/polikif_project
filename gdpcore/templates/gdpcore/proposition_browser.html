@@ -1,0 +1,545 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>{{main_prop.text}}<small>     ({{main_prop.autor.username}}, {{main_prop.creation_date|date:'Y-m-d H:i'}})</small></h1>
+</div>
+
+<div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Navigation</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Action</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">
+	
+		<div class ="row top-buffer">
+		
+		<!-- Les cars -->
+			<div class="col-md-6 nopadding">
+			
+				<div class="panel panel-default">
+				  <div class="panel-body">
+					<ul>
+					{% for link in links_left %}
+						{% if link.nature = 'Donc' %}
+						<li>
+							<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+							href="/gdpcore/link_browser/{{link.id}}" 
+							data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">Car </a>
+							<a class = "autor{{link.left_prop.autor.id}}" 
+							href="/gdpcore/proposition_browser/{{link.left_prop.id}}">{{link.left_prop.text}} ({{link.left_prop.autor.username}})</a>
+						</li>
+						{% endif %}
+					{% endfor %}
+					</ul>
+						
+				  </div>
+				</div>	
+			</div>
+
+			<!-- Les doncs -->
+			<div class="col-md-6 nopadding">
+			
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+					<ul>
+					{% for link in links_right %}
+						{% if link.nature = 'Donc' %}
+						<li>
+							<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+							href="/gdpcore/link_browser/{{link.id}}" 
+							data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">Donc </a>
+							<a class = "autor{{link.right_prop.autor.id}}" 
+							href="/gdpcore/proposition_browser/{{link.right_prop.id}}">{{link.right_prop.text}} ({{link.right_prop.autor.username}})</a>
+						</li>
+						{% endif %}
+					{% endfor %}
+					</ul>				
+				
+				  </div>
+				</div>	
+			</div>	
+		</div>
+
+		
+		<div class ="row">
+			<!-- Les ccrs -->
+			<div class="col-md-6 nopadding">
+			
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+					<ul>
+					{% for link in links_left %}
+						{% if link.nature = 'Concurrence' %}
+						<li>{% if link.status = 'P' %}(Non confirmé){% endif %}
+							<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+							href="/gdpcore/link_browser/{{link.id}}" 
+							data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">CCR </a>
+							<a class = "autor{{link.left_prop.autor.id}}" 
+							href="/gdpcore/proposition_browser/{{link.left_prop.id}}">{{link.left_prop.text}} ({{link.left_prop.autor.username}})</a>
+						</li>
+						{% endif %}
+					{% endfor %}
+					
+					{% for link in links_right %}
+						{% if link.nature = 'Concurrence' %}
+						<li>{% if link.status = 'P' %}(Non confirmé){% endif %}
+							<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+							href="/gdpcore/link_browser/{{link.id}}" 
+							data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">CCR </a>
+							<a class = "autor{{link.right_prop.autor.id}}" 
+							href="/gdpcore/proposition_browser/{{link.right_prop.id}}">{{link.right_prop.text}} ({{link.right_prop.autor.username}})</a>
+						</li>
+						{% endif %}
+					{% endfor %}					
+					</ul>
+					
+				
+				  </div>
+				</div>	
+			</div>
+			<!-- Les ex/th -->
+			<div class="col-md-6 nopadding">
+			
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+					<ul>
+					{% for link in links_left %}
+						{% if link.nature = 'Exemple' %}
+						<li>
+							<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+							href="/gdpcore/link_browser/{{link.id}}" 
+							data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">Théorie </a>
+							<a class = "autor{{link.left_prop.autor.id}}" 
+							href="/gdpcore/proposition_browser/{{link.left_prop.id}}">{{link.left_prop.text}} ({{link.left_prop.autor.username}})</a>
+						</li>
+						{% endif %}
+					{% endfor %}
+					
+					{% for link in links_right %}
+						{% if link.nature = 'Exemple' %}
+						<li>
+							<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+							href="/gdpcore/link_browser/{{link.id}}" 
+							data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">Ex </a>
+							<a class = "autor{{link.right_prop.autor.id}}" 
+							href="/gdpcore/proposition_browser/{{link.right_prop.id}}">{{link.right_prop.text}} ({{link.right_prop.autor.username}})</a>
+						</li>
+						{% endif %}
+					{% endfor %}	
+					</ul>			
+				  </div>
+				</div>	
+			</div>	
+		</div>	
+		
+		<!-- Le navigateur temporel -->
+		<div class ="row">
+		
+			<div class="dropdown">
+			  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				Derniers messages du cycle
+				<span class="caret"></span>
+			  </button>
+			  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+			  {% for prop in nav_props %}
+				<li><a href="/gdpcore/proposition_browser/{{prop.id}}">{{prop.creation_date|timesince}} {{prop.autor.username}} : {{prop.text}}</a></li>
+				<li role="separator" class="divider"></li>
+				{% endfor %}
+			  </ul>
+			</div>			
+		</div>
+	
+	
+	</div>
+	
+	<!-- Tab 'Action' qui commence -->
+    <div role="tabpanel" class="tab-pane" id="profile">
+		<div class ="row top-buffer">
+
+			<!-- Aperçu forum -->
+			<div class="col-md-8">
+			
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+					<ul>
+					{% for comment in comments %}
+					
+						{% if forloop.revcounter < 4 %}
+					<li>{{comment.creation_date|date:'Y-m-d H:i'}} {{comment.autor.username}} {{comment.text}}</li>
+						{% endif %}
+					
+					
+					
+					{% endfor %}
+					</ul>
+					
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalForum">
+					  Ouvrir le forum
+					</button>
+					
+					
+				
+				  </div>
+				</div>	
+			</div>
+			
+			<!-- Precision / suppléments -->
+			<div class="col-md-4">
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+					
+					<div>{% if main_prop.demande_precision == True %}Demande de précision ouverte{% else %}{% endif %}</div>
+					<div>{% if main_prop.demande_supplement == True %}Demande de supplément ouverte{% else %}{% endif %}</div>
+<!--						<div>Attention : {{main_prop.demande_attention}}  </div> -->
+					
+					{% if user != main_prop.autor %}
+					<div class="dropdown">
+					  <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						Demandes
+						<span class="caret"></span>
+					  </button>
+					  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						<li><a href="/gdpcore/precision_request/{{id_prop}}">Précision</a></li>
+						<li><a href="/gdpcore/supplement_request/{{id_prop}}">Supplement</a></li>
+<!--						<li><a href="/gdpcore/attention_request/{{id_cycle}}/{{id_prop}}">Attention</a></li> -->
+					  </ul>
+					</div>
+					{% endif %}
+				  </div>
+				  
+				</div>		
+			
+			
+			</div>
+			
+		</div>	
+	
+		
+		<div class ="row">
+			<!--Ajouter proposition / liens / modifier .... -->
+			<div class="col-md-6">
+			
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+					  Ajouter proposition + lien
+					</button>
+
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalLink">
+					  Ajouter lien
+					</button>
+					
+					{% if user == main_prop.autor %}
+					
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalEdit">
+					  Modifier proposition
+					</button>	
+
+					{% endif %}
+				
+				  </div>
+				</div>	
+			</div>
+
+			<div class="col-md-6">
+			
+				<div class="panel panel-default">
+
+				  <div class="panel-body">
+			
+				  </div>
+				</div>	
+			</div>	
+		</div>	
+	
+	
+	
+	
+	</div>
+  </div>
+
+</div>
+
+
+
+<!-- pour la recherche de propositions similaires-->
+<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
+{% csrf_token %}
+<input id="new_window_parameter_1" name="parameter" type="hidden" value="default">
+</form>
+
+
+
+<!-- Modal ajout prop-->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"></h4>
+      </div>
+      <div class="modal-body">
+        
+		<!-- Proposition initiale-->
+		<div>{{main_prop.text}}</div>
+		
+		
+	<form method="post" action="/gdpcore/new_proposition/{{id_prop}}">
+	{% csrf_token %}
+	
+		<!-- Choix connecteur-->
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios1" value="car" checked>
+			... car ...
+		  </label>
+		</div>
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios2" value="donc">
+			... donc ...
+		  </label>
+		</div>
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios3" value="ex">
+			Par exemple :
+		  </label>
+		</div>	
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios4" value="ccr">
+			Je ne suis pas d'accord. Je pense ceci :
+		  </label>
+		</div>	
+
+		
+		
+		<!-- Proposition entrée-->
+		 <div class="form-group">
+			<input type="text" class="form-control newprop" id="newprop" name="newprop" placeholder="Entrez votre nouvelle proposition...">
+		  </div>
+		  
+		 
+		<!-- Logique générée-->
+		
+		<div class="alert alert-info" role="alert" id="logique"></div>
+		
+		<!-- Checkbox logique-->
+		  <div class="checkbox">
+			<label>
+			  <input type="checkbox">Je confirme la logique
+			</label>
+		  </div>		  
+		  
+		<!-- Recherche propositions similaires-->
+		  <button type="button" class="btn btn-info" id="recherche_but">Rechercher propositions similaires</button>
+		  
+
+			
+			
+		 
+		  <div class="checkbox">
+			<label>
+			  <input type="checkbox"> Je n'ai trouvé aucune proposition similaire
+			</label>
+		  </div>		  
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		
+        <button type="submit" class="btn btn-primary">Ajouter proposition</button>
+      </div>
+	
+	</form>
+	
+    </div>
+  </div>
+</div>
+
+<!-- Modal ajout lien prop-->
+<div class="modal fade" id="myModalLink" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel"></h4>
+      </div>
+      <div class="modal-body">
+        
+		<!-- Proposition initiale-->
+		<div>{{main_prop.text}}</div>
+		
+		
+	<form method="post" action="/gdpcore/new_link/{{id_prop}}">
+	{% csrf_token %}
+	
+		<!-- Choix connecteur-->
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios1" value="car" checked>
+			... car ...
+		  </label>
+		</div>
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios2" value="donc">
+			... donc ...
+		  </label>
+		</div>
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios3" value="ex">
+			Par exemple :
+		  </label>
+		</div>	
+		<div class="radio newprop">
+		  <label>
+			<input type="radio" name="optionsRadios" id="optionsRadios4" value="ccr">
+			Je ne suis pas d'accord. Je pense ceci :
+		  </label>
+		</div>	
+
+		
+		
+		<!-- Proposition entrée-->
+		 <div class="form-group">
+			<input type="text" class="form-control newprop" id="second_prop" name="second_prop" placeholder="Entrez l'id de la seconde proposition...">
+		  </div>
+			 
+	
+	<button type="submit" class="btn btn-primary">Ajouter lien</button>
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		
+        
+      </div>
+	
+	</form>
+	
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Modal Edit comment -->
+<div class="modal fade" id="myModalEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Forum - {{main_prop.text}}</h4>
+      </div>
+      <div class="modal-body">
+        		  
+		<form method="post" action="/gdpcore/edit_proposition/{{id_prop}}">
+		{% csrf_token %}
+		
+		  <div class="form-group">
+			<label for="exampleInputEmail1">Nouvel intitulé</label>
+			<input type="text" class="form-control" id="edit" name='edit' placeholder="{{main_prop.text}}">
+		  </div>
+
+		  <button type="submit" class="btn btn-default">Modifier ma proposition</button>
+		</form>
+			
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal comments -->
+<div class="modal fade" id="myModalForum" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Forum - {{main_prop.text}}</h4>
+      </div>
+      <div class="modal-body">
+        
+			<ul>
+			{% for comment in comments %}
+			<li>{{comment.creation_date|date:'Y-m-d H:i'}} {{comment.autor.username}} {{comment.text}}</li>
+			{% endfor %}
+			</ul>	
+			
+
+			  
+		<form method="post" action="/gdpcore/text_request/{{id_prop}}">
+		{% csrf_token %}
+		
+		  <div class="form-group">
+			<label for="exampleInputEmail1">Répondre</label>
+			<input type="text" class="form-control" id="reponse" name='reponse' placeholder="Entrez votre réponse...">
+		  </div>
+
+		  <button type="submit" class="btn btn-default">Submit</button>
+		</form>
+			
+		
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+
+
+$( ".newprop" ).change(function() {
+
+var traduc = [];
+traduc["donc"] = "Donc";
+traduc["car"] = "Car";
+traduc["ex"] = "Par exemple :";
+traduc["ccr"] = "est incompatible avec :";
+
+  $( "#logique" ).html( "<div>	{{main_prop.text}}</div><div>"+traduc[$('input[name=optionsRadios]:checked').val()]+"</div><div>	"+$( "#newprop" ).val()+"</div>" );
+});
+
+$("#recherche_but").click(function() {
+	console.log('lalala')
+	console.log($( "#newprop" ).val())
+	
+
+  $('#new_window_parameter_1').val($( "#newprop" ).val());
+  $('#invisible_form').submit();
+});
+
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
+
+
+</script>
+	
+{% endblock %}

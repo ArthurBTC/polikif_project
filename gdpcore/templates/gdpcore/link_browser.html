@@ -5,13 +5,13 @@
 
 
 <div class ="row top-buffer">
-	<a href="/gdpcore/graph_browser/{{id_cycle}}/{{main_link.left_prop.id}}">{{main_link.left_prop.text}}</a>
+	<a href="/gdpcore/proposition_browser/{{main_link.left_prop.id}}">{{main_link.left_prop.text}}</a>
 </div>
 <div class="page-header">
   <h1>{{main_link.nature}}<small>     ({{main_link.autor.username}}, {{main_link.creation_date|date:'Y-m-d H:i'}})</small></h1>
 </div>
 <div class ="row top-buffer">
-<a href="/gdpcore/graph_browser/{{id_cycle}}/{{main_link.right_prop.id}}">{{main_link.right_prop.text}}</a>
+<a href="/gdpcore/proposition_browser/{{main_link.right_prop.id}}">{{main_link.right_prop.text}}</a>
 </div>
 
 <div class ="row top-buffer">
@@ -21,7 +21,7 @@
   <div class="panel-body">
 	<ul>
 	{% for implication in implications %}
-	<li><a href="/gdpcore/graph_browser/{{id_cycle}}/{{implication.proposition.id}}">{{implication.proposition.text}}</a></li>
+	<li><a href="/gdpcore/proposition_browser/{{implication.proposition.id}}">{{implication.proposition.text}}</a></li>
 	{% endfor %}
 	</ul>
 		
@@ -32,7 +32,7 @@
 
 </div>
 
-<form class="form" method="post" action="/gdpcore/link_attack/{{id_cycle}}/{{main_link.id}}">
+<form class="form" method="post" action="/gdpcore/link_attack/{{main_link.id}}">
 {% csrf_token %}
 	<div class="form-group">
 		<label for="Implication">Implication</label>
@@ -44,7 +44,7 @@
 		<input type="text" class="form-control" id="attack" name='attack' placeholder="Mais il s'avère que...">
 	</div>	
 	
-	<button type="submit" class="btn btn-primary">Créer cycle</button>
+	<button type="submit" class="btn btn-primary">Créer critique</button>
 	
 </form>
 

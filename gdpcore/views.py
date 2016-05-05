@@ -26,24 +26,20 @@ def register(request):
     })
 
 
-
-
-
 def index(request):
 	return render(request,'gdpcore/index.html')
 	
 #Pour la selection des cycles :
 @login_required
 def selection_cycle(request):
-	notifs = get_notifs(request)
 
 	cycles = Cycle.objects.all().order_by('-last_prop_date')
-	return render(request,'gdpcore/selection_cycle.html',{'cycles' : cycles, 'notifs' : notifs})
+	return render(request,'gdpcore/selection_cycle.html',{'cycles' : cycles})
 
 #Visualisation des choses à faire
 @login_required
 def tobedone(request):
-	notifs = get_notifs(request)
+	notifs = notifs = Notification.objects.filter(autor = request.user).order_by('-creation_date')
 
 	props_precison = Proposition.objects.filter(autor = request.user).filter(demande_precision = True)
 	props_supplement = Proposition.objects.filter(autor = request.user).filter(demande_supplement = True)
@@ -52,94 +48,31 @@ def tobedone(request):
 	
 	return render(request,'gdpcore/tobedone.html',{'props_precison' : props_precison,'props_supplement' : props_supplement, 'notifs' : notifs, 'last_props':last_props})
 
-#Pour le navigateur du browser :
-def get_last_props(id_cycle):
-	props = Proposition.objects.filter(cycle__id = id_cycle).order_by('-creation_date')[:3]
-	return props
 	
-#Pour l'aperçu du forum
-def get_last_comments(id_prop):
-	comments = Comment.objects.filter(proposition__id = id_prop).order_by('-creation_date')[:3]
-	return comments
 	
-#Pour obtenir les connecteurs
-def get_doncs(id_prop):
-	doncs = Link.objects.filter(left_prop__id = id_prop).filter(nature = 'Donc')
-	return doncs
+def proposition_browser(request, id_prop):
 	
-def get_cars(id_prop):
-	cars = Link.objects.filter(right_prop__id = id_prop).filter(nature = 'Donc')
-	return cars
-
-def get_exs(id_prop):
-	exs = Link.objects.filter(left_prop__id = id_prop).filter(nature = 'Exemple')
-	return exs
-	
-def get_ths(id_prop):
-	ths = Link.objects.filter(right_prop__id = id_prop).filter(nature = 'Exemple')
-	return ths
-
-def get_ccrs1(id_prop):
-	ccrs1 = Link.objects.filter(left_prop__id = id_prop).filter(nature = 'Concurrence')
-	return ccrs1
-	
-def get_ccrs2(id_prop):
-	ccrs2 = Link.objects.filter(right_prop__id = id_prop).filter(nature = 'Concurrence')
-	return ccrs2
-	
-
-#Notifications
-def get_notifs(request):
-	notifs = Notification.objects.filter(autor = request.user).order_by('-creation_date')
-	
-
-	
-	return notifs
-	
-def graph_browser(request, id_cycle, id_prop):
-	
-	nav_props = get_last_props(id_cycle)
 	main_prop = Proposition.objects.get(id = id_prop)
+	nav_props = Proposition.objects.filter(cycle = main_prop.cycle).order_by('-creation_date')[:3]
 	comments = Comment.objects.filter(proposition__id = id_prop).order_by('creation_date')
-	doncs = get_doncs(id_prop)
-	cars = get_cars(id_prop)
-	exs = get_exs(id_prop)
-	ths = get_ths(id_prop)
-	ccrs1 = get_ccrs1(id_prop)
-	ccrs2 = get_ccrs2(id_prop)
 	
-	notifs = get_notifs(request)
+	links_right = Link.objects.filter(left_prop = main_prop)
+	links_left = Link.objects.filter(right_prop = main_prop)
 	
-	return render(request,'gdpcore/graph_browser.html',{'id_cycle': id_cycle, 'id_prop': id_prop,
+	return render(request,'gdpcore/proposition_browser.html',{'id_prop': id_prop,
 														'nav_props': nav_props, 
 														'main_prop': main_prop, 
 														'comments': comments,
-														'doncs': doncs, 'cars': cars, 'exs': exs, 'ths': ths, 'ccrs1': ccrs1, 'ccrs2': ccrs2, 'notifs': notifs })
+														'links_right': links_right, 'links_left': links_left })
 	
 	
-def graph_browser_free(request, id_prop):
-
-	main_prop = Proposition.objects.get(id = id_prop)
-	comments = Comment.objects.filter(proposition__id = id_prop).order_by('creation_date')
-	doncs = get_doncs(id_prop)
-	cars = get_cars(id_prop)
-	exs = get_exs(id_prop)
-	ths = get_ths(id_prop)
-	ccrs1 = get_ccrs1(id_prop)
-	ccrs2 = get_ccrs2(id_prop)
 	
-	return render(request,'gdpcore/graph_browser_free.html',{'id_prop': id_prop,
-														'main_prop': main_prop, 
-														'comments': comments,
-														'doncs': doncs, 'cars': cars, 'exs': exs, 'ths': ths, 'ccrs1': ccrs1, 'ccrs2': ccrs2 })
-	
-	
-def link_browser(request, id_cycle, id_link):
+def link_browser(request, id_link):
 	main_link = Link.objects.get(id = id_link)
 	implications = Implication.objects.filter(link = main_link)
-	return render(request,'gdpcore/link_browser.html',{'main_link': main_link, 'id_cycle': id_cycle, 'implications': implications})
+	return render(request,'gdpcore/link_browser.html',{'main_link': main_link, 'implications': implications})
 	
-def precision_request(request, id_cycle, id_prop):
+def precision_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	prop.demande_precision = True
 	prop.save()
@@ -156,11 +89,11 @@ def precision_request(request, id_cycle, id_prop):
 		if usrid != request.user.id:
 			generate_notification(User.objects.get(id=usrid), prop, 'DP')
 			
-	cycle_updater(id_cycle)
+	cycle_updater(prop.cycle.id)
 	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
-def supplement_request(request, id_cycle, id_prop):
+def supplement_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	prop.demande_supplement = True
 	prop.save()
@@ -177,11 +110,11 @@ def supplement_request(request, id_cycle, id_prop):
 		if usrid != request.user.id:
 			generate_notification(User.objects.get(id=usrid), prop, 'DS')
 	
-	cycle_updater(id_cycle)
+	cycle_updater(prop.cycle.id)
 	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
-def attention_request(request, id_cycle, id_prop):
+def attention_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	prop.demande_attention = True
 	prop.save()
@@ -190,10 +123,10 @@ def attention_request(request, id_cycle, id_prop):
 	
 	generate_notification(prop.autor, prop, 'DA')
 	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
 	
-def text_request(request, id_cycle, id_prop):
+def text_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	
 	add_comment(request.user, prop, 'TX', request.POST['reponse'])	
@@ -204,9 +137,9 @@ def text_request(request, id_cycle, id_prop):
 		if usr.id != request.user.id:
 			generate_notification(usr, prop, 'NC')
 
-	cycle_updater(id_cycle)
+	cycle_updater(prop.cycle.id)
 	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 
 	
 def add_comment(autor, prop, nature, text):
@@ -238,12 +171,12 @@ def notif_viewer(request, id_notif):
 	id_prop = notif.proposition.id
 	
 #A CORRIGER ATTENTIOn	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 
 
 						
 #Ajout d'une proposition depuis le modal	
-def new_proposition(request, id_cycle, id_prop):
+def new_proposition(request, id_prop):
 	
 	initial_prop = Proposition.objects.get(id=id_prop)
 	
@@ -251,7 +184,7 @@ def new_proposition(request, id_cycle, id_prop):
 				text = request.POST['newprop'],
 				creation_date = datetime.now(),
 				modification_date = datetime.now(),
-				cycle = Cycle.objects.get(id=id_cycle),
+				cycle = initial_prop.cycle,
 				nature = 'Diagnostic',
 				trafic = 0,
 				demande_precision = False,
@@ -282,7 +215,7 @@ def new_proposition(request, id_cycle, id_prop):
 				creation_date = datetime.now(),
 				modification_date = datetime.now(),
 				nature = nat,
-				cycle = Cycle.objects.get(id=id_cycle),
+				cycle = initial_prop.cycle,
 				trafic = 0,
 				left_prop = left,
 				right_prop = right,
@@ -300,11 +233,11 @@ def new_proposition(request, id_cycle, id_prop):
 			
 	add_comment(prop.autor, prop, 'TX', 'Proposition créée : '+prop.text)
 	
-	cycle_updater(id_cycle)
+	cycle_updater(initial_prop.cycle.id)
 	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
-def new_link(request, id_cycle, id_prop):
+def new_link(request, id_prop):
 	
 	initial_prop = Proposition.objects.get(id=id_prop)
 	prop = Proposition.objects.get(id=int(request.POST['second_prop']))
@@ -330,7 +263,7 @@ def new_link(request, id_cycle, id_prop):
 				creation_date = datetime.now(),
 				modification_date = datetime.now(),
 				nature = nat,
-				cycle = Cycle.objects.get(id=id_cycle),
+				cycle = initial_prop.cycle,
 				trafic = 0,
 				left_prop = left,
 				right_prop = right,
@@ -348,72 +281,51 @@ def new_link(request, id_cycle, id_prop):
 	if link.autor.id != prop.autor.id:
 		generate_notification(prop.autor, prop, 'NL')
 	
-	cycle_updater(id_cycle)
+	cycle_updater(initial_prop.cycle.id)
 	
-	return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))	
+	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))	
 	
 #Edition d'une proposition depuis le modal	
-def edit_proposition(request, id_cycle, id_prop):
+def edit_proposition(request, id_prop):
 	if request.method == 'POST':
 		prop = Proposition.objects.get(id = id_prop)
+
+		#On change le texte
+		prop.text = request.POST['edit']
+		prop.demande_precision = False
+		prop.save()
 		
+		#On voit les liens qui sont connectés, et on les met en suspension
 		lefts = Link.objects.filter(left_prop__id = id_prop).exclude(autor = prop.autor)
 		rights = Link.objects.filter(right_prop__id = id_prop).exclude(autor = prop.autor)
-
-		if lefts.count()+rights.count() == 0:
-			prop.text = request.POST['edit']
-			prop.demande_precision = False
-			prop.save()
-			
-
-			autors = Comment.objects.filter(proposition = prop).values('autor')
-			myList =[]
-			for autor in autors:
-				myList.append(autor['autor'])
-			myNewList = list(set(myList))
-			
-			for usrid in myNewList:
-				if usrid != request.user.id:
-					generate_notification(User.objects.get(id=usrid), prop, 'MP')
 		
-			add_comment(prop.autor, prop, 'MP', 'Modification de la proposition : '+prop.text)			
+		for left in lefts:
+			left.status = 'P'
+			left.save()
 			
-			cycle_updater(id_cycle)
-			
-			return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,id_prop,)))
-			
-		else:
-			prop.autor = User.objects.get(username = 'nobody')
-			prop.save()
-
-			for left in lefts:
-				left.autor = User.objects.get(username = 'nobody')
-				left.save()
-			
-			for right in rights:
-				right.autor = User.objects.get(username = 'nobody')
-				right.save()
-			
-			new_prop = Proposition(autor = request.user,
-						text = request.POST['edit'],
-						creation_date = datetime.now(),
-						modification_date = datetime.now(),
-						cycle = Cycle.objects.get(id=id_cycle),
-						nature = prop.nature,
-						trafic = 0,
-						demande_precision = False,
-						demande_supplement = False,
-						demande_attention = False,
-						simil = 0
-						
-						)
-			new_prop.save()
-			
-			cycle_updater(id_cycle)
 		
-			return HttpResponseRedirect(reverse('graph_browser', args=(id_cycle,new_prop.id,)))
+		for right in rights:
+			right.status = 'P'
+			right.save()
+		
+		#On prévient tout le monde que la proposition a été changée:
+		autors = Comment.objects.filter(proposition = prop).values('autor')
+		myList =[]
+		for autor in autors:
+			myList.append(autor['autor'])
+		myNewList = list(set(myList))
+		
+		for usrid in myNewList:
+			if usrid != request.user.id:
+				generate_notification(User.objects.get(id=usrid), prop, 'MP')
 	
-	
+		add_comment(prop.autor, prop, 'MP', 'Modification de la proposition : '+prop.text)			
+		
+		cycle_updater(prop.cycle.id)
+		
+		return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
+			
+
 	
 def new_cycle(request):
 	if request.method == 'POST':
@@ -467,14 +379,16 @@ def new_starting_proposition(request):
 	return render(request,'gdpcore/new_cycle.html',{'props':props})		
 		
 		
-def link_attack(request,id_cycle, id_link):
+def link_attack(request, id_link):
 	if request.method == 'POST':
+	
+		main_link = Link.objects.get(id = id_link)
 
 		prop_imp = Proposition(autor = User.objects.get(username = 'nobody'),
 					text = request.POST['implication'],
 					creation_date = datetime.now(),
 					modification_date = datetime.now(),
-					cycle = Cycle.objects.get(id=id_cycle),
+					cycle = main_link.cycle,
 					nature = 'Diagnostic',
 					trafic = 0,
 					demande_precision = False,
@@ -486,7 +400,7 @@ def link_attack(request,id_cycle, id_link):
 	
 		implication = Implication(autor = request.user,
 								proposition = prop_imp,
-								link = Link.objects.get(id = id_link),
+								link = main_link,
 								creation_date = datetime.now()
 								)
 		implication.save()
@@ -495,7 +409,7 @@ def link_attack(request,id_cycle, id_link):
 					text = request.POST['attack'],
 					creation_date = datetime.now(),
 					modification_date = datetime.now(),
-					cycle = Cycle.objects.get(id=id_cycle),
+					cycle = main_link.cycle,
 					nature = 'Diagnostic',
 					trafic = 0,
 					demande_precision = False,
@@ -509,7 +423,7 @@ def link_attack(request,id_cycle, id_link):
 				creation_date = datetime.now(),
 				modification_date = datetime.now(),
 				nature = 'Concurrence',
-				cycle = Cycle.objects.get(id=id_cycle),
+				cycle = main_link.cycle,
 				trafic = 0,
 				left_prop = prop_ccr,
 				right_prop = prop_imp,
@@ -518,11 +432,11 @@ def link_attack(request,id_cycle, id_link):
 
 		link.save()
 		
-		generate_notification(Link.objects.get(id = id_link).autor, prop_imp, 'CL')
+		generate_notification(main_link.autor, prop_imp, 'CL')
 		
-		cycle_updater(id_cycle)
+		cycle_updater(main_link.cycle.id)
 		
-		return HttpResponseRedirect(reverse('link_browser', args=(id_cycle,id_link,)))
+		return HttpResponseRedirect(reverse('link_browser', args=(id_link,)))
 
 def cycle_updater(id_cycle):
 	cycle = Cycle.objects.get(id = id_cycle)
@@ -622,3 +536,58 @@ def similar_propositions(request):
 def search_proposition(request):
 	props = Proposition.objects.all()
 	return render(request,'gdpcore/search_proposition.html',{'props': props})
+	
+def envir_viewer(request, id_prop):
+
+	main_prop = Proposition.objects.get(id=id_prop)
+	links_right = Link.objects.filter(left_prop = main_prop)
+	links_left = Link.objects.filter(right_prop = main_prop)
+	
+	all_links = {}
+		
+	for link in links_left:
+		all_links[str(link.id)] = link
+		
+		more_links = Link.objects.filter(left_prop = link.right_prop)
+		for more_link in more_links:
+			all_links[str(more_link.id)] = more_link
+
+		more_links = Link.objects.filter(right_prop = link.right_prop)
+		for more_link in more_links:
+			all_links[str(more_link.id)] = more_link			
+		
+
+	for link in links_right:
+		all_links[str(link.id)] = link
+		
+		more_links = Link.objects.filter(left_prop = link.left_prop)
+		for more_link in more_links:
+			all_links[str(more_link.id)] = more_link
+
+		more_links = Link.objects.filter(right_prop = link.left_prop)
+		for more_link in more_links:
+			all_links[str(more_link.id)] = more_link
+			
+	return render(request,'gdpcore/envir_viewer.html',{'main_prop':main_prop,'all_links':all_links})
+	
+def env_viewer(request, id_prop):
+
+	main_prop = Proposition.objects.get(id=id_prop)
+	
+	ccrs1 = Link.objects.filter(left_prop = main_prop).filter(nature = 'Concurrence')
+	ccrs2 = Link.objects.filter(right_prop = main_prop).filter(nature = 'Concurrence')
+	
+	cars = {}
+	for ccr1 in ccrs1:
+		cars[str(ccr1.id)]= Link.objects.filter(left_prop = ccr1.right_prop).filter(nature = 'Donc')
+	for ccr2 in ccrs2:
+		cars[str(ccr2.id)]= Link.objects.filter(left_prop = ccr2.left_prop).filter(nature = 'Donc')
+		
+	doncs = {}
+	for ccr1 in ccrs1:
+		doncs[str(ccr1.id)]= Link.objects.filter(right_prop = ccr1.right_prop).filter(nature = 'Donc')
+	for ccr2 in ccrs2:
+		doncs[str(ccr2.id)]= Link.objects.filter(right_prop = ccr2.left_prop).filter(nature = 'Donc')
+
+			
+	return render(request,'gdpcore/env_viewer.html',{'main_prop':main_prop,'ccrs1':ccrs1,'ccrs2':ccrs2,'cars':cars,'doncs':doncs})

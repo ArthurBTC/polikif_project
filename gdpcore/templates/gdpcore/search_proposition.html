@@ -23,7 +23,7 @@ $(function(){
 		contentType: "application/json; charset=utf-8",
 		select : function(event, ui){ // lors de la sélection d'une proposition
 			$('#description').append( ui.item.desc ); // on ajoute la description de l'objet dans un bloc
-			window.location.replace("/gdpcore/graph_browser_free/"+ui.item.value)
+			window.location.replace("/gdpcore/proposition_browser/"+ui.item.value)
 		}
 	});
 });

@@ -21,7 +21,7 @@
 		  </div>
 		  <div class="panel-body">
 			{% for prop in props_precision %}
-				  <div>{{prop.text}}</div>
+				  <div><a href="/gdpcore/proposition_browser/{{prop.id}}">{{prop.text}}</div>
 				{% endfor %}
 		  </div>
 		</div>
@@ -32,7 +32,7 @@
 		  </div>
 		  <div class="panel-body">
 			{% for prop in props_supplement %}
-				  <div><a href="/gdpcore/graph_browser/{{id_cycle}}/{{prop.id}}">{{prop.text}}</a></div>
+				  <div><a href="/gdpcore/proposition_browser/{{prop.id}}">{{prop.text}}</a></div>
 				{% endfor %}
 		  </div>
 		</div>		
@@ -71,7 +71,7 @@
 				  <ul class="">
 					{% for notif in notifs %}
 						{% if notif.viewed == True %}
-					<li><a href="/gdpcore/graph_browser/{{id_cycle}}/{{notif.proposition.id}}"> {{notif.creation_date|timesince}} - {{notif.get_nature_display}} ({{notif.proposition.text}})</a></li>
+					<li><a href="/gdpcore/proposition_browser/{{notif.proposition.id}}"> {{notif.creation_date|timesince}} - {{notif.get_nature_display}} ({{notif.proposition.text}})</a></li>
 						{% endif %}
 					{% endfor %}
 				  </ul>
@@ -91,7 +91,7 @@
     <div role="tabpanel" class="tab-pane" id="profile">
 	
 	{% for prop in last_props %}
-		<div><a href="/gdpcore/graph_browser/{{id_cycle}}/{{prop.id}}">{{prop.text}}</a></div>
+		<div><a href="/gdpcore/proposition_browser/{{prop.id}}">{{prop.text}}</a></div>
 	{% endfor %}	
 	
 	

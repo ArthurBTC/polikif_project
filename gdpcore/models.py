@@ -49,10 +49,17 @@ class Link(models.Model):
 		('Syl','Syl'),
 
 	)
+	
+	STATUS_CHOICE = (
+		('A','Active'),
+		('I','Inactive'),
+		('P','Pending'),
+	)
 	autor = models.ForeignKey(User)
 	creation_date = models.DateTimeField()
 	modification_date = models.DateTimeField()
 	nature = models.CharField(max_length = 30, choices = NATURE_LINK_CHOICE, default = 'Donc')
+	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
 	cycle = models.ForeignKey(Cycle)
 	trafic = models.IntegerField(default=0)
 	
@@ -112,7 +119,8 @@ class Notification(models.Model):
 		('NC','Nouveau commentaire'),
 		('DA',"Demande d'attention"),
 		('DP','Demande de précision'),
-		('DS','Demande de source')
+		('DS','Demande de source'),
+		('DV','Demande de validation de lien'),
 		
 	)
 	autor = models.ForeignKey(User)

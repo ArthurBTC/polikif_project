@@ -1,0 +1,114 @@
+{% extends "gdpcore/base.html" %}
+
+{% block content %}
+
+<div>Id main_prop : {{main_prop.id}}</div>
+<div>CCRS</div>
+<ul>
+	{% for ccr1 in ccrs1 %}
+	<li>{{ccr1.id}} {{ccr1.right_prop.id}}</li>
+	{% endfor %}
+	{% for ccr2 in ccrs2 %}
+	<li>{{ccr2.id}}</li>
+	{% endfor %}
+</ul>
+<div>CARS</div>
+<ul>
+
+	{% for ccr1 in ccrs1 %}
+	
+	<li>{{cars.ccr1.id}}</li>
+	
+	{% endfor %}
+</ul>
+
+<div>DONCS</div>
+<ul>
+
+	{% for ccr1 in ccrs1 %}
+	
+	<li>{{doncs.32.0.id}}</li>
+	
+	{% endfor %}
+</ul>
+
+<div>Left_dict_left</div>
+<ul>
+
+
+		{% for key, value in left_dict_left.items %} 
+		  <li>{{key}} - {{value}}</li>
+		  {% for link in value %}<li>{{link.id}}</li>{% endfor %}
+		 {% endfor %}
+</ul>
+
+<div id="myholder"></div>
+
+  <script type="text/javascript">
+
+    var graph = new joint.dia.Graph;
+
+    var paper = new joint.dia.Paper({
+        el: $('#myholder'),
+        width: 1000,
+        height: 1000,
+        model: graph,
+        gridSize: 1
+    });
+
+    var rect{{main_prop.id}} = new joint.shapes.basic.Rect({
+        position: { x: 100, y: 30 },
+        size: { width: 100, height: 30 },
+        attrs: { rect: { fill: 'blue' }, text: { text: '{{main_prop.id}}', fill: 'white' } }
+    });
+	
+	 graph.addCells([rect{{main_prop.id}}]);
+
+	{% for ccr1 in ccrs1 %}
+
+		var rect{{ccr1.right_prop.id}} = new joint.shapes.basic.Rect({
+			position: { x: 100, y: 30 },
+			size: { width: 100, height: 30 },
+			attrs: { rect: { fill: 'blue' }, text: { text: '{{ccr1.right_prop.id}}', fill: 'white' } }
+		});	
+			
+		rect{{ccr1.right_prop.id}}.translate(0,{{forloop.counter}}*70);
+		
+		var link{{ccr1.id}} = new joint.dia.Link({
+			source: { id: rect{{main_prop.id}}.id },
+			target: { id: rect{{ccr1.right_prop.id}}.id },
+			labels: [ { position: 0.5, attrs: { text: { text: '{{ccr1.id}}' } } } ]
+		});	
+		
+		graph.addCells([rect{{ccr1.right_prop.id}}, link{{ccr1.id}}]);
+	
+	{% endfor %}
+	
+	{% for ccr2 in ccrs2 %}
+
+		var rect{{ccr2.left_prop.id}} = new joint.shapes.basic.Rect({
+			position: { x: 100, y: 30 },
+			size: { width: 100, height: 30 },
+			attrs: { rect: { fill: 'blue' }, text: { text: '{{ccr2.left_prop.id}}', fill: 'white' } }
+		});	
+			
+		rect{{ccr2.left_prop.id}}.translate(0,{{forloop.counter}}*70);
+		
+		var link{{ccr2.id}} = new joint.dia.Link({
+			source: { id: rect{{main_prop.id}}.id },
+			target: { id: rect{{ccr2.left_prop.id}}.id },
+			labels: [ { position: 0.5, attrs: { text: { text: '{{ccr2.id}}' } } } ]
+		});	
+		
+		graph.addCells([rect{{ccr2.left_prop.id}}, link{{ccr2.id}}]);
+	
+	{% endfor %}
+
+	
+		
+	
+
+
+  </script>
+
+{% endblock %}

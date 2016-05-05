@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 	url(r'^gdpcore/', include('gdpcore.urls')),
 	url(r'^polikif/', include('polikif.urls')),
-	url(r'^', views.index, name='acceuil'),
+#	url(r'^', views.index, name='acceuil'),
 ]
