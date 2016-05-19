@@ -688,7 +688,7 @@ def final_viewer(request, id_graph):
 				links.append(link_left)
 				props.append(link_left.left_prop)
 				
-				imps = Implication.objects.filter(link = link_right)
+				imps = Implication.objects.filter(link = link_left)
 				for imp in imps:
 					implications.append(imp)
 					props.append(imp.proposition)				
