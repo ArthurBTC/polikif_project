@@ -1,0 +1,12 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+<ul>
+				
+{% for graph in graphs %}
+	<li><a href="/gdpcore/graph_viewer/{{graph.id}}">{{graph.creation_date}} : {{graph.title}}</a></li>
+{% endfor %}
+
+</ul>
+
+{% endblock %}

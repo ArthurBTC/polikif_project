@@ -1,0 +1,359 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div class="page-header" id="title_display">
+</div>
+
+
+
+
+<div>
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">Navigation</a></li>
+    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Action</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="home">
+	
+		<div class ="row top-buffer">
+			<div class="col-md-8 nopadding">
+				<div id="selected_cell" style="display:none;"></div>
+				<div id="selected_prop" style="display:none;"></div>
+
+				<div id="myholder"></div>
+				
+			</div>
+			<div class="col-md-4 nopadding">
+				<button id="open_prop" type="button" class="btn btn-primary">
+					Ouvrir
+				</button>
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+					SAUVEGARDER
+				</button>			
+				<button id = "remove_prop" type="button" class="btn btn-primary"">
+					SUPPRIMER
+				</button>			
+				<div class="panel panel-default">
+				  <div id = "cons_display" class="panel-body">			
+				  </div>
+				</div>	
+			</div>	
+
+		</div>		
+	</div>
+	
+	
+	<div id = "data_container" style="display:none;">
+	
+{% for key, value in j.items %} 
+	
+		<div id = "proposition{{value.main_prop.id}}">
+			<div id = "title_prop{{value.main_prop.id}}">
+				<div class="page-header">
+					<h1>{{value.main_prop.text}}<small>     ({{value.main_prop.autor.username}}, {{value.main_prop.creation_date|date:'Y-m-d H:i'}})</small></h1>
+				</div>
+			</div>
+			<div id = "con_list{{value.main_prop.id}}">
+				<ul>
+								
+				{% for link in value.links_left %}
+					
+					<li>
+						<span id = "plus{{link.left_prop.id}} {{link.id}}" class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> 
+						<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+						href="/gdpcore/link_browser/{{link.id}}" 
+						data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">
+						{% if link.nature = 'Donc' %}Car 
+						{% elif link.nature = 'Concurrence' %}CCR 
+						{% elif link.nature = 'Exemple' %}Théorie  
+						{% endif %}</a>
+						<a class = "autor{{link.left_prop.autor.id}}" 
+						href="/gdpcore/proposition_browser/{{link.left_prop.id}}">{{link.left_prop.text}} ({{link.left_prop.autor.username}})</a>
+					</li>
+					
+				{% endfor %}
+				
+				{% for link in value.links_right %}
+					
+					<li>
+						<span id = "plus{{link.right_prop.id}} {{link.id}}" class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> 
+						<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+						href="/gdpcore/link_browser/{{link.id}}" 
+						data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">
+						{% if link.nature = 'Donc' %}Donc 
+						{% elif link.nature = 'Concurrence' %}CCR 
+						{% elif link.nature = 'Exemple' %}Ex 
+						{% endif %}</a>
+						<a class = "autor{{link.right_prop.autor.id}}" 
+						href="/gdpcore/proposition_browser/{{link.right_prop.id}}">{{link.right_prop.text}} ({{link.right_prop.autor.username}})</a>
+					</li>
+			
+				{% endfor %}
+	
+				</ul>			
+			</div>
+		</div>
+{% endfor %}
+		
+	</div>
+	
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Sauvegarder</h4>
+      </div>
+      <div class="modal-body">
+        <input id="graph_title" value="{{graph.title}}"></input>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="save_graph">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>	
+
+
+
+
+ <script type="text/javascript">
+
+ // INITIALISATION
+$( document ).ready(function() {
+ 
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+ 
+	var arrows = {
+		"Concurrence_source": { fill: '#fe854f', stroke: '#7c68fc', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Concurrence_target": { fill: '#fe854f', stroke: '#7c68fc', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Concurrence_connection": { stroke: '#fe854f', 'stroke-width': 4 },
+		"Donc_source": {},
+		"Donc_target": { fill: '#31d0c6', stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Donc_connection": { stroke: '#31d0c6', 'stroke-width': 2 },
+		"Exemple_source": {},
+		"Exemple_target": { fill: '#31d0c6', stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Exemple_connection": { stroke: '#31d0c6', 'stroke-width': 2 },
+		}; 
+			
+    var graph = new joint.dia.Graph;
+	
+
+
+    var paper = new joint.dia.Paper({
+        el: $('#myholder'),
+        width: 1000,
+        height: 1000,
+        model: graph,
+        gridSize: 1
+    });
+
+
+	graph.fromJSON(JSON.parse('{{graph.graphstring|escapejs}}'));
+	
+	current_props=[];
+	
+	
+	{% for key, value in j.items %} 
+	 current_props.push(parseInt({{key}}));
+	  {% endfor %}
+
+	
+
+
+// EVENTS
+
+	$( "body" ).on("click", ".glyphicon-plus-sign", function(event) {
+
+		
+		var idprop_idlink = event.target.id.replace( /^\D+/g, '');
+		idprop = idprop_idlink.substr(0,idprop_idlink.indexOf(' ')) ;		
+		idlink = idprop_idlink.substr(idprop_idlink.indexOf(' ')+1) ;		
+
+		
+	   if( $.inArray(parseInt(idprop), current_props) == -1 ){
+			
+			console.log('Proposition is not here')
+			addprop(parseInt(idprop), idlink);
+			current_props.push(parseInt(idprop))
+			
+		} else {
+			console.log('Proposition is already here')
+		}			
+
+	});
+	
+	$( "body" ).on("click", "#open_prop", function(event) {
+
+		var id_prop = $('#selected_prop').html()
+		var win = window.open('/gdpcore/proposition_browser/'+id_prop, '_blank');
+		if(win){
+			//Browser has allowed it to be opened
+			win.focus();
+		}else{
+			//Broswer has blocked it
+			alert('Please allow popups for this site');
+		}
+		
+		allCells = graph.getCells();
+		
+		console.log(allCells);
+		allCells.forEach(function(entry) {
+		  console.log('id prop:'+entry.get('id_prop'));
+		});
+
+		
+	});	
+	
+
+// SAUVEGARDER GRAPH
+	$( "body" ).on("click", "#save_graph", function(event) {		
+	
+		$.ajax({
+			url: '/gdpcore/save_graph/',
+			type: 'POST',
+			data: 'graphstring='+JSON.stringify(graph)+'&title='+$('#graph_title').val(),
+			dataType: "html",
+			success: function (data) {					
+				console.log('sauvegarde effectuée')	;
+				$('#myModal').modal('hide')				
+			},
+			failure: function(data) { 
+				alert('Got an error');
+			}
+		});
+
+	});
+
+//REMOVE PROP	
+	$( "body" ).on("click", "#remove_prop", function(event) {		
+	
+		graph.getCell($("#selected_cell").html()).remove();
+		
+		var itemtoRemove = parseInt($("#selected_prop").html());
+		current_props.splice($.inArray(itemtoRemove, current_props),1);
+
+		
+
+	});	
+
+//ADD PROP	
+	function addprop(id_prop, id_link) {
+				
+			$.ajax({
+				url: '/gdpcore/sv_addprop/'+id_prop+'/'+id_link,
+				dataType: "html",
+				success: function (data) {					
+					
+					
+					$( "#data_container" ).append(data);
+				
+//					console.log($("#data_container").html())
+//					console.log($("#con_list{{main_prop.id}}").html())
+					
+					var recto = new joint.shapes.basic.TextBlock({
+						position: { x: 200, y: 200 },
+						size: { width: 150, height: 80 },						
+						attrs: { rect: { fill: 'white' }},							
+						id_prop: id_prop,						
+						content: id_prop+' - '+$(data).find('.text_prop').html()					
+					});
+					
+					if (id_link != 0) {
+					
+						if ($(data).find('.link_sens').html() == 0) {
+							id_source = recto.id;
+							id_target = $("#selected_cell").html()
+						
+						} else {
+							id_target = recto.id;
+							id_source = $("#selected_cell").html()							
+						}
+						
+						var linko = new joint.dia.Link({
+							source: { id: id_source },
+							target: { id: id_target },
+							attrs: {},
+							id_link: id_link,
+							labels : [
+							{ position: 0.5, attrs: { text: { text: $(data).find('.link_nature').html() } } }
+							]
+						});
+						
+						linko.attr({
+							'.connection': arrows[$(data).find('.link_nature').html()+'_connection'],
+							'.marker-source': arrows[$(data).find('.link_nature').html()+'_source'],
+							'.marker-target': arrows[$(data).find('.link_nature').html()+'_target']
+						});					
+										
+						graph.addCells([recto , linko]);	
+						
+						
+					
+					} else {
+						graph.addCells([recto]);
+						$("#selected_cell").html(  recto.id  )
+					}
+					
+				$( ".props" ).each(function( index ) {
+				  console.log( 'Props: '+$(this).text());
+				  console.log($.inArray(parseInt($(this).text()), current_props) );
+				  
+					if (!($.inArray(parseInt($(this).text()), current_props) == -1)) {
+						
+						var linko = new joint.dia.Link({
+							source: { id: $("#selected_cell").html() },
+							target: { id: id_target },
+							attrs: {},
+							id_link: id_link,
+							labels : [
+							{ position: 0.5, attrs: { text: { text: $(data).find('.link_nature').html() } } }
+							]
+						});					
+					
+					}
+				});	
+
+
+					
+					
+				},
+				failure: function(data) { 
+					alert('Got an error');
+				}
+			});
+
+		
+		return null      
+	};
+
+	var cell;
+	
+	paper.on('cell:pointerclick', function(cellView,evt, x, y) { 
+	
+	//	paper.findViewByModel(cell).unhighlight(cell)
+	
+		cell = graph.getCell(cellView.model.id);
+		console.log(cell.get('id_prop'));
+
+	//	paper.findViewByModel(cell).highlight(cell)
+		
+		$("#cons_display").html(  $("#con_list"+cell.get('id_prop')).html()  );
+		$("#selected_cell").html(  cellView.model.id  );
+		$("#selected_prop").html(  cell.get('id_prop') );
+		$("#title_display").html(  $("#title_prop"+cell.get('id_prop')).html()  );
+	});
+	
+});	
+</script>
+	
+{% endblock %}

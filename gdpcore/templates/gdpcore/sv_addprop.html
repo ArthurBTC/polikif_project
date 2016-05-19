@@ -1,0 +1,59 @@
+<div id = "link{{main_link.id}}" class = "link">
+	<div id = "link_nature{{main_link.id}}" class = "link_nature">{{main_link.nature}}</div>
+	<div class = "link_sens">{{link_sens}}</div>
+	<div class = "link_id">{{main_link.id}}</div>
+</div>	
+	
+
+<div id = "proposition{{main_prop.id}}">
+	<div id = "title_prop{{main_prop.id}}" class = "title_prop">
+		<div class="page-header">
+			<h1><a class = "text_prop">{{main_prop.text}}</a><small>     ({{main_prop.autor.username}}, {{main_prop.creation_date|date:'Y-m-d H:i'}})</small></h1>
+		</div>
+	</div>
+	
+
+	<div id = "con_list{{main_prop.id}}">
+		<ul>
+						
+		{% for link in links_left %}
+			
+			<li>
+				<span id = "plus{{link.left_prop.id}} {{link.id}}" class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> 
+				<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+				href="/gdpcore/link_browser/{{link.id}}" 
+				data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">
+				{% if link.nature = 'Donc' %}Car 
+				{% elif link.nature = 'Concurrence' %}CCR 
+				{% elif link.nature = 'Exemple' %}Théorie  
+				{% endif %}</a>
+				<div style = "display:none;" class = "props">{{link.left_prop.id}}</div>
+				<a class = "autor{{link.left_prop.autor.id}}" 
+				href="/gdpcore/proposition_browser/{{link.left_prop.id}}">{{link.left_prop.text}} ({{link.left_prop.autor.username}})</a>
+			</li>
+			
+		{% endfor %}
+		
+		{% for link in links_right %}
+			
+			<li>
+				<span id = "plus{{link.right_prop.id}} {{link.id}}" class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> 
+				<a class = "autor{{link.autor.id}}" id="Con{{link.id}}" 
+				href="/gdpcore/link_browser/{{link.id}}" 
+				data-toggle="tooltip" data-placement="left" title="{{link.autor.username}}">
+				{% if link.nature = 'Donc' %}Donc 
+				{% elif link.nature = 'Concurrence' %}CCR 
+				{% elif link.nature = 'Exemple' %}Ex 
+				{% endif %}</a>
+				<div style = "display:none;" class = "props">{{link.right_prop.id}}</div>
+				<a class = "autor{{link.right_prop.autor.id}}" 
+				href="/gdpcore/proposition_browser/{{link.right_prop.id}}">{{link.right_prop.text}} ({{link.right_prop.autor.username}})</a>
+			</li>
+	
+		{% endfor %}
+	
+				</ul>			
+	</div>
+</div>
+	
+	

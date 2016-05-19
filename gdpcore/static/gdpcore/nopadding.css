@@ -12,3 +12,13 @@
 .autor3 {color:green;}
 
 .autor4 {color:brown;}
+
+.link-tools .tool-remove { display: none }
+
+#myholder {
+   position: relative;
+   border: 1px solid gray;
+   display: inline-block;
+   background: transparent;
+   overflow: hidden;
+}

@@ -1,0 +1,1605 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<!-- Pas de cache, jointjs plante avec du cache -->	
+<meta http-equiv='cache-control' content='no-cache'>
+<meta http-equiv='expires' content='0'>
+<meta http-equiv='pragma' content='no-cache'>
+
+<!-- Navigateur paper -->	
+<div class ="row top-buffer">
+	<div>Graph : {{graph.title}}</div>
+	<button id="paperLeft" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
+	<button id="paperRight" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
+	<button id="paperUp" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
+	<button id="paperDown" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
+	<button id="zoomIn" class="btn btn-secondary"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></button>
+	<button id="zoomOut" class="btn btn-secondary"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></button>
+<!--	<button id="fastSave" class="btn btn-secondary"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
+	-->
+	<div class="btn-group" role="group" aria-label="...">
+		
+		<!-- Action sur proposition -->
+		<div id = "actionProp" class="btn-group" role="group">
+			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuProp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				Proposition
+				<span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				<li><a data-toggle="modal" data-target="#modalAnswer">Répondre à la proposition</a></li>
+				<li><a data-toggle="modal" data-target="#modalConnect">Connecter à une proposition existante</a></li>
+				<li role="separator" class="divider"></li>
+				<li><a data-toggle="modal" data-target="#modalForum">Ouvrir le forum</a></li>
+				<li role="separator" class="divider"></li>
+				<li><a data-toggle="modal" data-target="#modalEdit">Modifier la proposition</a></li>
+				<li role="separator" class="divider"></li>
+				<li><a id ='remove_prop'>Masquer la proposition</a></li>
+			</ul>
+		</div>
+	
+		<!-- Action link -->
+		<div id = "actionLink" class="btn-group" role="group">		
+			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				Lien
+				<span class="caret"></span>
+			</button>		
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+				<li><a data-toggle="modal" data-target="#modalLinkAttack">Critiquer le lien</a></li>
+			</ul>		
+		</div>
+		
+		<!-- Action sur graph -->
+		<div id = "actionGraph" class="btn-group" role="group">
+			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuGraph" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+				Graphique
+				<span class="caret"></span>
+			</button>
+		
+			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+				<li><a data-toggle="modal" data-target="#modalSave">Sauvegarder le graphique</a></li>
+				<li><a>Partager le graphique</a></li>
+				<li><a>Ouvrir un nouveau graphique</a></li>
+				<li role="separator" class="divider"></li>
+				<li><a>Ajouter une proposition existante</a></li>
+				<li><a data-toggle="modal" data-target="#modalNewprop">Créer une nouvelle proposition</a></li>
+
+			</ul>
+	  
+		</div>  
+	</div>	
+</div>
+
+<!-- Paper, liens, actions... -->	
+<div class ="row top-buffer">
+	<div class="col-md-8 nopadding">				
+		<div id="myholder"></div>			
+	</div>
+	<div class="col-md-4 nopadding">
+
+			<!-- Affichage de la logique -->
+			<div class=" alert-warning" role="alert" id="logic">
+			</div>
+			
+					
+			<!-- Affichage des connecteurs -->
+			<div class="panel panel-default">
+				<div id = "cons_display" class="panel-body"></div>							
+			</div>
+			
+	</div>
+</div>
+
+<!-- Modaux -->		
+	<!-- Réponse Proposition+Lien -->	
+	<div class="modal fade" id="modalAnswer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalAnswerLabel">Ajouter une proposition</h4>
+		  </div>
+		  <div class="modal-body">
+			
+			<!-- Proposition initiale-->
+			<div id="ini_prop_answer"></div>
+			
+			
+		<form id = "Answer_form">
+		{% csrf_token %}
+		
+			<!-- Choix connecteur-->
+			<div class="radio newprop">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios1" value="car" checked>
+				... car ...
+			  </label>
+			</div>
+			<div class="radio newprop">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios2" value="donc">
+				... donc ...
+			  </label>
+			</div>
+			<div class="radio newprop">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios3" value="ex">
+				Par exemple :
+			  </label>
+			</div>	
+			<div class="radio newprop">
+			  <label>
+				<input type="radio" name="optionsRadios" id="optionsRadios4" value="ccr">
+				Je ne suis pas d'accord. Je pense ceci :
+			  </label>
+			</div>	
+
+			
+			
+			<!-- Proposition entrée-->
+			 <div class="form-group">
+				<input type="text" class="form-control newprop" id="newprop" name="newprop" placeholder="Entrez votre nouvelle proposition...">
+			  </div>
+			  
+			 
+			<!-- Logique générée-->
+			
+			<div class="alert alert-info" role="alert" id="logique"></div>
+			
+			<!-- Checkbox logique-->
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox">Je confirme la logique
+				</label>
+			  </div>		  
+			  
+			<!-- Recherche propositions similaires-->
+			  <button type="button" class="btn btn-info" id="recherche_but">Rechercher propositions similaires</button> 
+			  
+			  <div class="checkbox">
+				<label>
+				  <input type="checkbox"> Je n'ai trouvé aucune proposition similaire
+				</label>
+			  </div>		  			
+		  </div>
+		 
+		 </form>
+
+		
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			
+			<button id ="submit_answer" class="btn btn-primary">Ajouter proposition</button>
+		  </div>
+		  
+		
+		
+		
+		</div>
+	  </div>
+	</div>		
+
+	<!-- Connect -->
+	<div class="modal fade" id="modalConnect" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalConnectLabel"></h4>
+		  </div>
+		  <div class="modal-body">
+			
+			<!-- Proposition initiale-->
+			<div id="ini_prop_connect"></div>
+		
+			<form id = "Answer_form">
+				{% csrf_token %}
+		
+				<!-- Choix connecteur-->
+				<div class="radio newprop">
+				  <label>
+					<input type="radio" name="connectOptions" id="connectOption1" value="car" checked>
+					... car ...
+				  </label>
+				</div>
+				<div class="radio newprop">
+				  <label>
+					<input type="radio" name="connectOptions" id="connectOption2" value="donc">
+					... donc ...
+				  </label>
+				</div>
+				<div class="radio newprop">
+				  <label>
+					<input type="radio" name="connectOptions" id="connectOption3" value="ex">
+					Par exemple :
+				  </label>
+				</div>	
+				<div class="radio newprop">
+				  <label>
+					<input type="radio" name="connectOptions" id="connectOption4" value="ccr">
+					Je ne suis pas d'accord. Je pense ceci :
+				  </label>
+				</div>	
+		  	
+				<!-- Choix de prop-->
+				 <div class="form-group newprop">	 
+					 <select id = 'listprops' class="form-control">
+					</select>			 
+				  </div>			  
+				  		 
+				<!-- Logique générée-->			
+				<div class="alert alert-info" role="alert" id="connect_logic"></div>
+				
+				<!-- Checkbox logique-->
+				  <div class="checkbox">
+					<label>
+					  <input type="checkbox">Je confirme la logique
+					</label>
+				  </div>		  
+			</form>
+		  			
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+				<button id ="submit_connect" class="btn btn-primary">Connecter les propositions</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>		
+		
+	<!-- Save Graph -->	
+	<div class="modal fade" id="modalSave" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalSaveLabel">Sauvegarder</h4>
+		  </div>
+		  <div class="modal-body">
+			<input id="graph_title" value="{{graph.title}}"></input>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" id="save_graph">Save changes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>		
+
+	<!-- Forum -->
+	<div class="modal fade" id="modalForum" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalForumLabel"></h4>
+		  </div>
+		  <div class="modal-body">
+			
+				<ul id = "modalForumContent">
+				{% for comment in comments %}
+				<li>{{comment.creation_date|date:'Y-m-d H:i'}} {{comment.autor.username}} {{comment.text}}</li>
+				{% endfor %}
+				</ul>	
+				  
+			<form method="post" action="/gdpcore/text_request/{{id_prop}}">
+			{% csrf_token %}
+			
+			  <div class="form-group">
+				<label for="exampleInputEmail1">Répondre</label>
+				<input type="text" class="form-control" id="comment_text" name='reponse' placeholder="Entrez votre réponse...">
+			  </div>
+			</form>
+			
+			  <button id = "comment_submit" class="btn btn-default">Submit</button>		
+			
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>		
+	
+	<!-- Edition -->
+	<div class="modal fade" id="modalEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalEditLabel">Modifier proposition</h4>
+		  </div>
+		  <div class="modal-body">
+					  
+			<form method="post" action="/gdpcore/edit_proposition/{{id_prop}}">
+			{% csrf_token %}
+			
+			  <div class="form-group">
+				<label for="exampleInputEmail1">Nouvel intitulé</label>
+				<input type="text" class="form-control" id="edit_prop" name='edit' placeholder="{{main_prop.text}}">
+			  </div>
+			</form>
+			  <div id = "edit_recherche_but" class="btn btn-default">Recherche proposition similaire</div>
+
+			  <button id = "submit_edition" class="btn btn-default">Modifier ma proposition</button>
+			
+				
+			
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+
+	<!-- Nouvelle proposition -->
+	<div class="modal fade" id="modalNewprop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalNewpropLabel">Nouvelle proposition</h4>
+		  </div>
+		  <div class="modal-body">
+					  
+			<form>
+			{% csrf_token %}			
+			  <div class="form-group">
+				<label for="exampleInputEmail1">Nouvel intitulé</label>
+				<input type="text" class="form-control" id="propnew" name='propnew' placeholder="">
+			  </div>
+			</form>
+			<div id = "newprop_recherche_but" class="btn btn-default">Recherche proposition similaire</div>
+
+			<button id = "submit_newprop" class="btn btn-default">Ajouter ma proposition</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Critiquer un lien -->
+	<div class="modal fade" id="modalLinkAttack" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalLinkAttackLabel">Critiquer un lien</h4>
+		  </div>
+		  <div class="modal-body">
+					  
+				<div id = "attackLogic"></div>
+					  
+				<div class="form-group">
+					<label for="Implication">Implication</label>
+					<input type="text" class="form-control" id="linkImplication" name='implication' placeholder="Ce lien implique que...">
+				</div>
+
+				<div class="form-group">
+					<label for="Implication">Concurrence</label>
+					<input type="text" class="form-control" id="linkAttack" name='attack' placeholder="Mais il s'avère que...">
+				</div>
+				
+				<button id = "submitAttack" class="btn btn-primary">Envoyer ma critique</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+
+		</div>
+	  </div>
+	</div>
+	
+<!-- pour la recherche de propositions similaires-->
+<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
+	{% csrf_token %}
+	<input id="new_window_parameter_1" name="parameter" type="hidden" value="default">
+</form>	
+
+<script type="text/javascript">
+
+// INITIALISATION
+$( document ).ready(function() {
+  
+	//Pour les tools tips
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+ 
+	//Design des flèches
+	
+	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#FF9F1C'}
+	var arrows = {
+		"Concurrence_source": { fill: colors['CCR'], stroke: '#none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Concurrence_target": { fill: colors['CCR'], stroke: '#none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Concurrence_connection": { stroke: colors['CCR'], 'stroke-width': 4 },
+		"Donc_source": {},
+		"Donc_target": { fill: colors['D'], stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Donc_connection": { stroke: colors['D'], 'stroke-width': 4 },
+		"Exemple_source": {},
+		"Exemple_target": { fill: colors['E'], stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Exemple_connection": { stroke: colors['E'], 'stroke-width': 4 },
+		"Implication_source": {},
+		"Implication_target": { fill: colors['D'], stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Implication_connection": { stroke: colors['D'], 'stroke-width': 4 },				
+		};
+		
+	//On va stocker tous les ronds la-dedans, pour gérer leurs positions	
+	var circles = [];
+	
+	//Correspondances id
+	id_correspondance = {};
+	link_id_correspondance = {};
+	circles_id_correspondance = {};
+	authorList = {};
+	authorList[{{user.id}}] = '{{user.username|escapejs}}'
+
+	//Ini graph
+    var graph = new joint.dia.Graph;
+	
+	//Ini paper
+    var paper = new joint.dia.Paper({
+        el: $('#myholder'),
+        width: 1000,
+        height: 500,
+        model: graph,
+        gridSize: 1,
+		interactive: function(cellView) {
+			if (cellView.model instanceof joint.dia.Link) {
+				// Disable the default vertex add functionality on pointerdown.
+				return { vertexAdd: false };
+			}
+        return true;
+		}
+    });
+	
+	var selectedElement = '';
+	
+	//Variables pour le paper
+	var graphScale = 1;
+	var originX = {{graph.originx}};
+	var originY = {{graph.originy}};
+	var sensibility = 20;	
+	
+	paper.setOrigin(originX, originY);
+
+	//Pour ajouter un rond à un lien  (pour pouvoir pointer dessus)
+	function addCircToLink(link){	
+		source_position = link.getSourceElement().get('position');
+		target_position = link.getTargetElement().get('position');
+		var middle_position = {};
+		middle_position['x'] = (source_position['x']+target_position['x'])/2+56;
+		middle_position['y'] = (source_position['y']+target_position['y'])/2+20;
+					
+		var el = new joint.shapes.fsa.State({
+				position: { x: middle_position['x'], y: middle_position['y'] },
+				size: { width: 40, height: 40 },
+				attrs: {
+					text : { text: '', fill: '', 'font-weight': 'normal' },
+					'circle': {
+						fill: '',
+						stroke: '#000000',
+						'stroke-width': 0.1
+					}
+				},
+				link_id: link.get('id_link')			
+			});	
+		el.attr('./display', link.attr('./display'));							
+		graph.addCell(el);	
+		el.toBack();		
+		circles.push(el);
+		return el
+	};
+	
+	//Créer une proposition
+	function addProp(id_prop, text, autorname) {
+	
+		var el = new joint.shapes.basic.TextBlock({
+			position: { x: 0, y: 0} ,
+			size: { width: 150, height: 80 },
+			attrs: { rect: { rx: 5, ry: 10 }},							
+			id_prop: id_prop,
+			text: text,
+			content: autorname+' - '+text			
+		});
+
+		el.attr('./display', 'none');
+	
+		graph.addCell(el);	
+
+		console.log('prop added to graph - id_prop: '+id_prop+' id: '+el.id)
+		
+		return(el)
+	}
+	
+	//MAJ des correspondances
+	function updateCorrespondances(){
+		
+		all_elems = graph.getElements();
+		id_correspondance = {};
+		circles_id_correspondance = {};
+		all_elems.forEach(function(entry) {
+			id_correspondance[entry.get('id_prop')] = entry.id;
+			circles_id_correspondance[entry.get('link_id')] = entry.id;
+		});
+		
+		all_links = graph.getLinks();
+		link_id_correspondance = {};
+		all_links.forEach(function(entry) {
+			link_id_correspondance[entry.get('id_link')] = entry.id;
+		});	
+
+	}
+
+	//Creation d'un lien (avec bonne visibilité)
+	function addLink(id_link, id_left_prop, id_right_prop, nature, autorname){
+	
+		updateCorrespondances();
+
+		var traduc = [];
+		traduc["donc"] = "Donc";
+		traduc["car"] = "Car";
+		traduc["ex"] = "Par exemple :";
+		traduc["ccr"] = "est incompatible avec :";
+		
+		traduc["Donc"] = "Donc";
+		traduc["Exemple"] = "Par exemple :";
+		traduc["Concurrence"] = "est incompatible avec :";
+		
+
+		logic =  '<div>'+graph.getCell(id_correspondance[id_left_prop]).get('text')+'</div>'
+				+'<div>'+traduc[nature]+'</div>'
+				+'<div>'+graph.getCell(id_correspondance[id_right_prop]).get('text')+'</div>'			
+		
+		var li = new joint.dia.Link({
+			source: { id: id_correspondance[id_left_prop] },
+			target: { id: id_correspondance[id_right_prop] },
+			attrs: {},
+			id_link: id_link,
+			link_nature: nature,
+			link_autorname: autorname,
+			logic: logic,
+			labels : [
+			{ position: 0.5, attrs: { text: { text: nature+' ('+autorname+')', 'font-size': 12 } } }
+			]
+		});
+		
+		li.attr({
+			'.connection': arrows[nature+'_connection'],
+			'.marker-source': arrows[nature+'_source'],
+			'.marker-target': arrows[nature+'_target']
+		});					
+
+		li.attr('./display', 'none');
+		
+		graph.addCell(li) ;
+		linkVisu(li);		
+		
+		console.log('link added to graph - id_link: '+id_link+' id: '+li.id)
+		
+		return li	
+	}
+	
+	//Creation d'une implication (avec bonne visibilité)
+	function addImp(id_imp, id_imp_link, id_imp_prop, autorname ) {
+		var lo = new joint.dia.Link({
+			source: { id: circles_id_correspondance[id_imp_link] },
+			target: { id: id_correspondance[id_imp_prop] },
+			attrs: {},
+			id_implication: id_imp,
+			labels : [
+			{ position: 0.5, attrs: { text: { text: 'Implication ('+autorname+')', 'font-size': 12 } } }
+			]
+		});
+		
+		lo.attr({
+			'.connection': arrows['Implication_connection'],
+			'.marker-source': arrows['Implication_source'],
+			'.marker-target': arrows['Implication_target']
+		});					
+		lo.attr('./display', 'none');
+		graph.addCell(lo) ;
+		linkVisu(lo);
+		
+		console.log('imp added to graph - id_imp: '+id_imp+' id: '+lo.id);
+		
+		return lo
+	}
+	
+	//MAJ de la visibilité d'un lien et du cercle
+	function linkVisu(link) {
+			if( graph.getCell(link.get('source')['id']).attr('./display') == '' 
+			  && graph.getCell(link.get('target')['id']).attr('./display') == '' ) {
+					link.attr('./display', '');					
+			} else {
+					link.attr('./display', 'none');
+			}
+			
+		updateCorrespondances()		
+		
+		if (circ = graph.getCell( circles_id_correspondance[link.get('id_link')] )) {
+			circ.attr('./display', link.attr('./display'));	
+		}
+		
+	
+	}
+
+	//MAJ des visiiblités des liens entourant une cell
+	function aroundCellVisu(cell) {
+	
+		links = graph.getConnectedLinks(cell);	
+		links.forEach(function(li) {
+			linkVisu(li);
+		});
+	};
+	
+	//MAJ de con_display
+	function updateConDisplay(cell) {
+		$("#cons_display").html('');
+		updateCorrespondances();
+/*		voisins = graph.getNeighbors(cell);
+		voisins.forEach(function(entry){
+			if (entry.attr('./display') == 'none') {		
+				$("#cons_display").append(
+					"<div> "
+					+"<span id='"+entry.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
+					+entry.get('text')+
+					'</div>');				
+			};
+		});
+*/
+		inverseCon = {'Donc': 'Car', 'Exemple':'Théorie'}
+		
+		links = graph.getConnectedLinks(cell, {inbound: true});
+		links.forEach(function(entry){
+			voisin = entry.getSourceElement();
+			console.log(voisin.get('text'));
+			
+			if (entry.attr('./display') == 'none') {		
+				$("#cons_display").append(
+					"<div>"
+					+"<span id='"+voisin.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
+					+inverseCon[entry.get('link_nature')]+' '
+					+voisin.get('text')
+					+'</div>');				
+			};
+		});
+
+		links = graph.getConnectedLinks(cell, {outbound: true});
+		links.forEach(function(entry){
+			voisin = entry.getTargetElement();
+			console.log(voisin.get('text'));
+			
+			if (entry.attr('./display') == 'none') {		
+				$("#cons_display").append(
+					"<div> "
+					+"<span id='"+voisin.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
+					+entry.get('link_nature')+' '
+					+voisin.get('text')+' ('+entry.get('link_autorname')+')'
+					+'</div>');				
+			};		
+			
+			
+		});
+	};
+	
+	//Générateur de logique
+	function logicGenerator(link) {
+	
+	
+	}
+
+	//Firstload : main
+	function firstLoad() {
+	
+		$("#actionProp").hide();
+		$("#actionLink").hide();
+	
+		//Chargement des props (toutes invisibles)
+		{% for prop in props%}
+			addProp(
+				{{prop.id}},
+				'{{prop.text|escapejs}}',
+				'{{prop.autor.username|escapejs}}'
+				);
+		{% endfor %}
+
+		updateCorrespondances()
+
+		//Chargement des attributs
+		{% for key, value in attributes.items %}
+			
+			cell = graph.getCell(id_correspondance[{{key}}]);
+			cell.translate({{value.x}},{{value.y}});
+			cell.attr('./display', '');
+			
+			embs = cell.getEmbeddedCells();
+			embs.forEach(function(entry) {
+				entry.attr('./display', '');
+			});
+			
+		{% endfor %}
+
+		//Chargement des liens classiques
+		{% for link in links%}
+
+			li = addLink(
+				{{link.id}}, 
+				{{link.left_prop.id}}, 
+				{{link.right_prop.id}}, 
+				'{{link.nature|escapejs}}', 
+				'{{link.autor.username|escapejs}}' 
+				);
+			addCircToLink(li);
+			
+		{% endfor %}
+
+		updateCorrespondances()
+
+		//Chargement des implications
+		{% for implication in implications%}
+			imp = addImp(
+				'imp{{implication.id}}',
+				{{implication.link.id}},
+				{{implication.proposition.id}},
+				'{{implication.autor.username|escapejs}}'
+				);
+		{% endfor %}
+			
+		updateCorrespondances();
+		};
+		
+	firstLoad();
+		
+// FIN DE l'INITILISATION //
+
+//Events liés au graph 
+	//Extension du graph:
+	$( "body" ).on("click", ".glyphicon-plus-sign", function(event) {
+		extend_prop(event.target.id);		
+	});
+	function extend_prop(id_prop) {	
+				
+		updateCorrespondances();
+		
+		//D'abord, on fait apparaitre la prop et son entourage, et on MAJ con_display
+		clicked_cell = graph.getCell(id_correspondance[id_prop]);
+		selected_cell = graph.getCell(selectedElement);
+		
+
+		clicked_cell.position( selected_cell.position()['x'], selected_cell.position()['y'] + 200  );
+		clicked_cell.attr('./display', '');
+		aroundCellVisu(clicked_cell);
+		
+		//ON MAJ con_display
+		updateConDisplay(graph.getCell(selectedElement));
+		
+		// On va télécharger tous les props, liens et implications 	
+		$.ajax({
+			url: '/gdpcore/ajax_propenvir/'+id_prop,
+			dataType: "html",
+			success: function (data) {	
+				
+				
+				//Créer le catalogue d'auteurs
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='auth.user'){
+						authorList[entry['pk']] = entry['fields']['username'];
+					}
+				});				
+				
+				// Créer toutes les nouvelles props (invisibles)
+				JSON.parse(data).forEach(function(entry) {
+					if (!(entry['pk'] in id_correspondance) && entry['model']=='gdpcore.proposition'){
+						addProp(
+							entry['pk'], 
+							entry['fields']['text'], 
+							authorList[ entry['fields']['autor'] ]
+						);
+					}
+				});
+				
+				//  Créer tous les nouveux liens (visibilité conditionnelle)
+				updateCorrespondances()				
+				
+				JSON.parse(data).forEach(function(entry) {
+					if (!(entry['pk'] in link_id_correspondance) && entry['model']=='gdpcore.link'){
+
+						li = addLink(
+							entry['pk'], 
+							entry['fields']['left_prop'], 
+							entry['fields']['right_prop'], 
+							entry['fields']['nature'], 
+							authorList[entry['fields']['autor']]
+							);
+						addCircToLink(li);
+						console.log(li);
+						
+					}		
+				});
+			}
+		});	
+	};
+		
+	//Suppression d'une propostion	
+	$( "body" ).on("click", "#remove_prop", function(event) {		
+
+		cell_tbr = graph.getCell(selectedElement);
+		cell_tbr.attr('./display', 'none');
+				
+		embs = cell_tbr.getEmbeddedCells();
+		embs.forEach(function(entry) {
+			entry.attr('./display', cell_tbr.attr('./display'));
+		});
+		
+		aroundCellVisu(cell_tbr);
+		
+		$("#cons_display").html('');
+	});		
+		
+	// Events quand on clique sur le graph
+	paper.on('cell:pointerdown', function(cellView,evt, x, y) { 
+
+		function highlighter(el){
+			if (selectedElement != '') {
+				graph.getCell(selectedElement).attr('rect/stroke', 'black');
+				graph.getCell(selectedElement).attr('rect/stroke-width', 2);
+				graph.getCell(selectedElement).attr('circle/stroke', 'black');
+				graph.getCell(selectedElement).attr('circle/stroke-width', 2);				
+			}
+			el.attr('circle/stroke',colors['HL']);
+			el.attr('circle/stroke-width', 4);
+			el.attr('rect/stroke',colors['HL']);
+			el.attr('rect/stroke-width', 4);
+		};
+	
+		//Si c'est un lien
+		if (cellView.model instanceof joint.dia.Link) {
+			
+			$("#actionProp").hide();
+			$("#actionLink").show();
+			
+			elem = graph.getCell(circles_id_correspondance[cellView.model.get('id_link')]);
+			$("#logic").html(cellView.model.get('logic'));
+			
+
+			
+		//Si ce n'est pas un lien
+		} else if (cellView.model instanceof joint.shapes.fsa.State){
+			
+			$("#actionProp").hide();
+			$("#actionLink").show();
+			
+			elem = graph.getCell(cellView.model.id);
+			link = graph.getCell(link_id_correspondance[elem.get('link_id')])
+			$("#logic").html(link.get('logic'));
+			
+			
+		} else {
+		
+			$("#actionProp").show();
+			$("#actionLink").hide();
+			
+			elem = graph.getCell(cellView.model.id);
+			$("#logic").html(elem.get('text'));	
+		}
+		
+		updateCorrespondances();
+		highlighter(elem);
+		updateConDisplay(elem);
+		selectedElement = elem.id
+			
+	});
+	
+	//Quand on bouge des propositions : Calcul des positions des cercles
+	graph.on('change', function(cell) { 
+	
+		updateCorrespondances();
+		//Calcul des positions des cercles
+		$.each( circles, function( index, value ){
+			
+			if (value.attr('./display') == ''){
+			
+				link = graph.getCell(link_id_correspondance[value.get('link_id')]);		
+				source_position = link.getSourceElement().get('position');
+				target_position = link.getTargetElement().get('position');
+				var middle_position = {};
+				middle_position['x'] = (source_position['x']+target_position['x'])/2+56;
+				middle_position['y'] = (source_position['y']+target_position['y'])/2+20;			
+
+				value.position(middle_position['x'], middle_position['y']);
+			
+			}
+		});
+		
+		
+	})
+    	
+//Events liés aux modaux//	
+// Modal save graph
+	$( "body" ).on("click", "#save_graph", function(event) {		
+	
+		title = $('#graph_title').val();
+
+		$.ajax({
+			url: '/gdpcore/save_graph/',
+			type: 'POST',
+			data: JSON.stringify({graph ,'title': title, 'origin': {'x': originX, 'y': originY} }),
+			processData: false,
+			contentType: 'application/json',
+			success: function (data) {					
+				console.log('sauvegarde effectuée')	;
+				$('#modalSave').modal('hide')
+			},
+			failure: function(data) { 
+				 console.log('dadada');
+			}
+		});
+
+	});
+	
+// Modal ajouter réponse + lien:
+	//Mettre le bon titre
+	$('#modalAnswer').on('show.bs.modal', function (event) {
+	  var modal = $(this);
+	  modal.find('#ini_prop_answer').text(
+					graph.getCell(selectedElement).get('text')
+				);
+	});
+	
+	// Mettre la bonne logique
+	$( ".newprop" ).change(function() {
+
+		var traduc = [];
+		traduc["donc"] = "Donc";
+		traduc["car"] = "Car";
+		traduc["ex"] = "Par exemple :";
+		traduc["ccr"] = "est incompatible avec :";
+
+		$( "#logique" ).html( 
+					"<div>"+$( "#ini_prop_answer" ).html()+"</div><div>"
+					+traduc[$('input[name=optionsRadios]:checked').val()]+"</div><div>	"
+					+$( "#newprop" ).val()+"</div>" 
+							);
+	});	
+	
+	// Recherche propositions similaires
+	$("#recherche_but").click(function() {
+		console.log('lalala')
+		console.log($( "#newprop" ).val())
+		
+	  $('#new_window_parameter_1').val($( "#newprop" ).val());
+	  $('#invisible_form').submit();
+	});	
+	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#submit_answer").click(function() {		
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_newanswer/',
+			data: { 
+					id_prop: graph.getCell(selectedElement).get('id_prop'),
+					newprop: $("#newprop").val(),					
+					optionsRadios: $('input[name=optionsRadios]:checked', '#Answer_form').val()
+				},
+			success: function( data ) {		
+				$('#modalAnswer').modal('hide')
+				
+				authorList = {};
+				
+				//Créer le catalogue d'auteurs
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='auth.user'){
+						authorList[entry['pk']] = entry['fields']['username'];
+					}
+				});				
+				
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.proposition'){
+					
+						elem = addProp(
+									entry['pk'], 
+									entry['fields']['text'], 
+									authorList[entry['fields']['autor']]
+								);
+						elem.attr('./display', '');					
+						elem.position(
+							graph.getCell(selectedElement).position()['x'],
+							graph.getCell(selectedElement).position()['y'] + 100
+						)						
+					}
+				});
+				updateCorrespondances()
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.link'){				
+						li = addLink(
+								entry['pk'], 
+								entry['fields']['left_prop'], 
+								entry['fields']['right_prop'], 
+								entry['fields']['nature'], 
+								authorList[entry['fields']['autor']]
+								);
+						addCircToLink(li);			
+					}			 
+				});
+			}
+		});
+	});
+	
+// Modal forum:
+	//Mettre le bon titre + loader les comments
+	$('#modalForum').on('show.bs.modal', function (event) {
+		var modal = $(this);
+		modal.find('.modal-title').text(
+					graph.getCell(selectedElement).get('text')
+				);
+		$('#modalForumContent').html('')
+		
+		$.ajax({
+		  url: '/gdpcore/ajax_getcomments/'+graph.getCell(selectedElement).get('id_prop'),
+		  dataType: 'json',
+		  success: function( data ) {
+					
+					console.log(JSON.parse(data));
+					JSON.parse(data).forEach(function(entry) {
+						$('#modalForumContent').append('<li>'
+							+entry['fields']['autor']
+							+' : '
+							+entry['fields']['text']
+							+'</li>')
+					});
+				},
+		  
+		});
+	});
+
+	//Si user veut envoyer un nouveau message
+	$("#comment_submit").click(function() {
+		
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_newcomment/',
+			data: { 
+					id_prop: graph.getCell(selectedElement).get('id_prop'),
+					comment_text: $("#comment_text").val()
+				},
+			success: function( data ) {
+				$("#comment_text").val('')
+
+				JSON.parse(data).forEach(function(entry) {
+						$('#modalForumContent').append('<li>'
+							+entry['fields']['autor']
+							+' : '
+							+entry['fields']['text']
+							+'</li>')					
+				});						
+			}
+		});			
+	});
+	
+// Modal edition:
+	//Mettre le bon texte..
+	$('#modalEdit').on('show.bs.modal', function (event) {
+	  var modal = $(this);
+	  modal.find('#edit_prop').val(
+					graph.getCell(selectedElement).get('text')
+				);
+	});
+	
+	// Recherche propositions similaires
+	$("#edit_recherche_but").click(function() {
+		
+	  $('#new_window_parameter_1').val($( "#edit_prop" ).val());
+	  $('#invisible_form').submit();
+	});	
+
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#submit_edition").click(function() {
+	
+
+		$.ajax({
+			type: "POST",
+			url: '/gdpcore/ajax_editprop/',
+			data: { 
+					id_prop: graph.getCell(selectedElement).get('id_prop'),
+					edit_prop: $("#edit_prop").val()	
+				},
+			success: function( data ) {	
+				$('#modalEdit').modal('hide');
+			//	console.log(data);
+				
+				updateCorrespondances()				
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.proposition'){						
+						edit_cell = graph.getCell(id_correspondance[entry['pk']]);
+						edit_cell.set('text', entry['fields']['text']);
+						edit_cell.set('content', entry['pk'] + ' - ' + entry['fields']['text']);
+
+					}
+					
+					updateCorrespondances()
+										
+					if (entry['model']=='gdpcore.link'){
+					
+/*						link = graph.getCell(link_id_correspondance[entry['pk']]);
+						link.label(0, { 
+										attrs: { 
+											position: 0.2, 
+											attrs: { 
+												text: { 
+													text: 'lala', 
+													'font-size': 12 
+												} 
+											} 
+										} 
+									  } 
+								);
+*/						
+						
+					}			 
+				}) 
+			}
+		});
+	});		
+
+// Modal newprop
+	// Recherche propositions similaires
+	$("#newprop_recherche_but").click(function() {
+		
+	  $('#new_window_parameter_1').val($( "#propnew" ).val());
+	  $('#invisible_form').submit();
+	});	
+	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#submit_newprop").click(function() {
+		$.ajax({
+			type: "POST",
+			url: '/gdpcore/ajax_newprop/',
+			data: { 
+					newprop: $("#propnew").val()	
+				},
+			success: function( data ) {	
+				$('#modalNewprop').modal('hide');
+			//	console.log(data);
+				
+				updateCorrespondances()				
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.proposition'){	
+						console.log(data);
+						el = addProp(
+							entry['pk'], 
+							entry['fields']['text'], 
+							authorList[entry['fields']['autor']]
+							);
+						el.attr('./display', '');
+						el.position(-originX,-originY);
+					}				
+					updateCorrespondances()
+													 
+				}) 
+			}
+		});
+	});		
+
+//Modal connectprop
+	//Mettre le bon titre
+	$('#modalConnect').on('show.bs.modal', function (event) {
+		var modal = $(this);
+		modal.find('#ini_prop_connect').text(
+					graph.getCell(selectedElement).get('text')
+				);
+				
+				
+		$('#listprops').html('');	
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {	
+			if (
+				entry.attr("./display") == ''
+				&& entry.id != selectedElement 
+				&& entry.get('text')
+				){
+				$('#listprops').append('<option value='+entry.get('id_prop')+'>'+entry.get('text')+'</option>');
+			}
+		});
+				
+	});
+	
+	// Mettre la bonne logique
+	$( ".newprop" ).change(function() {
+
+		var traduc = [];
+		traduc["donc"] = "Donc";
+		traduc["car"] = "Car";
+		traduc["ex"] = "Par exemple :";
+		traduc["ccr"] = "est incompatible avec :";
+
+		$( "#connect_logic" ).html( 
+					"<div>"+$( "#ini_prop_connect" ).html()+"</div>"
+					+"<div>"+traduc[$('input[name=connectOptions]:checked').val()]+"</div>"
+					+"<div>"+$( "#listprops option:Selected" ).text()+"</div>" 
+							);
+	});	
+	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#submit_connect").click(function() {
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_connect/',
+			data: { 
+					left_prop: graph.getCell(selectedElement).get('id_prop'),
+					right_prop: $("#listprops").val(),					
+					nature: $('input[name=connectOptions]:checked').val()
+				},
+			success: function( data ) {		
+				$('#modalConnect').modal('hide')
+				
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.proposition'){
+					
+					}
+		
+					updateCorrespondances()
+										
+					if (entry['model']=='gdpcore.link'){
+					
+						li = addLink(
+								entry['pk'], 
+								entry['fields']['left_prop'], 
+								entry['fields']['right_prop'], 
+								entry['fields']['nature'], 
+								authorList[entry['fields']['autor']]
+								);
+						addCircToLink(li);			
+					}			 
+				});
+			}
+		});
+	});
+	
+//Modal connectprop
+	//Mettre la bonne logique
+	$('#modalLinkAttack').on('show.bs.modal', function (event) {
+		var modal = $(this);
+		
+		updateCorrespondances;
+		modal.find('#attackLogic').html ( 
+			graph.getCell ( 
+				link_id_correspondance [ 
+					graph.getCell(selectedElement).get('link_id')
+				]
+			)
+			.get('logic') 
+		);							
+	});
+	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#submitAttack").click(function() {
+	
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_linkattack/',
+			data: { 
+					id_link: graph.getCell(selectedElement).get('link_id'),
+					linkImplication: $("#linkImplication").val(),					
+					linkAttack: $("#linkAttack").val()
+				},
+			success: function( data ) {		
+				$('#modalLinkAttack').modal('hide')
+				
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.proposition'){
+					 
+						prop = addProp(
+							entry['pk'], 
+							entry['fields']['text'], 
+							authorList[ entry['fields']['autor'] ]
+						);
+						prop.attr('./display','');
+							
+					}	
+					updateCorrespondances()
+										
+					if (entry['model']=='gdpcore.link'){
+					
+						li = addLink(
+								entry['pk'], 
+								entry['fields']['left_prop'], 
+								entry['fields']['right_prop'], 
+								entry['fields']['nature'], 
+								authorList[entry['fields']['autor']]
+								);
+						addCircToLink(li);			
+					}			 
+				});
+			}
+		});
+	});		
+	
+	
+	
+//Navigateur Paper
+	function paperNav() {
+
+		var paperScale = function(sx, sy) {
+			 paper.scale(sx, sy);
+		};
+
+		var zoomOut = function(){
+			graphScale -= 0.1;
+			paperScale(graphScale, graphScale);
+		}
+
+		var zoomIn = function() {
+			graphScale += 0.1;
+			paperScale(graphScale, graphScale);
+		};
+
+		var resetZoom = function() {
+			graphScale = 1;
+			paperScale(graphScale, graphScale);
+		};
+
+		var originChange = function(x, y){
+			paper.setOrigin(x, y);
+		}
+		
+		var paperLeft = function(){
+			originX += sensibility;
+			paper.setOrigin(originX, originY)
+		}
+		var paperRight = function(){
+			originX -= sensibility;
+			paper.setOrigin(originX, originY)
+		}
+		var paperUp = function(){
+			originY += sensibility;
+			paper.setOrigin(originX, originY)
+		}
+		var paperDown = function(){
+			originY -= sensibility;
+			paper.setOrigin(originX, originY)
+		}	
+
+		$("#zoomIn").click(function() {
+			zoomIn();
+		});
+		
+		$("#zoomOut").click(function() {
+			zoomOut();
+		});
+		$("#paperLeft").click(function() {
+			paperLeft();
+		});
+		
+		$("#paperRight").click(function() {
+			paperRight();
+		});
+		
+		$("#paperUp").click(function() {
+			paperUp();
+		});
+		
+		$("#paperDown").click(function() {
+			paperDown();
+		});
+	};
+	
+	paperNav();
+
+/*	
+joint.shapes.basic.proposition = joint.dia.Element.extend({
+
+	markup: '<g class="rotatable">'
+				+'<g class="scalable">'
+					+'<rect class="propCadreText"/>'
+					+'<text class="propText"/>'
+					+'<rect class="propCadreAuteur"/>'
+					+'<text class="propAuteur"/>'
+				+'</g>'
+			+'</g>',
+
+           defaults: joint.util.deepSupplement({
+                type: "basic",
+                size: {
+                    width: 150,
+                    height: 80
+                },
+                attrs: {
+                    ".propCadreText": {
+                        stroke: 'black',
+                        'fill-opacity': 1,
+                        width: 150,
+                        height: 100
+                    },
+                    ".propText": {
+                        transform: "translate(0, 0)",
+                        r: 8,
+                        fill: "blue",
+						text: wraptext,
+						'font-size': 40
+                    },
+                   ".propCadreAuteur": {
+						transform: "translate(0, 100)",
+                        stroke: 'red',
+                        'fill-opacity': 1,
+                        width: 150,
+                        height: 50
+                    },					
+															
+                    ".propAuteur": {
+                        transform: "translate(0, 5)",
+                        r: 6,
+						'font-size': 8,
+                        fill: "red",
+						text: "lala"
+                    }					
+                }
+            }, joint.dia.Element.prototype.defaults)
+			
+});
+	
+var r1 = new joint.shapes.basic.proposition();
+graph.addCell(r1)
+	
+	
+	
+joint.shapes.basic.myShape = joint.dia.Element.extend({
+
+            markup: '<g class="rotatable"><g class="scalable"><rect class="outer"/><circle class="inner"/><text class="inner1"/><text class="inner2"/></g></g>',
+            defaults: joint.util.deepSupplement({
+                type: "basic",
+                size: {
+                    width: 50,
+                    height: 50
+                },
+                attrs: {
+                    ".outer": {
+                        stroke: 'black',
+                        'fill-opacity': 1,
+                        width: 40,
+                        height: 40
+                    },
+                    ".inner": {
+                        transform: "translate(40, 40)",
+                        r: 8,
+                        fill: "blue",
+						text: "rarara"
+                    },
+                    ".inner1": {
+                        transform: "translate(0, 0)",
+                        r: 6,
+						'font-size': 8,
+                        fill: "red",
+						text: "lala"
+                    },
+                    ".inner2": {
+                        transform: "translate(10, 5)",
+                        r: 6,
+						'font-size': 8,
+                        fill: "yellow",
+						text: "lala"
+                    }					
+                }
+            }, joint.dia.Element.prototype.defaults)
+});
+
+
+
+var r1 = new joint.shapes.basic.myShape({
+            attrs: {	
+				".inner": {
+					fill: "red"
+					
+				}
+            }
+        });
+		
+var r2 = new joint.shapes.basic.myShape({
+            size: {
+                width: 200,
+                height: 200
+            }
+        });	
+		
+var li = new joint.dia.Link({
+			source: { id: r1.id },
+			target: { id: r2.id },
+			attrs: {},
+			id_link: 123,
+			logic: 'lala',
+			labels : [
+			{ position: 0.5, attrs: { text: { text: 'textaaa', 'font-size': 12 } } }
+			]
+		});		
+
+ graph.addCells([r1,r2,li], 'basic');
+
+
+
+	var wraptext = joint.util.breakText('Le mouvement Nuit debout na pas pas de "maîtres à penser", et non ', {
+		width: 145,
+		height: 90,
+		attrs: {
+		
+			'text-anchor': 'middle',		
+		}
+	});	
+
+	joint.shapes.basic.twoTextRect = joint.shapes.basic.Generic.extend({
+
+		markup: '<g class="rotatable">'
+					+'<g class="scalable">'
+						+'<rect/>'
+					+'</g>'
+					+'<text class = "word1"></text>'
+					+'<text class = "word2"></text>'
+				+'</g>',
+
+		defaults: joint.util.deepSupplement({
+
+			type: 'basic.twoTextRect',
+			attrs: {
+				rect: { 
+					fill: 'white', 
+					stroke: 'black', 
+					'stroke-width': 1, 
+					'follow-scale': true, 
+					width: 150, 
+					height: 80,
+					rx: 5, 
+					ry: 10
+				},
+				'.word1': { 
+				    'ref': 'rect',
+					'font-size': 15,
+					'text-anchor':'middle',
+					transform: "translate(75,5)" ,
+					fill: 'black' 
+				},
+				'.word2': { 
+					'font-size': 15,
+					'font-weight': 'bold',
+					fill: 'black', 
+					'text-anchor':'end',
+					transform: "translate(145,65)" 
+				}
+
+			},
+			size: { width: 150, height: 80 }
+		}, joint.shapes.basic.Generic.prototype.defaults)
+	});
+
+	var rectShape = new joint.shapes.basic.twoTextRect();
+	rectShape.attr('.word1/text', wraptext);
+	rectShape.attr('.word2/text', 'word 2');
+		
+	graph.addCell(rectShape);
+	
+	var aarectShape2 = new joint.shapes.basic.twoTextRect();
+	aarectShape2.attr('.word1/text', wraptext);
+	aarectShape2.attr('.word2/text', 'zaezae');
+		
+	graph.addCell(aarectShape2);	
+	
+
+	var li = new joint.dia.Link({
+			source: { id: rectShape.id },
+			target: { id: aarectShape2.id },
+			attrs: {},
+			id_link: 123,
+			logic: 'lala',
+			labels : [
+			{ position: 0.5, attrs: { text: { text: 'textaaa', 'font-size': 12 } } }
+			]
+		});		
+	graph.addCell(li);*/
+});	
+
+	
+</script>
+	
+{% endblock %}

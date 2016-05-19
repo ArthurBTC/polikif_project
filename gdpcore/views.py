@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Proposition, Link, Cycle, Comment, Notification, Implication
+from .models import Proposition, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models import F
@@ -10,6 +10,9 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from difflib import SequenceMatcher
+from django.core import serializers
+import json
+from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime  
 
@@ -150,6 +153,7 @@ def add_comment(autor, prop, nature, text):
 					  proposition = prop
 						)
 	comment.save()
+	return comment
 	
 def generate_notification(aut, prop, nat):
 	
@@ -591,3 +595,487 @@ def env_viewer(request, id_prop):
 
 			
 	return render(request,'gdpcore/env_viewer.html',{'main_prop':main_prop,'ccrs1':ccrs1,'ccrs2':ccrs2,'cars':cars,'doncs':doncs})
+	
+	
+def super_viewer(request, id_prop):
+
+	main_prop = Proposition.objects.get(id = id_prop)
+	links_right = Link.objects.filter(left_prop = main_prop)
+	links_left = Link.objects.filter(right_prop = main_prop)
+	
+	return render(request,'gdpcore/super_viewer.html',{'main_prop': main_prop, 'links_right': links_right, 'links_left': links_left })
+	
+def sv_addprop(request, id_prop, id_link):
+#	link = Link.objects.get(id = id_link)
+#	prop_ini = Proposition.objects.get(id = id_prop)
+	
+#	if link.left_prop == prop_ini:
+#		prop = link.right_prop
+#	elif link.right_prop == prop_ini:
+#		prop = link.left_prop
+		
+#	links_left = Link.objects.filter(left_prop = prop)
+#	links_right = Link.objects.filter(right_prop = prop)
+	
+#	all_objects = list([link]) + list([prop]) + list(links_left) + list(links_right)
+#	data = serializers.serialize('json', all_objects)
+
+	main_prop = Proposition.objects.get(id = id_prop)
+	if id_link != '0':
+		main_link = Link.objects.get(id = id_link)
+		if main_prop == main_link.left_prop:
+			link_sens = 0
+		else:
+			link_sens = 1
+	else:
+		main_link=None;
+		link_sens=None;
+	links_right = Link.objects.filter(left_prop = main_prop)
+	links_left = Link.objects.filter(right_prop = main_prop)
+	
+	props = []
+	
+	for link_right in links_right:
+		props.append(link_right.right_prop)
+		
+	for link_left in links_left:
+		props.append(link_left.left_prop)
+	
+	all_objects = list([main_prop])+list([main_link])+list(links_right)+list(links_left)+props
+	data = serializers.serialize('json', all_objects)
+#	return render(request,'gdpcore/sv_addprop.html',{'main_prop': main_prop, 'main_link': main_link, 'links_right': links_right, 'links_left': links_left, 'link_sens': link_sens })
+	return HttpResponse(data)
+	
+
+	
+def incremental_viewer(request, id_prop):
+
+	main_prop = Proposition.objects.get(id = id_prop)
+
+	
+	return render(request,'gdpcore/incremental_viewer.html',{'main_prop': main_prop })
+
+def final_viewer(request, id_graph):
+	graph = Graph.objects.get(id = id_graph)
+	
+	elems = Elemgraph.objects.filter(graph = graph)
+
+	props = []
+	links = []
+	implications = []
+	attributes = {}
+	for elem in elems:
+		if elem.displayed == True:
+			attributes[elem.proposition.id] = {'x':elem.x,'y':elem.y}
+			
+			props.append(elem.proposition)
+			
+			links_right = Link.objects.filter(left_prop = elem.proposition)
+			links_left = Link.objects.filter(right_prop = elem.proposition)
+				
+			
+				
+			for link_right in links_right:
+				links.append(link_right)
+				props.append(link_right.right_prop)
+				
+				imps = Implication.objects.filter(link = link_right)
+				for imp in imps:
+					implications.append(imp)
+					props.append(imp.proposition)
+				
+			for link_left in links_left:
+				links.append(link_left)
+				props.append(link_left.left_prop)
+				
+				imps = Implication.objects.filter(link = link_right)
+				for imp in imps:
+					implications.append(imp)
+					props.append(imp.proposition)				
+				
+			props = list(set(props))
+			links = list(set(links))
+			
+	return render(request,'gdpcore/final_viewer.html',{
+					'graph': graph, 
+					'props': props,
+					'attributes': attributes, 
+					'links':links,
+					'implications': implications})
+	
+def ajax_propenvir(request, id_prop):
+
+	main_prop = Proposition.objects.get(id = id_prop)
+	links_right = Link.objects.filter(left_prop = main_prop)
+	links_left = Link.objects.filter(right_prop = main_prop)
+	props = []
+	authorList = [];
+	for link_right in links_right:
+		props.append(link_right.right_prop)
+		authorList.append(link_right.autor)
+		authorList.append(link_right.right_prop.autor)
+		
+	for link_left in links_left:
+		props.append(link_left.left_prop)
+		authorList.append(link_left.autor)
+		authorList.append(link_left.left_prop.autor)
+		
+	authorList = list(set(authorList))
+		
+	all_objects = list([main_prop])+list(links_right)+list(links_left)+props+authorList
+	data = serializers.serialize('json', all_objects)
+		
+	return HttpResponse(data)
+	
+	
+@csrf_exempt
+def save_graph(request):
+	if request.method == 'POST':	
+
+		j = json.loads(request.body.decode('utf-8'))
+		
+		graph, created = Graph.objects.update_or_create(
+				title = j['title'],
+				autor = request.user,
+				defaults = {
+					'graphstring': j['graph'],
+					'creation_date':datetime.now(),
+					'originx':j['origin']['x'] ,
+					'originy':j['origin']['y'] 			
+					}	
+				)
+	
+	for cell in j['graph']['cells']:
+		if cell["type"] == "basic.TextBlock":
+			if cell['attrs']['.']['display'] == 'none':
+				display = False
+			else:
+				display = True
+			
+			elem, created = Elemgraph.objects.update_or_create(
+					graph=graph, 
+					proposition = Proposition.objects.get(id = cell['id_prop']), 
+					defaults={
+						'x': cell['position']['x'],
+						'y': cell['position']['y'],
+						'displayed':display
+						})
+
+	return HttpResponse('OK')
+
+	
+def graph_viewer(request, id_graph):
+	graph = Graph.objects.get(id = id_graph)
+
+	j = json.loads(graph.graphstring)['cells']
+	
+	id_props =[]
+	id_links=[]
+	props={}
+	links={}
+	
+	for cell in j:
+		if 'id_prop' in cell:
+			id_props.append(cell['id_prop'])
+		if 'id_link' in cell:
+			id_links.append(cell['id_link'])
+
+	for id_prop in id_props:
+		main_prop = Proposition.objects.get(id = id_prop)
+		prop = {}
+		prop['main_prop']= main_prop
+		prop['links_right']= Link.objects.filter(left_prop = main_prop)
+		prop['links_left']= Link.objects.filter(right_prop = main_prop)
+		props[id_prop] = prop
+	
+	
+	return render(request,'gdpcore/graph_viewer.html',{'graph': graph, 'j':props})
+	
+def selection_graph(request):
+	from django.db.models import Count
+	graphs = Graph.objects.filter(autor = request.user).order_by('-creation_date')
+	return render(request,'gdpcore/selection_graph.html',{'graphs': graphs})
+	
+@csrf_exempt	
+def ajax_newanswer(request):
+	
+	initial_prop = Proposition.objects.get(id=request.POST['id_prop'])
+	
+	prop = Proposition(autor = request.user,
+				text = request.POST['newprop'],
+				creation_date = datetime.now(),
+				modification_date = datetime.now(),
+				cycle = initial_prop.cycle,
+				nature = 'Diagnostic',
+				trafic = 0,
+				demande_precision = False,
+				demande_supplement = False,
+				demande_attention = False
+				)
+	prop.save()
+	
+	if request.POST['optionsRadios'] == 'donc':
+		nat = 'Donc'
+		left = initial_prop
+		right = prop
+	elif request.POST['optionsRadios'] == 'car':
+		nat = 'Donc'
+		right = initial_prop
+		left = prop
+	elif request.POST['optionsRadios'] == 'ex':
+		nat = 'Exemple'
+		left = initial_prop
+		right = prop
+	elif request.POST['optionsRadios'] == 'ccr':
+		nat = 'Concurrence'
+		left = initial_prop
+		right = prop
+		
+	
+	link = Link(autor = request.user,
+				creation_date = datetime.now(),
+				modification_date = datetime.now(),
+				nature = nat,
+				cycle = initial_prop.cycle,
+				trafic = 0,
+				left_prop = left,
+				right_prop = right,
+				junction = 'No'				
+				)
+
+	link.save()
+	
+	if prop.autor.id != initial_prop.autor.id:	
+
+		generate_notification(initial_prop.autor, initial_prop, 'NL')
+
+			
+	add_comment(prop.autor, prop, 'TX', 'Proposition créée : '+prop.text)
+	
+	cycle_updater(initial_prop.cycle.id)
+	
+	return JsonResponse(serializers.serialize('json', [prop,link]), safe = False)
+	
+def ajax_getcomments(request, id_prop):
+
+	comments = Comment.objects.filter(proposition__id = id_prop).order_by('creation_date')
+	return JsonResponse(serializers.serialize('json', comments), safe = False)
+	
+@csrf_exempt	
+def ajax_newcomment(request):
+	
+	prop = Proposition.objects.get(id = request.POST['id_prop'])
+	comment = add_comment(request.user, prop, 'TX', request.POST['comment_text'])
+	
+	autors = Comment.objects.filter(proposition = prop).values('autor')
+	for autor in autors:
+		usr = User.objects.get(id=autor['autor'])
+		if usr.id != request.user.id:
+			generate_notification(usr, prop, 'NC')
+
+	cycle_updater(prop.cycle.id)	
+	
+	return JsonResponse(serializers.serialize('json', [comment]), safe = False)
+
+@csrf_exempt	
+def ajax_editprop(request):
+
+	id_prop = request.POST['id_prop']
+	prop = Proposition.objects.get(id=id_prop)
+
+	#On change le texte
+	prop.text = request.POST['edit_prop']
+	prop.demande_precision = False
+	prop.save()
+
+	#On voit les liens qui sont connectés, et on les met en suspension
+	lefts = Link.objects.filter(left_prop__id = id_prop).exclude(autor = prop.autor)
+	rights = Link.objects.filter(right_prop__id = id_prop).exclude(autor = prop.autor)
+	
+	for left in lefts:
+		left.status = 'P'
+		left.save()
+			
+	for right in rights:
+		right.status = 'P'
+		right.save()
+
+	#On prévient tout le monde que la proposition a été changée:
+	autors = Comment.objects.filter(proposition = prop).values('autor')
+	myList =[]
+	for autor in autors:
+		myList.append(autor['autor'])
+	myNewList = list(set(myList))
+	
+	for usrid in myNewList:
+		if usrid != request.user.id:
+			generate_notification(User.objects.get(id=usrid), prop, 'MP')
+
+	add_comment(prop.autor, prop, 'MP', 'Modification de la proposition : '+prop.text)			
+	
+	cycle_updater(prop.cycle.id)
+
+	all_items = list([prop]) + list(lefts) + list(rights)
+	return JsonResponse(serializers.serialize('json', all_items), safe = False)
+	# return HttpResponse('lala')
+
+@csrf_exempt	
+def ajax_newprop(request):
+	prop = Proposition(
+		autor = request.user,
+		text = request.POST['newprop'],		
+		creation_date = datetime.now(),
+		modification_date = datetime.now(),
+		cycle = Cycle.objects.get(pk=1)
+		)
+	
+	prop.save()
+	
+	all_items = list([prop])
+	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
+
+@csrf_exempt	
+def ajax_connect(request):
+
+	left_prop = Proposition.objects.get(pk = request.POST['left_prop'])
+	right_prop = Proposition.objects.get(pk = request.POST['right_prop'])
+	nature = request.POST['nature']
+	
+	if nature == 'donc':
+		nat = 'Donc'
+		left = left_prop
+		right = right_prop
+	elif nature == 'car':
+		nat = 'Donc'
+		right = left_prop
+		left = right_prop
+	elif nature == 'ex':
+		nat = 'Exemple'
+		left = left_prop
+		right = right_prop
+	elif nature == 'ccr':
+		nat = 'Concurrence'
+		left = left_prop
+		right = right_prop
+
+	link = Link(
+		autor = request.user,
+		creation_date = datetime.now(),
+		modification_date = datetime.now(),
+		nature = nat,
+		cycle = Cycle.objects.get(pk=1),		
+		left_prop = left,
+		right_prop = right	
+		)
+		
+	link.save()
+	all_items = list([link])
+	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
+@csrf_exempt
+def ajax_linkattack(request):
+
+	main_link = Link.objects.get(id = request.POST['id_link'])
+
+	propImplication = Proposition(autor = User.objects.get(username = 'nobody'),
+				text = request.POST['linkImplication'],
+				creation_date = datetime.now(),
+				modification_date = datetime.now(),
+				cycle = main_link.cycle,
+				nature = 'Diagnostic',				
+				)
+	propImplication.save()
+	
+	implication = Implication(autor = request.user,
+						proposition = propImplication,
+						link = main_link,
+						creation_date = datetime.now()
+					)
+	implication.save()	
+
+	prop_ccr = Proposition(autor = request.user,
+				text = request.POST['linkAttack'],
+				creation_date = datetime.now(),
+				modification_date = datetime.now(),
+				cycle = main_link.cycle,
+				nature = 'Diagnostic',				
+				)
+	
+	prop_ccr.save()
+
+	link = Link(autor = request.user,
+			creation_date = datetime.now(),
+			modification_date = datetime.now(),
+			nature = 'Concurrence',
+			cycle = main_link.cycle,
+			left_prop = prop_ccr,
+			right_prop = propImplication,			
+			)
+
+	link.save()	
+
+	generate_notification(main_link.autor, propImplication, 'CL')
+	cycle_updater(main_link.cycle.id)
+	
+	all_items = list([main_link]) + list([propImplication]) + list([implication]) + list([prop_ccr])+ list([link])
+	return JsonResponse(serializers.serialize('json', all_items), safe = False)		
+	
+	
+def link_attack(request, id_link):
+	if request.method == 'POST':
+	
+		main_link = Link.objects.get(id = id_link)
+
+		prop_imp = Proposition(autor = User.objects.get(username = 'nobody'),
+					text = request.POST['implication'],
+					creation_date = datetime.now(),
+					modification_date = datetime.now(),
+					cycle = main_link.cycle,
+					nature = 'Diagnostic',
+					trafic = 0,
+					demande_precision = False,
+					demande_supplement = False,
+					demande_attention = False				
+					)
+		
+		prop_imp.save()
+	
+		implication = Implication(autor = request.user,
+								proposition = prop_imp,
+								link = main_link,
+								creation_date = datetime.now()
+								)
+		implication.save()
+		
+		prop_ccr = Proposition(autor = request.user,
+					text = request.POST['attack'],
+					creation_date = datetime.now(),
+					modification_date = datetime.now(),
+					cycle = main_link.cycle,
+					nature = 'Diagnostic',
+					trafic = 0,
+					demande_precision = False,
+					demande_supplement = False,
+					demande_attention = False				
+					)
+		
+		prop_ccr.save()
+		
+		link = Link(autor = request.user,
+				creation_date = datetime.now(),
+				modification_date = datetime.now(),
+				nature = 'Concurrence',
+				cycle = main_link.cycle,
+				trafic = 0,
+				left_prop = prop_ccr,
+				right_prop = prop_imp,
+				junction = 'No'				
+				)
+
+		link.save()
+		
+		generate_notification(main_link.autor, prop_imp, 'CL')
+		
+		cycle_updater(main_link.cycle.id)
+		
+		return HttpResponseRedirect(reverse('link_browser', args=(id_link,)))	
+	

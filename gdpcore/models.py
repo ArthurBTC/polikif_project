@@ -11,8 +11,8 @@ class Cycle(models.Model):
 	nb = models.IntegerField(default=1)
 	last_prop_date = models.DateTimeField()
 
-#	def __str__(self):
-#		return self.id
+	def __str__(self):
+		return str(self.id)
 
 
 class Proposition(models.Model):
@@ -24,7 +24,7 @@ class Proposition(models.Model):
 	autor = models.ForeignKey(User)
 	text = models.CharField(max_length = 3000)
 	
-	tags = models.CharField(max_length = 3000)
+	tags = models.CharField(max_length = 3000, default = '')
 	simil = models.FloatField(default=0)
 	
 	creation_date = models.DateTimeField()
@@ -33,12 +33,12 @@ class Proposition(models.Model):
 	nature = models.CharField(max_length = 30, choices = NATURE_PROP_CHOICE, default = 'Diagnostic')
 	trafic = models.IntegerField(default=0)
 
-	demande_precision = models.BooleanField()
-	demande_supplement = models.BooleanField()
-	demande_attention = models.BooleanField()
+	demande_precision = models.BooleanField(default=False)
+	demande_supplement = models.BooleanField(default=False)
+	demande_attention = models.BooleanField(default=False)
 	
-#	def __str__(self):
-#		return self.text
+	def __str__(self):
+		return str(self.id)
 
 		
 class Link(models.Model):
@@ -47,7 +47,9 @@ class Link(models.Model):
 		('Donc','Donc'),
 		('Concurrence','Concurrence'),
 		('Syl','Syl'),
-
+		('E','Exemple'),
+		('D','Donc'),
+		('C','Concurrence')
 	)
 	
 	STATUS_CHOICE = (
@@ -67,14 +69,11 @@ class Link(models.Model):
 	#If that's a syllogisme :
 	second_left_prop = models.ForeignKey(Proposition, related_name='%(class)s_second_left_prop', blank=True, null=True)
 	
-	right_prop = models.ForeignKey(Proposition, related_name='%(class)s_right_prop')
+	right_prop = models.ForeignKey(Proposition, related_name='%(class)s_right_prop')	
+	junction = models.CharField(max_length = 30, default = '')
 	
-	
-	
-	junction = models.CharField(max_length = 30)
-	
-#	def __str__(self):
-#		return self.id
+	def __str__(self):
+		return str(self.id)
 		
 class Comment(models.Model):
 	NATURE_COMMENT_CHOICE = (
@@ -98,8 +97,8 @@ class Comment(models.Model):
 	creation_date = models.DateTimeField()
 	proposition = models.ForeignKey(Proposition)
 	
-#	def __str__(self):
-#		return self.id
+	def __str__(self):
+		return str(self.id)
 
 	
 class Notification(models.Model):
@@ -129,18 +128,36 @@ class Notification(models.Model):
 	creation_date = models.DateTimeField()
 	modification_date = models.DateTimeField()
 	viewed = models.BooleanField()
-	
-#	def __str__(self):
-#		return self.id
-	
+	def __str__(self):
+		return str(self.id)
 	
 class Implication(models.Model):
 	autor = models.ForeignKey(User)
 	proposition = models.ForeignKey(Proposition)
 	link = models.ForeignKey(Link)
 	creation_date = models.DateTimeField()
+	def __str__(self):
+		return str(self.id)
 
+class Graph(models.Model):
+	autor = models.ForeignKey(User)
+	graphstring = models.CharField(max_length = 10000)
+	title = models.CharField(max_length = 300)
+	originx = models.IntegerField(default=0)
+	originy = models.IntegerField(default=0)
+	creation_date = models.DateTimeField()
+	def __str__(self):
+		return str(self.id)
+		
+class Elemgraph(models.Model):
+	graph = models.ForeignKey(Graph)
+	x = models.IntegerField(default=0)
+	y = models.IntegerField(default=0)
+	proposition = models.ForeignKey(Proposition)
+	displayed = models.BooleanField()
+	def __str__(self):
+		return str(self.id)	
 
-	
-	
-
+class UserProfile(models.Model):
+	user = models.OneToOneField(User)
+	picture = models.ImageField(upload_to='pictures')

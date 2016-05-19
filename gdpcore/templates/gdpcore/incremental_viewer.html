@@ -1,0 +1,430 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div class="page-header" id="title_display">
+</div>
+
+
+
+
+	
+		<div class ="row top-buffer">
+			<div class="col-md-8 nopadding">
+				<div id="selected_cell" style="display:none;"></div>
+				<div id="selected_prop" style="display:none;"></div>
+
+				<div id="myholder"></div>
+				
+			</div>
+			<div class="col-md-4 nopadding">
+				<button id="open_prop" type="button" class="btn btn-primary">
+					Ouvrir
+				</button>
+			
+				<button id = "remove_prop" type="button" class="btn btn-primary"">
+					SUPPRIMER
+				</button>			
+				<div class="panel panel-default">
+				  <div id = "cons_display" class="panel-body">			
+				  </div>
+			</div>	
+	
+	</div>
+	
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="myModalLabel">Sauvegarder</h4>
+		  </div>
+		  <div class="modal-body">
+			<input id="graph_title" value="{{graph.title}}"></input>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			<button type="button" class="btn btn-primary" id="save_graph">Save changes</button>
+		  </div>
+		</div>
+	  </div>
+	</div>		
+		
+
+
+
+
+ <script type="text/javascript">
+
+ // INITIALISATION
+$( document ).ready(function() {
+ 
+	$(function () {
+	  $('[data-toggle="tooltip"]').tooltip()
+	})
+ 
+	var arrows = {
+		"Concurrence_source": { fill: '#fe854f', stroke: '#7c68fc', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Concurrence_target": { fill: '#fe854f', stroke: '#7c68fc', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Concurrence_connection": { stroke: '#fe854f', 'stroke-width': 4 },
+		"Donc_source": {},
+		"Donc_target": { fill: '#31d0c6', stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Donc_connection": { stroke: '#31d0c6', 'stroke-width': 2 },
+		"Exemple_source": {},
+		"Exemple_target": { fill: '#31d0c6', stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
+		"Exemple_connection": { stroke: '#31d0c6', 'stroke-width': 2 },
+		}; 
+			
+    var graph = new joint.dia.Graph;
+	
+
+
+    var paper = new joint.dia.Paper({
+        el: $('#myholder'),
+        width: 1000,
+        height: 1000,
+        model: graph,
+        gridSize: 1,
+		interactive: function(cellView) {
+			if (cellView.model instanceof joint.dia.Link) {
+				// Disable the default vertex add functionality on pointerdown.
+				return { vertexAdd: false };
+			}
+        return true;
+		}
+    });
+	
+
+//	graph.fromJSON(JSON.parse('{{graph.graphstring|escapejs}}'));
+	
+
+
+
+
+
+id_correspondance = {}
+all_cells = graph.getCells();
+all_cells.forEach(function(entry) {
+	id_correspondance[entry.get('id_prop')] = entry.id;
+});
+
+link_id_correspondance = {};
+all_links = graph.getLinks();
+all_links.forEach(function(entry) {
+	link_id_correspondance[entry.get('id_link')] = entry.id;
+});
+
+// EVENTS
+
+	function first_prop(id_prop) {
+			$.ajax({
+				url: '/gdpcore/ajax_propenvir/'+id_prop,
+				dataType: "html",
+				success: function (data) {					
+
+					JSON.parse(data).forEach(function(entry) {
+						if (entry['model']=='gdpcore.proposition'){
+
+
+							var el = new joint.shapes.basic.TextBlock({
+								position: { x: 200, y: 200 },
+								size: { width: 150, height: 80 },						
+								attrs: { rect: { fill: 'white' }},							
+								id_prop: entry['pk'],
+								text: entry['fields']['text'],
+								content: entry['pk']+' - '+entry['fields']['text']					
+							});
+						
+							graph.addCell(el) ;
+							if (entry['pk'] != id_prop) {
+								el.attr('./display', 'none');
+							} else {
+								el.attr('./display', '');
+							}
+							
+						}
+					});
+					
+					id_correspondance = {};
+					all_cells = graph.getCells();
+					all_cells.forEach(function(entry) {
+
+						id_correspondance[entry.get('id_prop')] = entry.id;
+					});
+					
+					
+
+					
+					
+					
+					JSON.parse(data).forEach(function(entry) {
+						if (entry['model']=='gdpcore.link'){
+
+							
+							
+							var li = new joint.dia.Link({
+								source: { id: id_correspondance[entry['fields']['left_prop']] },
+								target: { id: id_correspondance[entry['fields']['right_prop']] },
+								attrs: {},
+								id_link: entry['pk'],
+								labels : [
+								{ position: 0.5, attrs: { text: { text: entry['fields']['nature'] } } }
+								]
+							});
+							
+						li.attr({
+							'.connection': arrows[entry['fields']['nature']+'_connection'],
+							'.marker-source': arrows[entry['fields']['nature']+'_source'],
+							'.marker-target': arrows[entry['fields']['nature']+'_target']
+						});					
+
+							graph.addCell(li) ;
+					        li.attr('./display', 'none');						
+						}	
+						
+					 
+					});				
+	
+				}
+			});
+	};
+
+	function extend_prop(id_prop) {
+	
+	
+//D'abord, on fait apparaitre la prop :	
+		all_cells = graph.getCells();
+		all_cells.forEach(function(entry) {
+			id_correspondance[entry.get('id_prop')] = entry.id;
+		});
+		
+		clicked_cell = graph.getCell(id_correspondance[id_prop]);
+		clicked_cell.attr('./display', '');
+
+
+// On va télécharger tous les liens et props, 	
+		$.ajax({
+			url: '/gdpcore/ajax_propenvir/'+id_prop,
+			dataType: "html",
+			success: function (data) {					
+
+// Créer toutes les props (invisibles)
+				JSON.parse(data).forEach(function(entry) {
+					if (!(entry['pk'] in id_correspondance) && entry['model']=='gdpcore.proposition'){
+
+						var el = new joint.shapes.basic.TextBlock({
+							position: { x: 200, y: 200 },
+							size: { width: 150, height: 80 },						
+							attrs: { rect: { fill: 'white' }},							
+							id_prop: entry['pk'],
+							text: entry['fields']['text'],
+							content: entry['pk']+' - '+entry['fields']['text']					
+						});
+					
+						graph.addCell(el) ;
+						el.attr('./display', 'none');
+						
+					}
+				});
+				
+//  Créer tous les liens (invisible)
+
+				all_cells = graph.getCells();
+				all_cells.forEach(function(entry) {
+					id_correspondance[entry.get('id_prop')] = entry.id;
+				});
+				
+				all_links= {};
+				all_links = graph.getLinks();
+				all_links.forEach(function(entry) {
+					link_id_correspondance[entry.get('id_link')] = entry.id;
+				});
+				
+				
+				JSON.parse(data).forEach(function(entry) {
+					if (!(entry['pk'] in link_id_correspondance) && entry['model']=='gdpcore.link'){
+
+						var li = new joint.dia.Link({
+							source: { id: id_correspondance[entry['fields']['left_prop']] },
+							target: { id: id_correspondance[entry['fields']['right_prop']] },
+							attrs: {},
+							id_link: entry['pk'],
+							labels : [
+							{ position: 0.5, attrs: { text: { text: entry['fields']['nature'] } } }
+							]
+						});
+						
+					li.attr({
+						'.connection': arrows[entry['fields']['nature']+'_connection'],
+						'.marker-source': arrows[entry['fields']['nature']+'_source'],
+						'.marker-target': arrows[entry['fields']['nature']+'_target']
+					});					
+
+						graph.addCell(li) ;
+						li.attr('./display', 'none');						
+					}	
+					
+
+
+
+				
+					
+				});
+	
+	
+				
+
+			}
+		});
+
+// Rendre visibles les bons liens
+		
+		connected_links = graph.getConnectedLinks(clicked_cell)
+		
+		connected_links.forEach(function(entry) {
+
+//		
+		if( graph.getCell(entry.get('source')['id']).attr('./display') == '' 
+		  && graph.getCell(entry.get('target')['id']).attr('./display') == '' ) {
+
+			entry.attr('./display', '');
+			
+		}
+//			console.log(entry.attr('./display'));
+		});
+		
+		
+	};
+	
+	$( "body" ).on("click", "#open_prop", function(event) {
+
+		first_prop({{main_prop.id}});
+	
+		
+	});	
+	
+	$( "body" ).on("click", ".glyphicon-plus-sign", function(event) {
+
+		console.log(event.target.id);
+		extend_prop(event.target.id);
+		
+	});	
+	
+// SAUVEGARDER GRAPH
+	$( "body" ).on("click", "#save_graph", function(event) {		
+	
+		$.ajax({
+			url: '/gdpcore/save_graph/',
+			type: 'POST',
+			data: 'graphstring='+JSON.stringify(graph)+'&title='+$('#graph_title').val(),
+			dataType: "html",
+			success: function (data) {					
+				console.log('sauvegarde effectuée')	;
+				$('#myModal').modal('hide')
+				console.log(data)
+			},
+			failure: function(data) { 
+				alert('Got an error');
+			}
+		});
+
+	});
+
+//REMOVE PROP	
+	$( "body" ).on("click", "#remove_prop", function(event) {		
+			
+		cell_tbr = graph.getCell($("#selected_cell").html())
+		cell_tbr.attr('./display', 'none');
+		
+		$("#cons_display").html('');
+		
+		connected_links = graph.getConnectedLinks(cell_tbr)
+		
+		connected_links.forEach(function(entry) {
+
+	//		
+			if( graph.getCell(entry.get('source')['id']).attr('./display') == '' 
+			  && graph.getCell(entry.get('target')['id']).attr('./display') == '' ) {
+
+				entry.attr('./display', '');
+				
+			} else {
+				entry.attr('./display', 'none');
+				
+			}
+
+		});
+		
+
+	});	
+
+
+	var cell;
+	
+	paper.on('cell:pointerclick', function(cellView,evt, x, y) { 
+	
+		
+		$("#cons_display").html('');
+		cell = graph.getCell(cellView.model.id);
+
+		;
+		if (cellView.model instanceof joint.dia.Link) {
+            // Disable the default vertex add functionality on pointerdown.
+			
+	
+			
+			source_position = cellView.model.getSourceElement().get('position');
+			target_position = cellView.model.getTargetElement().get('position');
+           console.log(source_position);
+		   console.log(target_position);
+		   var middle_position = {};
+		   middle_position['x'] = (source_position['x']+target_position['x'])/2;
+		   middle_position['y'] = (source_position['y']+target_position['y'])/2;
+		   console.log(middle_position);
+
+	/*		var el = new joint.shapes.basic.TextBlock({
+						position: { x: middle_position['x'], y: middle_position['y'] },
+						size: { width: 30, height: 30 },						
+						attrs: { rect: { fill: 'white' }},							
+						id_prop: 10,
+						text: 'Hello',
+						content: 'lala'					
+					});
+			graph.addCell(el)		   
+	*/	   
+        }
+		
+		
+		
+        
+		voisins = graph.getNeighbors(cell);
+		
+
+		
+		voisins.forEach(function(entry){
+
+			if (entry.attr('./display') == 'none') {
+			
+				$("#cons_display").append(
+					"<div> "
+					+"<span id='"+entry.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
+					+entry.get('text')+
+					'</div>');
+					
+			};
+			
+		});
+	
+	
+		
+
+		
+		$("#selected_cell").html(  cellView.model.id  );
+		$("#selected_prop").html(  cell.get('id_prop') );
+
+	});
+	
+});	
+</script>
+	
+{% endblock %}
