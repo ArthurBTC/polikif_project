@@ -808,7 +808,7 @@ def graph_viewer(request, id_graph):
 	
 def selection_graph(request):
 	from django.db.models import Count
-	graphs = Graph.objects.filter(autor = request.user).order_by('-creation_date')
+	graphs = Graph.objects.order_by('-creation_date')
 	return render(request,'gdpcore/selection_graph.html',{'graphs': graphs})
 	
 @csrf_exempt	
