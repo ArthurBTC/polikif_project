@@ -7,86 +7,97 @@
 <meta http-equiv='expires' content='0'>
 <meta http-equiv='pragma' content='no-cache'>
 
-<div id="graph"></div>
-<!-- Navigateur paper -->	
-<div class ="row">
-	<div>Graph : {{graph.title}}</div>
-	<button id="paperLeft" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span></button>
-	<button id="paperRight" type="button" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span></button>
-	<button id="paperUp" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span></button>
-	<button id="paperDown" class="btn btn-secondary"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span></button>
-	<button id="zoomIn" class="btn btn-secondary"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></button>
-	<button id="zoomOut" class="btn btn-secondary"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></button>
-<!--	<button id="fastSave" class="btn btn-secondary"><span class="glyphicon glyphicon-floppy-save" aria-hidden="true"></span></button>
-	-->
-	<div class="btn-group" role="group" aria-label="...">
-		
-		<!-- Action sur proposition -->
-		<div id = "actionProp" class="btn-group" role="group">
-			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuProp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				Proposition
-				<span class="caret"></span>
-			</button>
-			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				<li><a data-toggle="modal" data-target="#modalAnswer">Répondre à la proposition</a></li>
-				<li><a data-toggle="modal" data-target="#modalConnect">Connecter à une proposition existante</a></li>
-				<li role="separator" class="divider"></li>
-				<li><a data-toggle="modal" data-target="#modalForum">Ouvrir le forum</a></li>
-				<li role="separator" class="divider"></li>
-				<li><a data-toggle="modal" data-target="#modalEdit">Modifier la proposition</a></li>
-				<li role="separator" class="divider"></li>
-				<li><a id ='remove_prop'>Masquer la proposition</a></li>
-			</ul>
-		</div>
-	
-		<!-- Action link -->
-		<div id = "actionLink" class="btn-group" role="group">		
-			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				Lien
-				<span class="caret"></span>
-			</button>		
-			<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-				<li><a data-toggle="modal" data-target="#modalLinkAttack">Critiquer le lien</a></li>
-			</ul>		
-		</div>
-		
-		<!-- Action sur graph -->
-		<div id = "actionGraph" class="btn-group" role="group">
-			<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuGraph" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-				Graphique
-				<span class="caret"></span>
-			</button>
-		
-			<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-				<li><a data-toggle="modal" data-target="#modalSave">Sauvegarder le graphique</a></li>
-				<li><a>Partager le graphique</a></li>
-				<li><a>Ouvrir un nouveau graphique</a></li>
-				<li role="separator" class="divider"></li>
-				<li><a>Ajouter une proposition existante</a></li>
-				<li><a data-toggle="modal" data-target="#modalNewprop">Créer une nouvelle proposition</a></li>
 
-			</ul>
-	  
-		</div>  
-	</div>	
-</div>
 
 <div class ="row">
+
+	<div class="col-md-8">	
+
+
+
+
+
+
+
 <!-- Paper, liens, actions... -->	
 
-	<div class="col-md-8">		
+		
 		<div id="myholder"></div>			
 	</div>
 	<div class="col-md-4">
+	
+		<div id="graph_info_container">
+			
+			<!-- Action sur graph -->
+			<div id = "actionGraph" class="btn-group" role="group">
+				<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuGraph" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+					Graphique
+					<span class="caret"></span>
+				</button>
+			
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+					<li><a data-toggle="modal" data-target="#modalSave">Sauvegarder le graphique</a></li>
+					<li><a>Partager le graphique</a></li>
+					<li><a>Ouvrir un nouveau graphique</a></li>
+					<li role="separator" class="divider"></li>
+					<li><a>Ajouter une proposition existante</a></li>
+					<li><a data-toggle="modal" data-target="#modalNewprop">Créer une nouvelle proposition</a></li>
 
+				</ul>
+			</div>
+			<button id = "quickSave" type="button" class="btn btn-default" aria-label="Left Align">
+				<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauvegarde rapide
+			</button>
+			<div>Titre : {{graph.title}}</div>
+
+			
+			
+		</div>
+	
+		<div id ="prop_info_container">
+			
+			
+			<!-- Action sur proposition -->
+				<div id = "actionProp" class="btn-group" role="group">
+					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuProp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						Proposition
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+						<li><a data-toggle="modal" data-target="#modalAnswer">Répondre à la proposition</a></li>
+						<li><a data-toggle="modal" data-target="#modalConnect">Connecter à une proposition existante</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a data-toggle="modal" data-target="#modalForum">Ouvrir le forum</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a data-toggle="modal" data-target="#modalEdit">Modifier la proposition</a></li>
+						<li role="separator" class="divider"></li>
+						<li><a id ='remove_prop'>Masquer la proposition</a></li>
+					</ul>
+				</div>
+			
+				<!-- Action link -->
+				<div id = "actionLink" class="btn-group" role="group">		
+					<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+						Lien
+						<span class="caret"></span>
+					</button>		
+					<ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+						<li><a data-toggle="modal" data-target="#modalLinkAttack">Critiquer le lien</a></li>
+						<li><a data-toggle="modal" data-target="#modalLinkRemove">Supprimer le lien</a></li>
+					</ul>		
+				</div>
+				
 			<!-- Affichage de la logique -->
-		<div class=" alert-warning" role="alert" id="logic">
+			<div id="logic"></div>
+
+			
+		
+
+		
 		</div>
 		
-				
-		<!-- Affichage des connecteurs -->
-		<div class="panel panel-default">
-			<div id = "cons_display" class="panel-body"></div>							
+		<div id="envir_info_container">
+			<div id = "cons_display"></div>							
 		</div>
 				
 
@@ -395,8 +406,27 @@
 		</div>
 	  </div>
 	</div>
-	
 
+	<!-- Supprimer un lien -->
+	<div class="modal fade" id="modalLinkRemove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalLinkRemoveLabel">Critiquer un lien</h4>
+		  </div>
+		  <div class="modal-body">		  
+				<div id = "removeLogic"></div>
+				<button id = "submitRemove" class="btn btn-primary">Supprimer le lien</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	
 	
 <!-- pour la recherche de propositions similaires-->
 	<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
@@ -450,7 +480,6 @@ $( document ).ready(function() {
 	//Ini graph
     var graph = new joint.dia.Graph;
 	
-
 	//Ini paper
     var paper = new joint.dia.Paper({
         el: $('#myholder'),
@@ -467,8 +496,24 @@ $( document ).ready(function() {
 		}
     });
 	
-	$("#logic").height(40/100*$(window).height());
-	$("#cons_display").height(60/100*$(window).height());
+	$(function(){
+		var he = $(window).height();
+        var wi = $(window).width();
+		$("#graph_info_container").height(20/100*he);
+		$("#prop_info_container").height(40/100*he);
+		$("#envir_info_container").height(40/100*he);
+		paper.setDimensions(66/100*wi, 99/100*he);
+		
+		$(window).resize(function(){
+		
+			var he = $(window).height();
+			var wi = $(window).width();
+			$("#graph_info_container").height(20/100*he);
+			$("#prop_info_container").height(40/100*he);
+			$("#envir_info_container").height(40/100*he);
+			paper.setDimensions(66/100*wi, 99/100*he);
+		})          
+	});
 	
 	var selectedElement = '';
 	
@@ -510,8 +555,70 @@ $( document ).ready(function() {
 	
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
+
+		var wraptext = joint.util.breakText(text, {
+			width: 145,
+			height: 90,
+			attrs: {		
+				'text-anchor': 'middle'		
+			}
+		});	
+
+		joint.shapes.basic.twoTextRect = joint.shapes.basic.Generic.extend({
+
+			markup: '<g class="rotatable">'
+						+'<g class="scalable">'
+							+'<rect/>'
+						+'</g>'
+						+'<text class = "word1"></text>'
+						+'<text class = "word2"></text>'
+					+'</g>',
+
+			defaults: joint.util.deepSupplement({
+
+				type: 'basic.twoTextRect',
+				attrs: {
+					rect: { 
+						fill: '#EEEEEE', 
+						stroke: '', 
+						'stroke-width': 1, 
+						'follow-scale': true, 
+						width: 150, 
+						height: 80
+					},
+
+					'.word2': { 
+						'font-size': 15,
+						'font-weight': 'bold',
+						fill: 'black', 
+						'text-anchor':'end',
+						transform: "translate(165,82)" 
+					},
+					'.word1': { 
+						'ref': 'rect',
+						'font-size': 15,
+						'text-anchor':'middle',
+						transform: "translate(95,20)" ,
+						fill: 'black',
+						'dy': 100		
+					}
+				},
+				size: { width: 200, height: 100 },
+				id_prop : id_prop,
+				text : text,
+			}, joint.shapes.basic.Generic.prototype.defaults)
+		});
+
+		var el = new joint.shapes.basic.twoTextRect();
+		el.attr('.word1/text', wraptext);
+		el.attr('.word2/text', autorname);
+		el.attr('./display', 'none');	
+		graph.addCell(el);
+
+
+
 	
-		var el = new joint.shapes.basic.TextBlock({
+/*		var el = new joint.shapes.basic.TextBlock({
 			position: { x: 0, y: 0} ,
 			size: { width: 150, height: 80 },
 			attrs: { rect: { rx: 5, ry: 10 }},							
@@ -523,7 +630,7 @@ $( document ).ready(function() {
 		el.attr('./display', 'none');
 	
 		graph.addCell(el);	
-
+*/
 		console.log('prop added to graph - id_prop: '+id_prop+' id: '+el.id)
 		
 		return(el)
@@ -665,7 +772,7 @@ $( document ).ready(function() {
 			};
 		});
 */
-		inverseCon = {'Donc': 'Car', 'Exemple':'Théorie'}
+		inverseCon = {'Donc': 'Car', 'Exemple':'Théorie', 'Concurrence':'Concurrence'}
 		
 		links = graph.getConnectedLinks(cell, {inbound: true});
 		links.forEach(function(entry){
@@ -853,21 +960,43 @@ $( document ).ready(function() {
 		
 		$("#cons_display").html('');
 	});		
+	
+	//Quicksave	
+	$( "body" ).on("click", "#quickSave", function(event) {		
+
+		console.log('quickSave');
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_quicksave/',
+			data: { 			
+					'graphstring': JSON.stringify(graph),
+					'id_graph' : {{graph.id}},				
+					'x': originX,
+					'y': originY
+			},
+			success: function( data ) {		
+				console.log('success quicksave');
+				console.log(data);
+			}	
+		});
 		
+	});		
+	
+	
 	// Events quand on clique sur le graph
 	paper.on('cell:pointerdown', function(cellView,evt, x, y) { 
 
 		function highlighter(el){
-/*			if (selectedElement != '') {
+			if (selectedElement != '') {
 				graph.getCell(selectedElement).attr('rect/stroke', 'black');
-				graph.getCell(selectedElement).attr('rect/stroke-width', 2);
+				graph.getCell(selectedElement).attr('rect/stroke-width', 0);
 				graph.getCell(selectedElement).attr('circle/stroke', 'black');
-				graph.getCell(selectedElement).attr('circle/stroke-width', 2);				
+				graph.getCell(selectedElement).attr('circle/stroke-width', 0);				
 			}
 			el.attr('circle/stroke',colors['HL']);
 			el.attr('circle/stroke-width', 4);
 			el.attr('rect/stroke',colors['HL']);
-			el.attr('rect/stroke-width', 4);  */
+			el.attr('rect/stroke-width', 4);  
 		};
 	
 		//Si c'est un lien
@@ -898,7 +1027,7 @@ $( document ).ready(function() {
 			$("#actionLink").hide();
 			
 			elem = graph.getCell(cellView.model.id);
-			$("#logic").html(elem.get('text'));	
+			$("#logic").html('Intitulé : '+elem.get('text'));	
 		}
 		
 		updateCorrespondances();
@@ -921,8 +1050,8 @@ $( document ).ready(function() {
 				source_position = link.getSourceElement().get('position');
 				target_position = link.getTargetElement().get('position');
 				var middle_position = {};
-				middle_position['x'] = (source_position['x']+target_position['x'])/2+56;
-				middle_position['y'] = (source_position['y']+target_position['y'])/2+20;			
+				middle_position['x'] = (source_position['x']+target_position['x'])/2+80;
+				middle_position['y'] = (source_position['y']+target_position['y'])/2+30;			
 
 				value.position(middle_position['x'], middle_position['y']);
 			
@@ -1002,7 +1131,6 @@ $( document ).ready(function() {
 			success: function( data ) {		
 				$('#modalAnswer').modal('hide')
 				
-				authorList = {};
 				
 				//Créer le catalogue d'auteurs
 				JSON.parse(data).forEach(function(entry) {
@@ -1274,7 +1402,7 @@ $( document ).ready(function() {
 		});
 	});
 	
-//Modal connectprop
+//Modal attack link
 	//Mettre la bonne logique
 	$('#modalLinkAttack').on('show.bs.modal', function (event) {
 		var modal = $(this);
@@ -1333,159 +1461,122 @@ $( document ).ready(function() {
 		});
 	});		
 	
+//Modal remove link
+	//Mettre la bonne logique
+	$('#modalLinkRemove').on('show.bs.modal', function (event) {
+		var modal = $(this);
+		
+		updateCorrespondances;
+		modal.find('#removeLogic').html ( 
+			graph.getCell ( 
+				link_id_correspondance [ 
+					graph.getCell(selectedElement).get('link_id')
+				]
+			)
+			.get('logic') 
+		);							
+	});
 	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#submitRemove").click(function() {
 	
-//Navigateur Paper
-	function paperNav() {
-
-		var paperScale = function(sx, sy) {
-			 paper.scale(sx, sy);
-		};
-
-		var zoomOut = function(){
-			graphScale -= 0.1;
-			paperScale(graphScale, graphScale);
-		}
-
-		var zoomIn = function() {
-			graphScale += 0.1;
-			paperScale(graphScale, graphScale);
-		};
-
-		var resetZoom = function() {
-			graphScale = 1;
-			paperScale(graphScale, graphScale);
-		};
-
-		var originChange = function(x, y){
-			paper.setOrigin(x, y);
-		}
-		
-		var paperLeft = function(){
-			originX += sensibility;
-			paper.setOrigin(originX, originY)
-		}
-		var paperRight = function(){
-			originX -= sensibility;
-			paper.setOrigin(originX, originY)
-		}
-		var paperUp = function(){
-			originY += sensibility;
-			paper.setOrigin(originX, originY)
-		}
-		var paperDown = function(){
-			originY -= sensibility;
-			paper.setOrigin(originX, originY)
-		}	
-
-		$("#zoomIn").click(function() {
-			zoomIn();
-		});
-		
-		$("#zoomOut").click(function() {
-			zoomOut();
-		});
-		$("#paperLeft").click(function() {
-			paperLeft();
-		});
-		
-		$("#paperRight").click(function() {
-			paperRight();
-		});
-		
-		$("#paperUp").click(function() {
-			paperUp();
-		});
-		
-		$("#paperDown").click(function() {
-			paperDown();
-		});
-	};
-	
-	paperNav();
-
-	
-
-	var wraptext = joint.util.breakText('Le mouvement Nuit debout na pas pas de "maîtres à penser", et non ', {
-		width: 145,
-		height: 90,
-		attrs: {
-		
-			'text-anchor': 'middle',		
-		}
-	});	
-
-	joint.shapes.basic.twoTextRect = joint.shapes.basic.Generic.extend({
-
-		markup: '<g class="rotatable">'
-					+'<g class="scalable">'
-						+'<rect/>'
-					+'</g>'
-					+'<text class = "word1"></text>'
-					+'<text class = "word2"></text>'
-				+'</g>',
-
-		defaults: joint.util.deepSupplement({
-
-			type: 'basic.twoTextRect',
-			attrs: {
-				rect: { 
-					fill: '#EEEEEE', 
-					stroke: '', 
-					'stroke-width': 1, 
-					'follow-scale': true, 
-					width: 150, 
-					height: 80
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_linkremove/',
+			data: { 
+					id_link: graph.getCell(selectedElement).get('link_id')
 				},
-				'.word1': { 
-				    'ref': 'rect',
-					'font-size': 15,
-					'text-anchor':'middle',
-					transform: "translate(75,5)" ,
-					fill: 'black' 
-				},
-				'.word2': { 
-					'font-size': 15,
-					'font-weight': 'bold',
-					fill: 'black', 
-					'text-anchor':'end',
-					transform: "translate(145,65)" 
+			success: function( data ) {	
+					
+				cir = graph.getCell(selectedElement);			
+				updateCorrespondances();							
+				lin = graph.getCell(
+					link_id_correspondance[
+						cir.get('link_id')
+					]
+				);
+				
+				lin.remove();
+				cir.remove();
+				
+				var index = circles.indexOf(cir);
+				if (index > -1) {
+					circles.splice(index, 1);
 				}
+				
+				$('#modalLinkRemove').modal('hide')					
+				}
+			
+		});
+	});			
+	
 
-			},
-			size: { width: 150, height: 80 }
-		}, joint.shapes.basic.Generic.prototype.defaults)
+//NAV PAPER	
+	//Initial Parameters
+	var gridsize = 1;
+	var currentScale = 1;
+
+	//Get the div that will hold the graph
+	var targetElement= $('#myholder')[0];
+
+	//Bonus function use (see below) - create dotted grid
+//	setGrid(paper, gridsize*15, '#808080');
+
+	//Setup  svgpan and zoom, with handlers that set the grid sizing on zoom and pan
+	//Handlers not needed if you don't want the dotted grid
+	panAndZoom = svgPanZoom(targetElement.childNodes[0], 
+	{
+		viewportSelector: targetElement.childNodes[0].childNodes[0],
+		fit: false,
+		zoomScaleSensitivity: 0.4,
+		panEnabled: false,
+		onZoom: function(scale){
+			currentScale = scale;
+//			setGrid(paper, gridsize*15*currentScale, '#808080');
+		},
+		beforePan: function(oldpan, newpan){
+//			setGrid(paper, gridsize*15*currentScale, '#808080', newpan);
+		}
 	});
 
-	var rectShape = new joint.shapes.basic.twoTextRect();
-	rectShape.attr('.word1/text', wraptext);
-	rectShape.attr('.word2/text', 'word 2');
+	//Enable pan when a blank area is click (held) on
+	paper.on('blank:pointerdown', function (evt, x, y) {
+		panAndZoom.enablePan();
+		//console.log(x + ' ' + y);
+	});
+
+	//Disable pan when the mouse button is released
+	paper.on('cell:pointerup blank:pointerup', function(cellView, event) {
+	  panAndZoom.disablePan();
+	});
+
+
+	//BONUS function - will add a css background of a dotted grid that will scale reasonably
+	//well with zooming and panning.
+	function setGrid(paper, size, color, offset) {
+		// Set grid size on the JointJS paper object (joint.dia.Paper instance)
+		paper.options.gridsize = gridsize;
+		// Draw a grid into the HTML 5 canvas and convert it to a data URI image
+		var canvas = $('<canvas/>', { width: size, height: size });
+		canvas[0].width = size;
+		canvas[0].height = size;
+		var context = canvas[0].getContext('2d');
+		context.beginPath();
+		context.rect(1, 1, 1, 1);
+		context.fillStyle = color || '#AAAAAA';
+		context.fill();
+		// Finally, set the grid background image of the paper container element.
+		var gridBackgroundImage = canvas[0].toDataURL('image/png');
+		$(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
+		if(typeof(offset) != 'undefined'){  
+			$(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
+		}
+	}
 		
-	graph.addCell(rectShape);
-	
-	var aarectShape2 = new joint.shapes.basic.twoTextRect();
-	aarectShape2.attr('.word1/text', wraptext);
-	aarectShape2.attr('.word2/text', 'zaezae');
 		
-	graph.addCell(aarectShape2);	
-	
-
-	var li = new joint.dia.Link({
-			source: { id: rectShape.id },
-			target: { id: aarectShape2.id },
-			attrs: {},
-			id_link: 123,
-			logic: 'lala',
-			labels : [
-			{ position: 0.5, attrs: { text: { text: 'textaaa', 'font-size': 12 } } }
-			]
-		});		
-	graph.addCell(li);
-
-
 	
 	
-	});	
+});	
 
 
 	

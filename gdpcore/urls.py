@@ -45,6 +45,9 @@ urlpatterns = [
 	url(r'^ajax_newprop', views.ajax_newprop, name='ajax_newprop'),
 	url(r'^ajax_connect', views.ajax_connect, name='ajax_connect'),
 	url(r'^ajax_linkattack', views.ajax_linkattack, name='ajax_linkattack'),
+	url(r'^ajax_linkremove', views.ajax_linkremove, name='ajax_linkremove'),
+	url(r'^ajax_quicksave', views.ajax_quicksave, name='ajax_quicksave'),	
+	url(r'^new_graph', views.new_graph, name='new_graph'),	
 	
 	url(r'^register', views.register, name='register'),	
 	

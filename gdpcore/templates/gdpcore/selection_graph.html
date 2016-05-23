@@ -4,9 +4,45 @@
 <ul>
 				
 {% for graph in graphs %}
-	<li><a href="/gdpcore/graph_viewer/{{graph.id}}">{{graph.creation_date}} : {{graph.title}}</a></li>
+	<li><a href="/gdpcore/final_viewer/{{graph.id}}">{{graph.creation_date}} : {{graph.title}}</a></li>
 {% endfor %}
 
+<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalNewGraph">
+  Nouveau graph
+</button>
+
 </ul>
+
+	<div class="modal fade" id="modalNewGraph" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalConnectLabel">Nouveau Graph</h4>
+		  </div>
+		  <div class="modal-body">
+			
+			<!-- Proposition initiale-->
+			<div id="ini_prop_connect"></div>
+		
+			<form id = "Answer_form" method='POST' action = '/gdpcore/new_graph'>
+				{% csrf_token %}
+		
+			  <div class="form-group">
+				<label for="graphTitle">Répondre</label>
+				<input type="text" class="form-control" id="graphTitle" name='graphTitle' placeholder="Entrez le titre du graphe...">
+			  </div>
+		  			
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+				<button type = "submit" class="btn btn-primary">Créer un nouveau graph</button>
+			
+			</form>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</div>		
+		
 
 {% endblock %}

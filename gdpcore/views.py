@@ -696,7 +696,7 @@ def final_viewer(request, id_graph):
 			props = list(set(props))
 			links = list(set(links))
 			
-	return render(request,'gdpcore/final_viewer.html',{
+	return render(request,'gdpcore/final_viewer2.html',{
 					'graph': graph, 
 					'props': props,
 					'attributes': attributes, 
@@ -747,6 +747,21 @@ def save_graph(request):
 	
 	for cell in j['graph']['cells']:
 		if cell["type"] == "basic.TextBlock":
+			if cell['attrs']['.']['display'] == 'none':
+				display = False
+			else:
+				display = True
+			
+			elem, created = Elemgraph.objects.update_or_create(
+					graph=graph, 
+					proposition = Proposition.objects.get(id = cell['id_prop']), 
+					defaults={
+						'x': cell['position']['x'],
+						'y': cell['position']['y'],
+						'displayed':display
+						})
+						
+		if cell["type"] == "basic.twoTextRect":
 			if cell['attrs']['.']['display'] == 'none':
 				display = False
 			else:
@@ -971,6 +986,7 @@ def ajax_connect(request):
 	link.save()
 	all_items = list([link])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
+
 @csrf_exempt
 def ajax_linkattack(request):
 
@@ -1019,63 +1035,58 @@ def ajax_linkattack(request):
 	all_items = list([main_link]) + list([propImplication]) + list([implication]) + list([prop_ccr])+ list([link])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)		
 	
-	
-def link_attack(request, id_link):
-	if request.method == 'POST':
-	
-		main_link = Link.objects.get(id = id_link)
+@csrf_exempt	
+def ajax_linkremove(request):
 
-		prop_imp = Proposition(autor = User.objects.get(username = 'nobody'),
-					text = request.POST['implication'],
-					creation_date = datetime.now(),
-					modification_date = datetime.now(),
-					cycle = main_link.cycle,
-					nature = 'Diagnostic',
-					trafic = 0,
-					demande_precision = False,
-					demande_supplement = False,
-					demande_attention = False				
-					)
-		
-		prop_imp.save()
-	
-		implication = Implication(autor = request.user,
-								proposition = prop_imp,
-								link = main_link,
-								creation_date = datetime.now()
-								)
-		implication.save()
-		
-		prop_ccr = Proposition(autor = request.user,
-					text = request.POST['attack'],
-					creation_date = datetime.now(),
-					modification_date = datetime.now(),
-					cycle = main_link.cycle,
-					nature = 'Diagnostic',
-					trafic = 0,
-					demande_precision = False,
-					demande_supplement = False,
-					demande_attention = False				
-					)
-		
-		prop_ccr.save()
-		
-		link = Link(autor = request.user,
-				creation_date = datetime.now(),
-				modification_date = datetime.now(),
-				nature = 'Concurrence',
-				cycle = main_link.cycle,
-				trafic = 0,
-				left_prop = prop_ccr,
-				right_prop = prop_imp,
-				junction = 'No'				
-				)
+	main_link = Link.objects.get(id = request.POST['id_link'])	
+	main_link.delete();
+	return HttpResponse('')
 
-		link.save()
+@csrf_exempt	
+def ajax_quicksave(request):
+	
+	if request.method == 'POST':	
 		
-		generate_notification(main_link.autor, prop_imp, 'CL')
+		graph = Graph.objects.get(id = request.POST['id_graph'])
 		
-		cycle_updater(main_link.cycle.id)
+		graph.graphstring = request.POST['graphstring']
+		graph.creation_date = datetime.now()
+		graph.originx = request.POST['x']
+		graph.originy = request.POST['y']
 		
-		return HttpResponseRedirect(reverse('link_browser', args=(id_link,)))	
+		j = json.loads(request.POST['graphstring'])
+		
+		graph.save()
+	
+	for cell in j['cells']:
+						
+		if cell["type"] == "basic.twoTextRect":
+			if cell['attrs']['.']['display'] == 'none':
+				display = False
+			else:
+				display = True
+			
+			elem, created = Elemgraph.objects.update_or_create(
+					graph=graph, 
+					proposition = Proposition.objects.get(id = cell['id_prop']), 
+					defaults={
+						'x': cell['position']['x'],
+						'y': cell['position']['y'],
+						'displayed':display
+						})
+
+	return HttpResponse('ok')
+	
+def new_graph(request):
+	graph = Graph(
+	autor = request.user,
+	title = request.POST['graphTitle'],
+	creation_date = datetime.now()
+	)
+	graph.save()
+	
+	return HttpResponseRedirect(reverse('final_viewer', args=(graph.pk,)))
+	
+	
+	
 	

@@ -141,7 +141,7 @@ class Implication(models.Model):
 
 class Graph(models.Model):
 	autor = models.ForeignKey(User)
-	graphstring = models.CharField(max_length = 10000)
+	graphstring = models.CharField(max_length = 10000, default = '')
 	title = models.CharField(max_length = 300)
 	originx = models.IntegerField(default=0)
 	originy = models.IntegerField(default=0)
