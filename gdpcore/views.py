@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Proposition, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph
+from .models import Proposition, LinkType, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models import F
@@ -655,6 +655,7 @@ def incremental_viewer(request, id_prop):
 	
 	return render(request,'gdpcore/incremental_viewer.html',{'main_prop': main_prop })
 
+@login_required
 def final_viewer(request, id_graph):
 	graph = Graph.objects.get(id = id_graph)
 	
@@ -695,9 +696,14 @@ def final_viewer(request, id_graph):
 				
 			props = list(set(props))
 			links = list(set(links))
-			
+	
+	link_types = LinkType.objects.all()
+	json_linktypes = serializers.serialize('json', link_types)
+	
 	return render(request,'gdpcore/final_viewer2.html',{
-					'graph': graph, 
+					'graph': graph,
+					'link_types': link_types,
+					'json_linktypes': json_linktypes,
 					'props': props,
 					'attributes': attributes, 
 					'links':links,
@@ -816,41 +822,61 @@ def ajax_newanswer(request):
 	
 	initial_prop = Proposition.objects.get(id=request.POST['id_prop'])
 	
-	prop = Proposition(autor = request.user,
-				text = request.POST['newprop'],
-				creation_date = datetime.now(),
-				modification_date = datetime.now(),
-				cycle = initial_prop.cycle,
-				nature = 'Diagnostic',
-				trafic = 0,
-				demande_precision = False,
-				demande_supplement = False,
-				demande_attention = False
-				)
+	
+	if request.POST['nature'] == 'diagnostic':
+	
+		prop = Proposition(autor = request.user,
+					text = request.POST['newprop'],
+					creation_date = datetime.now(),
+					modification_date = datetime.now(),
+					cycle = initial_prop.cycle,
+					nature = 'Diagnostic',
+					trafic = 0,
+					demande_precision = False,
+					demande_supplement = False,
+					demande_attention = False
+					)
+					
+	elif request.POST['nature'] == 'youtube':
+		
+		prop = Proposition(
+					autor = request.user,
+					text = request.POST['youtubeTitle'],
+					creation_date = datetime.now(),
+					modification_date = datetime.now(),
+					cycle = initial_prop.cycle,
+					nature = 'YT',
+					ytid = request.POST['youtubeId'],
+					videoBeginning = int(request.POST['youtubeBegin']),
+					videoEnd = int(request.POST['youtubeEnd'])	
+
+					)			
+					
 	prop.save()
 	
-	if request.POST['optionsRadios'] == 'donc':
-		nat = 'Donc'
-		left = initial_prop
-		right = prop
-	elif request.POST['optionsRadios'] == 'car':
-		nat = 'Donc'
-		right = initial_prop
+	if request.POST['nature'] == 'diagnostic':
+		linktype = LinkType.objects.get(id = request.POST['type_id'])	
+	
+	elif request.POST['nature'] == 'youtube':
+		linktype = LinkType.objects.get(type = 'exemple')
+	
+	if linktype.sens == True:
+		nat = linktype.inverse
 		left = prop
-	elif request.POST['optionsRadios'] == 'ex':
-		nat = 'Exemple'
-		left = initial_prop
-		right = prop
-	elif request.POST['optionsRadios'] == 'ccr':
-		nat = 'Concurrence'
-		left = initial_prop
-		right = prop
+		right = initial_prop
+		linktype = LinkType.objects.get(type = linktype.inverse)
 		
+	else:
+		nat = linktype.type
+		left = initial_prop
+		right = prop
+	
 	
 	link = Link(autor = request.user,
 				creation_date = datetime.now(),
 				modification_date = datetime.now(),
 				nature = nat,
+				type = linktype,
 				cycle = initial_prop.cycle,
 				trafic = 0,
 				left_prop = left,
@@ -861,9 +887,7 @@ def ajax_newanswer(request):
 	link.save()
 	
 	if prop.autor.id != initial_prop.autor.id:	
-
 		generate_notification(initial_prop.autor, initial_prop, 'NL')
-
 			
 	add_comment(prop.autor, prop, 'TX', 'Proposition créée : '+prop.text)
 	
@@ -936,14 +960,30 @@ def ajax_editprop(request):
 
 @csrf_exempt	
 def ajax_newprop(request):
-	prop = Proposition(
-		autor = request.user,
-		text = request.POST['newprop'],		
-		creation_date = datetime.now(),
-		modification_date = datetime.now(),
-		cycle = Cycle.objects.get(pk=1)
-		)
+
+	if request.POST['nature'] == 'diagnostic':	
+		prop = Proposition(
+			autor = request.user,
+			text = request.POST['newprop'],		
+			creation_date = datetime.now(),
+			modification_date = datetime.now(),
+			cycle = Cycle.objects.get(pk=1)
+			)
 	
+	elif request.POST['nature'] == 'youtube':
+		prop = Proposition(
+			autor = request.user,
+			text = request.POST['youtubeTitle'],		
+			creation_date = datetime.now(),
+			modification_date = datetime.now(),
+			cycle = Cycle.objects.get(pk=1),
+			
+			nature = 'YT',
+			ytid = request.POST['youtubeId'],
+			videoBeginning = int(request.POST['youtubeBegin']),
+			videoEnd = int(request.POST['youtubeEnd'])
+			)
+		
 	prop.save()
 	
 	all_items = list([prop])
@@ -952,32 +992,28 @@ def ajax_newprop(request):
 @csrf_exempt	
 def ajax_connect(request):
 
-	left_prop = Proposition.objects.get(pk = request.POST['left_prop'])
-	right_prop = Proposition.objects.get(pk = request.POST['right_prop'])
-	nature = request.POST['nature']
+	initial_prop = Proposition.objects.get(pk = request.POST['left_prop'])
+	prop = Proposition.objects.get(pk = request.POST['right_prop'])
+
+	linktype = LinkType.objects.get(id = request.POST['type_id'])	
 	
-	if nature == 'donc':
-		nat = 'Donc'
-		left = left_prop
-		right = right_prop
-	elif nature == 'car':
-		nat = 'Donc'
-		right = left_prop
-		left = right_prop
-	elif nature == 'ex':
-		nat = 'Exemple'
-		left = left_prop
-		right = right_prop
-	elif nature == 'ccr':
-		nat = 'Concurrence'
-		left = left_prop
-		right = right_prop
+	if linktype.sens == True:
+		nat = linktype.inverse
+		left = prop
+		right = initial_prop
+		linktype = LinkType.objects.get(type = linktype.inverse)
+		
+	else:
+		nat = linktype.type
+		left = initial_prop
+		right = prop	
 
 	link = Link(
 		autor = request.user,
 		creation_date = datetime.now(),
 		modification_date = datetime.now(),
 		nature = nat,
+		type = linktype,
 		cycle = Cycle.objects.get(pk=1),		
 		left_prop = left,
 		right_prop = right	
@@ -1060,7 +1096,7 @@ def ajax_quicksave(request):
 	
 	for cell in j['cells']:
 						
-		if cell["type"] == "basic.twoTextRect":
+		if cell["type"] in ["basic.twoTextRect","basic.youtubeVideo"]:
 			if cell['attrs']['.']['display'] == 'none':
 				display = False
 			else:
@@ -1078,15 +1114,35 @@ def ajax_quicksave(request):
 	return HttpResponse('ok')
 	
 def new_graph(request):
+
+	
+	links = Link.objects.all()
+	
+
+	for link in links:
+		if link.nature == 'Donc':
+			link.type = LinkType.objects.get(type = 'donc')
+		if link.nature == 'Exemple':
+			link.type = LinkType.objects.get(type = 'exemple')
+		if link.nature == 'Concurrence':
+				link.type = LinkType.objects.get(type = 'concurrence')
+		if link.nature == 'Syl':
+				link.type = LinkType.objects.get(type = 'syllogisme')
+		if link.nature == 'E':
+				link.type = LinkType.objects.get(type = 'exemple')
+		if link.nature == 'D':
+				link.type = LinkType.objects.get(type = 'donc')	
+		if link.nature == 'C':
+				link.type = LinkType.objects.get(type = 'concurrence')				
+			
+		link.save();
+		
 	graph = Graph(
-	autor = request.user,
-	title = request.POST['graphTitle'],
-	creation_date = datetime.now()
-	)
+		autor = request.user,
+		title = request.POST['graphTitle'],
+		creation_date = datetime.now()
+		)
 	graph.save()
 	
 	return HttpResponseRedirect(reverse('final_viewer', args=(graph.pk,)))
-	
-	
-	
 	

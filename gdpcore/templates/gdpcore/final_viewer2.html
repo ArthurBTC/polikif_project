@@ -8,20 +8,11 @@
 <meta http-equiv='pragma' content='no-cache'>
 
 
-
 <div class ="row">
 
 	<div class="col-md-8">	
 
-
-
-
-
-
-
-<!-- Paper, liens, actions... -->	
-
-		
+<!-- Paper, liens, actions... -->		
 		<div id="myholder"></div>			
 	</div>
 	<div class="col-md-4">
@@ -48,13 +39,13 @@
 			<button id = "quickSave" type="button" class="btn btn-default" aria-label="Left Align">
 				<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauvegarde rapide
 			</button>
+			<button id = "adminBut" type="button" class="btn btn-default" aria-label="Left Align">Admin</button>
 			<div>Titre : {{graph.title}}</div>
 
-			
-			
+
 		</div>
 	
-		<div id ="prop_info_container">
+		<div id="prop_info_container">
 			
 			
 			<!-- Action sur proposition -->
@@ -91,7 +82,7 @@
 			<div id="logic"></div>
 
 			
-		
+			<div id="ytplayer"></div>
 
 		
 		</div>
@@ -113,81 +104,95 @@
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			<h4 class="modal-title" id="modalAnswerLabel">Ajouter une proposition</h4>
 		  </div>
-		  <div class="modal-body">
-			
-			<!-- Proposition initiale-->
-			<div id="ini_prop_answer"></div>
-			
-			
-		<form id = "Answer_form">
-		{% csrf_token %}
-		
-			<!-- Choix connecteur-->
-			<div class="radio newprop">
-			  <label>
-				<input type="radio" name="optionsRadios" id="optionsRadios1" value="car" checked>
-				... car ...
-			  </label>
-			</div>
-			<div class="radio newprop">
-			  <label>
-				<input type="radio" name="optionsRadios" id="optionsRadios2" value="donc">
-				... donc ...
-			  </label>
-			</div>
-			<div class="radio newprop">
-			  <label>
-				<input type="radio" name="optionsRadios" id="optionsRadios3" value="ex">
-				Par exemple :
-			  </label>
-			</div>	
-			<div class="radio newprop">
-			  <label>
-				<input type="radio" name="optionsRadios" id="optionsRadios4" value="ccr">
-				Je ne suis pas d'accord. Je pense ceci :
-			  </label>
-			</div>	
+		  
+		  <div class="modal-body">	
 
-			
-			
-			<!-- Proposition entrée-->
-			 <div class="form-group">
-				<input type="text" class="form-control newprop" id="newprop" name="newprop" placeholder="Entrez votre nouvelle proposition...">
-			  </div>
-			  
-			 
-			<!-- Logique générée-->
-			
-			<div class="alert alert-info" role="alert" id="logique"></div>
-			
-			<!-- Checkbox logique-->
-			  <div class="checkbox">
-				<label>
-				  <input type="checkbox">Je confirme la logique
-				</label>
-			  </div>		  
-			  
-			<!-- Recherche propositions similaires-->
-			  <button type="button" class="btn btn-info" id="recherche_but">Rechercher propositions similaires</button> 
-			  
-			  <div class="checkbox">
-				<label>
-				  <input type="checkbox"> Je n'ai trouvé aucune proposition similaire
-				</label>
-			  </div>		  			
-		  </div>
-		 
-		 </form>
 
-		
+			  <ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#classic" aria-controls="classic" role="tab" data-toggle="tab">Diagnostic</a></li>
+				<li role="presentation"><a href="#yt" aria-controls="yt" role="tab" data-toggle="tab">Youtube</a></li>
+			  </ul>
+
+				<div class="tab-content">
+					<div role="tabpanel" class="tab-pane active" id="classic">	
+		  
+						<!-- Proposition initiale-->
+						<div id="ini_prop_answer"></div>									
+						<!-- Choix connecteur-->			
+						{% for link_type in link_types %}			
+							<div class="radio newprop">
+							  <label>
+								<input type="radio" name="optionsRadios" id="optionsRadios{{link_type.id}}" value="{{link_type.id}}" checked>
+								{{link_type.text}}
+							  </label>
+							</div>							
+						{% endfor %}			
+							
+						<!-- Proposition entrée-->
+						 <div class="form-group">
+							<input type="text" class="form-control newprop" id="newprop" name="newprop" placeholder="Entrez votre nouvelle proposition...">
+						  </div>
+								 
+						<!-- Logique générée-->			
+						<div class="alert alert-info" role="alert" id="answerLogic"></div>
+						
+						<!-- Checkbox logique-->
+						  <div class="checkbox">
+							<label>
+							  <input type="checkbox">Je confirme la logique
+							</label>
+						  </div>		  
+						  
+						<!-- Recherche propositions similaires-->
+						  <button type="button" class="btn btn-info" id="recherche_but">Rechercher propositions similaires</button> 
+						  
+						  <div class="checkbox">
+							<label>
+							  <input type="checkbox"> Je n'ai trouvé aucune proposition similaire
+							</label>
+						  </div>	
+						 <button id ="submit_answer" class="btn btn-primary">Ajouter proposition</button>
+					</div>
+					
+					<div role="tabpanel" class="tab-pane active" id="yt">	
+					
+						<div class="form-group">
+							<label for="answer_youtubetitle">Titre</label>
+							<input type="text" class="form-control" id="answer_youtubeTitle" name='answer_youtubetitle' placeholder="Entrez le titre">
+						</div>				
+
+						<div class="form-group">
+							<label for="answer_youtubeid">Id youtube (Exemple : F9NPnKZkF-Y)</label>
+							<input type="text" class="form-control" id="answer_youtubeId" name='answer_youtubeid' placeholder="Exemple : F9NPnKZkF-Y">
+						</div>
+
+						<div class="form-group">
+							<label for="answer_youtubeBegin">Debut (en seconde)</label>
+							<input type="number" class="form-control" id="answer_youtubeBegin" name='answer_youtubeid' placeholder="0">
+						</div>
+
+						<div class="form-group">
+							<label for="answer_youtubeEnd">Fin (en seconde)</label>
+							<input type="number" class="form-control" id="answer_youtubeEnd" name='answer_youtubeid' placeholder="1000">
+						</div>
+						
+						<div id='answer_playerPrev'></div>
+					
+						<button id = "answer_youtubePreview" class="btn btn-default">Visualiser extrait</button>
+						<button id = "answer_youtubeSubmit" class="btn btn-default">Créer extrait</button>															
+					
+					</div>
+					
+				</div>
+				
+				
+				
+			</div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
 			
-			<button id ="submit_answer" class="btn btn-primary">Ajouter proposition</button>
+			
 		  </div>
-		  
-		
-		
 		
 		</div>
 	  </div>
@@ -197,43 +202,27 @@
 	<div class="modal fade" id="modalConnect" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	  <div class="modal-dialog" role="document">
 		<div class="modal-content">
+		
 		  <div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			<h4 class="modal-title" id="modalConnectLabel"></h4>
+			<h4 class="modal-title" id="modalConnectLabel">Connecter à une proposition</h4>
 		  </div>
+		  
 		  <div class="modal-body">
 			
 			<!-- Proposition initiale-->
 			<div id="ini_prop_connect"></div>
-		
-			<form id = "Answer_form">
-				{% csrf_token %}
-		
-				<!-- Choix connecteur-->
+				
+			{% for link_type in link_types %}
+			
 				<div class="radio newprop">
 				  <label>
-					<input type="radio" name="connectOptions" id="connectOption1" value="car" checked>
-					... car ...
+					<input type="radio" name="connectOptions" id="connectOption{{link_type.id}}" value="{{link_type.id}}" checked>
+					{{link_type.text}}
 				  </label>
-				</div>
-				<div class="radio newprop">
-				  <label>
-					<input type="radio" name="connectOptions" id="connectOption2" value="donc">
-					... donc ...
-				  </label>
-				</div>
-				<div class="radio newprop">
-				  <label>
-					<input type="radio" name="connectOptions" id="connectOption3" value="ex">
-					Par exemple :
-				  </label>
-				</div>	
-				<div class="radio newprop">
-				  <label>
-					<input type="radio" name="connectOptions" id="connectOption4" value="ccr">
-					Je ne suis pas d'accord. Je pense ceci :
-				  </label>
-				</div>	
+				</div>				
+			
+			{% endfor %}
 		  	
 				<!-- Choix de prop-->
 				 <div class="form-group newprop">	 
@@ -242,7 +231,7 @@
 				  </div>			  
 				  		 
 				<!-- Logique générée-->			
-				<div class="alert alert-info" role="alert" id="connect_logic"></div>
+				<div class="alert alert-info" role="alert" id="connectLogic"></div>
 				
 				<!-- Checkbox logique-->
 				  <div class="checkbox">
@@ -250,17 +239,17 @@
 					  <input type="checkbox">Je confirme la logique
 					</label>
 				  </div>		  
-			</form>
-		  			
-			<div class="modal-footer">
+		  </div>		
+		  
+		  <div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
 				<button id ="submit_connect" class="btn btn-primary">Connecter les propositions</button>
-			</div>
 		  </div>
+		  
 		</div>
 	  </div>
 	</div>		
-		
+	
 	<!-- Save Graph -->	
 	<div class="modal fade" id="modalSave" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
 	  <div class="modal-dialog" role="document">
@@ -357,16 +346,53 @@
 		  </div>
 		  <div class="modal-body">
 					  
-			<form>
-			{% csrf_token %}			
-			  <div class="form-group">
-				<label for="exampleInputEmail1">Nouvel intitulé</label>
-				<input type="text" class="form-control" id="propnew" name='propnew' placeholder="">
-			  </div>
-			</form>
-			<div id = "newprop_recherche_but" class="btn btn-default">Recherche proposition similaire</div>
+			
+			
+			  <ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#diag" aria-controls="home" role="tab" data-toggle="tab">Diagnostic</a></li>
+				<li role="presentation"><a href="#youtube" aria-controls="profile" role="tab" data-toggle="tab">Youtube</a></li>
+			  </ul>
+			
+			
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="diag">			
+					<div class="form-group">
+						<label for="propnew">Nouvel intitulé</label>
+						<input type="text" class="form-control" id="propnew" name='propnew' placeholder="">
+					</div>
+					<div id = "newprop_recherche_but" class="btn btn-default">Recherche proposition similaire</div>
+					<button id = "submit_newprop" class="btn btn-default">Ajouter ma proposition</button>
+					
+				</div>
+				
+				<div role="tabpanel" class="tab-pane" id="youtube">
+					<div class="form-group">
+						<label for="youtubetitle">Titre</label>
+						<input type="text" class="form-control" id="youtubeTitle" name='youtubetitle' placeholder="Entrez le titre">
+					</div>				
 
-			<button id = "submit_newprop" class="btn btn-default">Ajouter ma proposition</button>
+					<div class="form-group">
+						<label for="youtubeid">Id youtube (Exemple : F9NPnKZkF-Y)</label>
+						<input type="text" class="form-control" id="youtubeId" name='youtubeid' placeholder="Exemple : F9NPnKZkF-Y">
+					</div>
+
+					<div class="form-group">
+						<label for="youtubeBegin">Debut (en seconde)</label>
+						<input type="number" class="form-control" id="youtubeBegin" name='youtubeid' placeholder="0">
+					</div>
+
+					<div class="form-group">
+						<label for="youtubeEnd">Fin (en seconde)</label>
+						<input type="number" class="form-control" id="youtubeEnd" name='youtubeid' placeholder="1000">
+					</div>
+					
+					<div id='playerPrev'></div>
+				
+					<button id = "youtubePreview" class="btn btn-default">Visualiser extrait</button>
+					<button id = "youtubeSubmit" class="btn btn-default">Créer extrait</button>
+				</div>
+			</div>			
+			
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -426,8 +452,7 @@
 	  </div>
 	</div>
 	
-	
-	
+		
 <!-- pour la recherche de propositions similaires-->
 	<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
 	{% csrf_token %}
@@ -437,43 +462,98 @@
 
 {% endblock %}
 {% block script %}
+<!-- YOUTUBE -->
+<script>
+  // Load the IFrame Player API code asynchronously.
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/player_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // Replace the 'ytplayer' element with an <iframe> and
+  // YouTube player after the API code downloads.
+      var player;
+      function onYouTubeIframeAPIReady() {
+       		player = new YT.Player('ytplayer', {
+			  height: '200',
+			  width: '400',
+			  videoId: '',
+			  events: {
+				'onReady': console.log('player loaded'),
+				'onStateChange': ''
+			  }
+			});
+			
+			playerPrev = new YT.Player('playerPrev', {
+			  height: '220',
+			  width: '400',
+			  videoId: '',
+			  events: {
+				'onReady': console.log('playerPrev loaded'),
+				'onStateChange': ''
+			  }
+			});
+			  
+			answer_playerPrev = new YT.Player('answer_playerPrev', {
+			  height: '220',
+			  width: '400',
+			  videoId: '',
+			  events: {
+				'onReady': console.log('answer_playerPrev loaded'),
+				'onStateChange': ''
+			  }			  
+			});
+      }
+	 $("#ytplayer").hide();  
+</script>
 
 <script type="text/javascript">
 
 // INITIALISATION
 $( document ).ready(function() {
   
-	console.log();
 	//Pour les tools tips
 	$(function () {
 	  $('[data-toggle="tooltip"]').tooltip()
 	})
- 
-	//Design des flèches
+ 	
+	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#FF9F1C'}		
+	var typesData = {};
+
+	{% for link_type in link_types %}			
+		typesData['{{link_type.id}}'] = {
+							'type' : '{{link_type.type|escapejs}}',
+							'logic' : '{{link_type.logic|escapejs}}',
+							'inverse' : '{{link_type.inverse|escapejs}}',
+							'source': {
+							{% if link_type.arrows > 1 %}
+								fill: '{{link_type.strokeColor|escapejs}}',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'	
+							{% endif %}
+							} ,
+							'target': {
+							{% if link_type.arrows > 0 %}
+								fill: '{{link_type.strokeColor|escapejs}}',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'	
+							{% endif %}
+							},
+							'connection': {
+								stroke: '{{link_type.strokeColor|escapejs}}',
+								'stroke-width': {{link_type.strokeWidth}}							
+							}
+						} ; 		
+	{% endfor %}
 	
-	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#FF9F1C'}
-	var arrows = {
-		"Concurrence_source": { fill: colors['CCR'], stroke: '#none', d: 'M 10 0 L 0 5 L 10 10 z' },
-		"Concurrence_target": { fill: colors['CCR'], stroke: '#none', d: 'M 10 0 L 0 5 L 10 10 z' },
-		"Concurrence_connection": { stroke: colors['CCR'], 'stroke-width': 4 },
-		"Donc_source": {},
-		"Donc_target": { fill: colors['D'], stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
-		"Donc_connection": { stroke: colors['D'], 'stroke-width': 4 },
-		"Exemple_source": {},
-		"Exemple_target": { fill: colors['E'], stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
-		"Exemple_connection": { stroke: colors['E'], 'stroke-width': 4 },
-		"Implication_source": {},
-		"Implication_target": { fill: colors['D'], stroke: 'none', d: 'M 10 0 L 0 5 L 10 10 z' },
-		"Implication_connection": { stroke: colors['D'], 'stroke-width': 4 },				
-		};
-		
 	//On va stocker tous les ronds la-dedans, pour gérer leurs positions	
 	var circles = [];
+	var syls = [];
 	
 	//Correspondances id
-	id_correspondance = {};
-	link_id_correspondance = {};
-	circles_id_correspondance = {};
+	propIdCorrespondance = {};
+	linkIdCorrespondance = {};
+	circleIdCorrespondance = {};
 	authorList = {};
 	authorList[{{user.id}}] = '{{user.username|escapejs}}'
 
@@ -496,6 +576,7 @@ $( document ).ready(function() {
 		}
     });
 	
+	//On met tout à la bonne taille
 	$(function(){
 		var he = $(window).height();
         var wi = $(window).width();
@@ -525,33 +606,6 @@ $( document ).ready(function() {
 	
 	paper.setOrigin(originX, originY);
 
-	//Pour ajouter un rond à un lien  (pour pouvoir pointer dessus)
-	function addCircToLink(link){	
-		source_position = link.getSourceElement().get('position');
-		target_position = link.getTargetElement().get('position');
-		var middle_position = {};
-		middle_position['x'] = (source_position['x']+target_position['x'])/2+56;
-		middle_position['y'] = (source_position['y']+target_position['y'])/2+20;
-					
-		var el = new joint.shapes.fsa.State({
-				position: { x: middle_position['x'], y: middle_position['y'] },
-				size: { width: 40, height: 40 },
-				attrs: {
-					text : { text: '', fill: '', 'font-weight': 'normal' },
-					'circle': {
-						fill: '',
-						stroke: '#000000',
-						'stroke-width': 0.1
-					}
-				},
-				link_id: link.get('id_link')			
-			});	
-		el.attr('./display', link.attr('./display'));							
-		graph.addCell(el);	
-		el.toBack();		
-		circles.push(el);
-		return el
-	};
 	
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
@@ -605,7 +659,7 @@ $( document ).ready(function() {
 				},
 				size: { width: 200, height: 100 },
 				id_prop : id_prop,
-				text : text,
+				text : text
 			}, joint.shapes.basic.Generic.prototype.defaults)
 		});
 
@@ -615,84 +669,121 @@ $( document ).ready(function() {
 		el.attr('./display', 'none');	
 		graph.addCell(el);
 
-
-
-	
-/*		var el = new joint.shapes.basic.TextBlock({
-			position: { x: 0, y: 0} ,
-			size: { width: 150, height: 80 },
-			attrs: { rect: { rx: 5, ry: 10 }},							
-			id_prop: id_prop,
-			text: text,
-			content: autorname+' - '+text			
-		});
-
-		el.attr('./display', 'none');
-	
-		graph.addCell(el);	
-*/
 		console.log('prop added to graph - id_prop: '+id_prop+' id: '+el.id)
 		
 		return(el)
 	}
+
+	//ajouter une vidéo youtube
+	function addYoutube(id_prop, text, ytid, ytbeginning, ytend) {
+
+		var wraptext = joint.util.breakText(text, {
+			width: 145,
+			height: 90,
+			attrs: {		
+				'text-anchor': 'middle'		
+			}
+		});
 	
-	//MAJ des correspondances
-	function updateCorrespondances(){
-		
-		all_elems = graph.getElements();
-		id_correspondance = {};
-		circles_id_correspondance = {};
-		all_elems.forEach(function(entry) {
-			id_correspondance[entry.get('id_prop')] = entry.id;
-			circles_id_correspondance[entry.get('link_id')] = entry.id;
+		joint.shapes.basic.youtubeVideo = joint.shapes.basic.Generic.extend({
+
+			markup: '<g class="rotatable"><g class="scalable"><rect/></g><image/><text/></g>',
+
+			defaults: joint.util.deepSupplement({
+
+				type: 'basic.youtubeVideo',
+				size: { width: 200, height: 100 },
+				attrs: {
+					'rect': { fill: '#FDE3A7', stroke: '', width: 200, height: 100 },
+					'text': { 'font-size': 14, text: '', 'ref-x': .5, 'ref-y': .5, ref: 'rect', 'y-alignment': 'middle', 'x-alignment': 'middle', fill: 'black' },
+					'image': { 'ref-x': 2, 'ref-y': 2, ref: 'rect', width: 50, height: 30 }
+				},
+				id_prop : id_prop,
+				ytid : ytid,
+				ytbeginning : ytbeginning,
+				ytend : ytend,
+				text: text
+
+			}, joint.shapes.basic.Generic.prototype.defaults)
 		});
 		
-		all_links = graph.getLinks();
-		link_id_correspondance = {};
-		all_links.forEach(function(entry) {
-			link_id_correspondance[entry.get('id_link')] = entry.id;
-		});	
+		{% load staticfiles %}
+		var el = new joint.shapes.basic.youtubeVideo({
+			position: { x: 0, y: 0 },
+			size: { width: 200, height: 100 },
+			attrs: { 
+				text: { text: wraptext },
+				image: { 'xlink:href': "{% static 'gdpcore/yticon.png' %}" }
+			}
+		});
+		graph.addCell(el);		
 
+		el.attr('./display', 'none');	
+		graph.addCell(el);	
+		
+		return el;
+	
 	}
+	
+	//Ajouter un syllogisme
+	function addSyllogism(id_prop) {
+		joint.shapes.basic.syllogism = joint.shapes.basic.Generic.extend({
 
+			markup: '<g class="rotatable">'
+						+'<g class="scalable">'
+							+'<rect/>'
+						+'</g>'
+						+'<text/>'
+					+'</g>',
+
+			defaults: joint.util.deepSupplement({
+
+				type: 'basic.syllogism',
+				size: { width: 30, height: 30 },
+				attrs: {
+					'rect': { fill: '#EEEEEE', stroke: 1, width: 30, height: 30 },
+					'text': { 'font-size': 14, text: '&', 'ref-x': .5, 'ref-y': .5, ref: 'rect', 'y-alignment': 'middle', 'x-alignment': 'middle', fill: 'black' }					
+				},
+				id_prop : id_prop,
+				text: '&'
+
+			}, joint.shapes.basic.Generic.prototype.defaults)
+		});	
+		var el = new joint.shapes.basic.syllogism();
+		graph.addCell(el);
+		
+		syls.push(el);
+		
+		return el
+	};
+	
 	//Creation d'un lien (avec bonne visibilité)
-	function addLink(id_link, id_left_prop, id_right_prop, nature, autorname){
+	function addLink(id_link, id_left_prop, id_right_prop, type_id, autorname){
 	
 		updateCorrespondances();
 
-		var traduc = [];
-		traduc["donc"] = "Donc";
-		traduc["car"] = "Car";
-		traduc["ex"] = "Par exemple :";
-		traduc["ccr"] = "est incompatible avec :";
-		
-		traduc["Donc"] = "Donc";
-		traduc["Exemple"] = "Par exemple :";
-		traduc["Concurrence"] = "est incompatible avec :";
-		
-
-		logic =  '<div>'+graph.getCell(id_correspondance[id_left_prop]).get('text')+'</div>'
-				+'<div>'+traduc[nature]+'</div>'
-				+'<div>'+graph.getCell(id_correspondance[id_right_prop]).get('text')+'</div>'			
+		logic =  '<div>'+graph.getCell(propIdCorrespondance[id_left_prop]).get('text')+'</div>'
+				+'<div>'+typesData[type_id]['logic']+'</div>'
+				+'<div>'+graph.getCell(propIdCorrespondance[id_right_prop]).get('text')+'</div>'			
 		
 		var li = new joint.dia.Link({
-			source: { id: id_correspondance[id_left_prop] },
-			target: { id: id_correspondance[id_right_prop] },
+			source: { id: propIdCorrespondance[id_left_prop] },
+			target: { id: propIdCorrespondance[id_right_prop] },
 			attrs: {},
 			id_link: id_link,
-			link_nature: nature,
+			type_id : type_id,
 			link_autorname: autorname,
 			logic: logic,
 			labels : [
-			{ position: 0.5, attrs: { text: { text: nature+' ('+autorname+')', 'font-size': 12 } } }
+			{ position: 0.5, attrs: { text: { text: typesData[type_id]['type']+' ('+autorname+')', 'font-size': 12 } } }
 			]
 		});
-		
+
 		li.attr({
-			'.connection': arrows[nature+'_connection'],
-			'.marker-source': arrows[nature+'_source'],
-			'.marker-target': arrows[nature+'_target']
-		});					
+			'.connection': typesData[type_id]['connection'],
+			'.marker-source': typesData[type_id]['source'],
+			'.marker-target': typesData[type_id]['target']
+		});	
 
 		li.attr('./display', 'none');
 		
@@ -701,14 +792,46 @@ $( document ).ready(function() {
 		
 		console.log('link added to graph - id_link: '+id_link+' id: '+li.id)
 		
+		if (typesData[type_id]['type'] != 'syllogisme') {
+			addCircToLink(li);
+		}
+		
 		return li	
 	}
 	
+	//Pour ajouter un rond à un lien  (pour pouvoir pointer dessus)
+	function addCircToLink(link){	
+		source_position = link.getSourceElement().get('position');
+		target_position = link.getTargetElement().get('position');
+		var middle_position = {};
+		middle_position['x'] = (source_position['x']+target_position['x'])/2+80;
+		middle_position['y'] = (source_position['y']+target_position['y'])/2+30;
+					
+		var el = new joint.shapes.fsa.State({
+				position: { x: middle_position['x'], y: middle_position['y'] },
+				size: { width: 40, height: 40 },
+				attrs: {
+					text : { text: '', fill: '', 'font-weight': 'normal' },
+					'circle': {
+						fill: '',
+						stroke: '#000000',
+						'stroke-width': 0.1
+					}
+				},
+				link_id: link.get('id_link')			
+			});	
+		el.attr('./display', link.attr('./display'));							
+		graph.addCell(el);	
+		el.toBack();		
+		circles.push(el);
+		return el
+	};
+		
 	//Creation d'une implication (avec bonne visibilité)
 	function addImp(id_imp, id_imp_link, id_imp_prop, autorname ) {
 		var lo = new joint.dia.Link({
-			source: { id: circles_id_correspondance[id_imp_link] },
-			target: { id: id_correspondance[id_imp_prop] },
+			source: { id: circleIdCorrespondance[id_imp_link] },
+			target: { id: propIdCorrespondance[id_imp_prop] },
 			attrs: {},
 			id_implication: id_imp,
 			labels : [
@@ -717,9 +840,9 @@ $( document ).ready(function() {
 		});
 		
 		lo.attr({
-			'.connection': arrows['Implication_connection'],
-			'.marker-source': arrows['Implication_source'],
-			'.marker-target': arrows['Implication_target']
+			'.connection': typesData[1]['connection'],
+			'.marker-source': typesData[1]['source'],
+			'.marker-target': typesData[1]['target']
 		});					
 		lo.attr('./display', 'none');
 		graph.addCell(lo) ;
@@ -728,6 +851,25 @@ $( document ).ready(function() {
 		console.log('imp added to graph - id_imp: '+id_imp+' id: '+lo.id);
 		
 		return lo
+	}
+	
+	//MAJ des correspondances
+	function updateCorrespondances(){
+		
+		all_elems = graph.getElements();
+		propIdCorrespondance = {};
+		circleIdCorrespondance = {};
+		all_elems.forEach(function(entry) {
+			propIdCorrespondance[entry.get('id_prop')] = entry.id;
+			circleIdCorrespondance[entry.get('link_id')] = entry.id;
+		});
+		
+		all_links = graph.getLinks();
+		linkIdCorrespondance = {};
+		all_links.forEach(function(entry) {
+			linkIdCorrespondance[entry.get('id_link')] = entry.id;
+		});	
+
 	}
 	
 	//MAJ de la visibilité d'un lien et du cercle
@@ -741,7 +883,7 @@ $( document ).ready(function() {
 			
 		updateCorrespondances()		
 		
-		if (circ = graph.getCell( circles_id_correspondance[link.get('id_link')] )) {
+		if (circ = graph.getCell( circleIdCorrespondance[link.get('id_link')] )) {
 			circ.attr('./display', link.attr('./display'));	
 		}
 		
@@ -761,29 +903,16 @@ $( document ).ready(function() {
 	function updateConDisplay(cell) {
 		$("#cons_display").html('');
 		updateCorrespondances();
-/*		voisins = graph.getNeighbors(cell);
-		voisins.forEach(function(entry){
-			if (entry.attr('./display') == 'none') {		
-				$("#cons_display").append(
-					"<div> "
-					+"<span id='"+entry.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
-					+entry.get('text')+
-					'</div>');				
-			};
-		});
-*/
-		inverseCon = {'Donc': 'Car', 'Exemple':'Théorie', 'Concurrence':'Concurrence'}
 		
 		links = graph.getConnectedLinks(cell, {inbound: true});
 		links.forEach(function(entry){
 			voisin = entry.getSourceElement();
-			console.log(voisin.get('text'));
-			
+					
 			if (entry.attr('./display') == 'none') {		
 				$("#cons_display").append(
 					"<div>"
 					+"<span id='"+voisin.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
-					+inverseCon[entry.get('link_nature')]+' '
+					+typesData[entry.get('type_id')]['inverse']+' '
 					+voisin.get('text')
 					+'</div>');				
 			};
@@ -792,13 +921,13 @@ $( document ).ready(function() {
 		links = graph.getConnectedLinks(cell, {outbound: true});
 		links.forEach(function(entry){
 			voisin = entry.getTargetElement();
-			console.log(voisin.get('text'));
+
 			
 			if (entry.attr('./display') == 'none') {		
 				$("#cons_display").append(
 					"<div> "
 					+"<span id='"+voisin.get('id_prop')+"' class='glyphicon glyphicon-plus-sign' aria-hidden='true'></span> "
-					+entry.get('link_nature')+' '
+					+typesData[entry.get('type_id')]['type']+' '
 					+voisin.get('text')+' ('+entry.get('link_autorname')+')'
 					+'</div>');				
 			};		
@@ -806,13 +935,47 @@ $( document ).ready(function() {
 			
 		});
 	};
-	
-	//Générateur de logique
-	function logicGenerator(link) {
-	
-	
-	}
 
+	//Ajouter des props depuis un Json envoyé par le serveur
+	function fromJsonAddProp( entry ) {
+		if (entry['model']=='gdpcore.proposition'){	
+			if (entry['fields']['nature'] == 'Diagnostic') {
+				elem = addProp(
+							entry['pk'], 
+							entry['fields']['text'], 
+							authorList[entry['fields']['autor']]
+						);
+				
+			} else if (entry['fields']['nature'] == 'YT'){				
+				elem = addYoutube(
+							entry['pk'],
+							entry['fields']['text'],
+							entry['fields']['ytid'],
+							entry['fields']['ytbeginning'],
+							entry['fields']['ytend']
+						
+						);
+			} else {		
+				elem = '';
+			}
+		}
+	return elem;
+	};
+
+	//Ajouter des links depuis un Jsons envoyé par le serveur
+	function fromJsonAddLink( entry ) {
+		if (entry['model']=='gdpcore.link'){				
+			li = addLink(
+					entry['pk'], 
+					entry['fields']['left_prop'], 
+					entry['fields']['right_prop'], 
+					entry['fields']['type'], 
+					authorList[entry['fields']['autor']]
+					);			
+		}
+	return li
+	};
+		
 	//Firstload : main
 	function firstLoad() {
 	
@@ -821,11 +984,30 @@ $( document ).ready(function() {
 	
 		//Chargement des props (toutes invisibles)
 		{% for prop in props%}
-			addProp(
-				{{prop.id}},
-				'{{prop.text|escapejs}}',
-				'{{prop.autor.username|escapejs}}'
+		
+			{% if prop.nature == 'Diagnostic' %}
+				addProp(
+					{{prop.id}},
+					'{{prop.text|escapejs}}',
+					'{{prop.autor.username|escapejs}}'
 				);
+			{% endif %}
+				
+			{% if prop.nature == 'YT' %}
+				addYoutube(
+					{{prop.id}},
+					'{{prop.text|escapejs}}',
+					'{{prop.ytid}}',
+					'{{prop.videoBeginning}}',
+					'{{prop.videoEnd}}'
+				);
+			{% endif %}	
+
+			{% if prop.nature == 'SY' %}
+				addSyllogism(
+					{{prop.id}}
+				);
+			{% endif %}					
 		{% endfor %}
 
 		updateCorrespondances()
@@ -833,14 +1015,10 @@ $( document ).ready(function() {
 		//Chargement des attributs
 		{% for key, value in attributes.items %}
 			
-			cell = graph.getCell(id_correspondance[{{key}}]);
+			cell = graph.getCell(propIdCorrespondance[{{key}}]);
 			cell.translate({{value.x}},{{value.y}});
 			cell.attr('./display', '');
 			
-			embs = cell.getEmbeddedCells();
-			embs.forEach(function(entry) {
-				entry.attr('./display', '');
-			});
 			
 		{% endfor %}
 
@@ -851,10 +1029,10 @@ $( document ).ready(function() {
 				{{link.id}}, 
 				{{link.left_prop.id}}, 
 				{{link.right_prop.id}}, 
-				'{{link.nature|escapejs}}', 
+				{{link.type}}, 
 				'{{link.autor.username|escapejs}}' 
 				);
-			addCircToLink(li);
+			
 			
 		{% endfor %}
 
@@ -877,20 +1055,16 @@ $( document ).ready(function() {
 		
 // FIN DE l'INITILISATION //
 
-//Events liés au graph 
+//Events
 	//Extension du graph:
 	$( "body" ).on("click", ".glyphicon-plus-sign", function(event) {
-		extend_prop(event.target.id);		
-	});
-	function extend_prop(id_prop) {	
-				
+		id_prop = event.target.id;					
 		updateCorrespondances();
 		
-		//D'abord, on fait apparaitre la prop et son entourage, et on MAJ con_display
-		clicked_cell = graph.getCell(id_correspondance[id_prop]);
+		//D'abord, on fait apparaitre la prop et son entourage
+		clicked_cell = graph.getCell(propIdCorrespondance[id_prop]);
 		selected_cell = graph.getCell(selectedElement);
 		
-
 		clicked_cell.position( selected_cell.position()['x'], selected_cell.position()['y'] + 200  );
 		clicked_cell.attr('./display', '');
 		aroundCellVisu(clicked_cell);
@@ -904,7 +1078,6 @@ $( document ).ready(function() {
 			dataType: "html",
 			success: function (data) {	
 				
-				
 				//Créer le catalogue d'auteurs
 				JSON.parse(data).forEach(function(entry) {
 					if (entry['model']=='auth.user'){
@@ -914,48 +1087,29 @@ $( document ).ready(function() {
 				
 				// Créer toutes les nouvelles props (invisibles)
 				JSON.parse(data).forEach(function(entry) {
-					if (!(entry['pk'] in id_correspondance) && entry['model']=='gdpcore.proposition'){
-						addProp(
-							entry['pk'], 
-							entry['fields']['text'], 
-							authorList[ entry['fields']['autor'] ]
-						);
+					if (!(entry['pk'] in propIdCorrespondance)) {
+						fromJsonAddProp(entry);
 					}
-				});
+				});	
+				
+				updateCorrespondances()	
 				
 				//  Créer tous les nouveux liens (visibilité conditionnelle)
-				updateCorrespondances()				
-				
 				JSON.parse(data).forEach(function(entry) {
-					if (!(entry['pk'] in link_id_correspondance) && entry['model']=='gdpcore.link'){
-
-						li = addLink(
-							entry['pk'], 
-							entry['fields']['left_prop'], 
-							entry['fields']['right_prop'], 
-							entry['fields']['nature'], 
-							authorList[entry['fields']['autor']]
-							);
-						addCircToLink(li);
-						console.log(li);
-						
+					if (!(entry['pk'] in linkIdCorrespondance)){
+						fromJsonAddLink();
 					}		
 				});
 			}
 		});	
-	};
+	});
 		
-	//Suppression d'une propostion	
+	//Masquer une proposition	
 	$( "body" ).on("click", "#remove_prop", function(event) {		
 
 		cell_tbr = graph.getCell(selectedElement);
 		cell_tbr.attr('./display', 'none');
-				
-		embs = cell_tbr.getEmbeddedCells();
-		embs.forEach(function(entry) {
-			entry.attr('./display', cell_tbr.attr('./display'));
-		});
-		
+						
 		aroundCellVisu(cell_tbr);
 		
 		$("#cons_display").html('');
@@ -982,8 +1136,7 @@ $( document ).ready(function() {
 		
 	});		
 	
-	
-	// Events quand on clique sur le graph
+	// Quand on touche au graph
 	paper.on('cell:pointerdown', function(cellView,evt, x, y) { 
 
 		function highlighter(el){
@@ -999,35 +1152,54 @@ $( document ).ready(function() {
 			el.attr('rect/stroke-width', 4);  
 		};
 	
+		$("#actionProp").hide();
+		$("#actionLink").hide();
+		$("#ytplayer").hide();
+		player.stopVideo();
+		playerPrev.stopVideo();
+		answer_playerPrev.stopVideo();
+		
+		//Test de la nature de cell:
 		//Si c'est un lien
 		if (cellView.model instanceof joint.dia.Link) {
-			
-			$("#actionProp").hide();
-			$("#actionLink").show();
-			
-			elem = graph.getCell(circles_id_correspondance[cellView.model.get('id_link')]);
+								
+			$("#actionLink").show();			
+			elem = graph.getCell(circleIdCorrespondance[cellView.model.get('id_link')]);
 			$("#logic").html(cellView.model.get('logic'));
-			
-
-			
-		//Si ce n'est pas un lien
+		
+		//Si c'est un circle		
 		} else if (cellView.model instanceof joint.shapes.fsa.State){
 			
-			$("#actionProp").hide();
-			$("#actionLink").show();
-			
+			$("#actionLink").show();			
 			elem = graph.getCell(cellView.model.id);
-			link = graph.getCell(link_id_correspondance[elem.get('link_id')])
+			link = graph.getCell(linkIdCorrespondance[elem.get('link_id')])
 			$("#logic").html(link.get('logic'));
-			
-			
-		} else {
+		//Si c'est une vidéo youtube				
+		} else if (cellView.model.get('type') == 'basic.youtubeVideo') {
 		
+			$("#actionProp").show();
+			elem = graph.getCell(cellView.model.id);
+			$("#logic").html('Intitulé : '+elem.get('text'));
+						
+			$("#ytplayer").show();	
+			
+			player.loadVideoById({
+				'videoId': elem.get('ytid'),
+				'startSeconds': elem.get('ytbeginning'),
+				'endSeconds': elem.get('ytend'),
+				'suggestedQuality': 'large'
+			}); 		
+		//Si c'est une prop
+		} else if (cellView.model.get('type') == 'basic.twoTextRect') {
+				
 			$("#actionProp").show();
 			$("#actionLink").hide();
 			
 			elem = graph.getCell(cellView.model.id);
 			$("#logic").html('Intitulé : '+elem.get('text'));	
+		} else if (cellView.model.get('type') == 'basic.syllogism') {
+			
+			elem = graph.getCell(cellView.model.id);
 		}
 		
 		updateCorrespondances();
@@ -1046,7 +1218,7 @@ $( document ).ready(function() {
 			
 			if (value.attr('./display') == ''){
 			
-				link = graph.getCell(link_id_correspondance[value.get('link_id')]);		
+				link = graph.getCell(linkIdCorrespondance[value.get('link_id')]);		
 				source_position = link.getSourceElement().get('position');
 				target_position = link.getTargetElement().get('position');
 				var middle_position = {};
@@ -1058,10 +1230,33 @@ $( document ).ready(function() {
 			}
 		});
 		
+		$.each( syls, function( index, value ){
+			
+			if (value.attr('./display') == ''){
+				
+				neighbors = graph.getNeighbors(value);
+				var sumX = 0;
+				var sumY = 0;
+				
+				var i = 0;
+				var len = neighbors.length;
+
+				for (; i < len; i++) { 
+				
+					sumX = sumX + neighbors[i].get('position')['x'];
+					sumY = sumY + neighbors[i].get('position')['y'];
+				}
+				
+				value.position(sumX/len + 85, sumY/len + 45);				
+			}
+		});		
+		
 		
 	})
     	
-//Events liés aux modaux//	
+//Events liés aux modaux//
+
+
 // Modal save graph
 	$( "body" ).on("click", "#save_graph", function(event) {		
 	
@@ -1083,35 +1278,29 @@ $( document ).ready(function() {
 		});
 
 	});
-	
 // Modal ajouter réponse + lien:
-	//Mettre le bon titre
+$(function(){	
+	//Mettre le bon titre + init
 	$('#modalAnswer').on('show.bs.modal', function (event) {
-	  var modal = $(this);
-	  modal.find('#ini_prop_answer').text(
-					graph.getCell(selectedElement).get('text')
-				);
+		var modal = $(this);
+		modal.find('#ini_prop_answer').text(
+			graph.getCell(selectedElement).get('text')
+		);
+		
 	});
 	
 	// Mettre la bonne logique
 	$( ".newprop" ).change(function() {
-
-		var traduc = [];
-		traduc["donc"] = "Donc";
-		traduc["car"] = "Car";
-		traduc["ex"] = "Par exemple :";
-		traduc["ccr"] = "est incompatible avec :";
-
-		$( "#logique" ).html( 
+		$( "#answerLogic" ).html( 
 					"<div>"+$( "#ini_prop_answer" ).html()+"</div><div>"
-					+traduc[$('input[name=optionsRadios]:checked').val()]+"</div><div>	"
+					+typesData[$('input[name=optionsRadios]:checked').val()]['logic']+"</div><div>	"
 					+$( "#newprop" ).val()+"</div>" 
-							);
+		);
 	});	
 	
 	// Recherche propositions similaires
 	$("#recherche_but").click(function() {
-		console.log('lalala')
+
 		console.log($( "#newprop" ).val())
 		
 	  $('#new_window_parameter_1').val($( "#newprop" ).val());
@@ -1124,14 +1313,19 @@ $( document ).ready(function() {
 			type: "POST",
 			url: '/gdpcore/ajax_newanswer/',
 			data: { 
+					nature: 'diagnostic',
 					id_prop: graph.getCell(selectedElement).get('id_prop'),
 					newprop: $("#newprop").val(),					
-					optionsRadios: $('input[name=optionsRadios]:checked', '#Answer_form').val()
-				},
+					type_id: $('input[name=optionsRadios]:checked').val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+				
 			success: function( data ) {		
-				$('#modalAnswer').modal('hide')
+				$('#modalAnswer').modal('hide');
+				$( "#answerLogic" ).html('');
+				$( "#newprop" ).val('');
 				
-				
+
 				//Créer le catalogue d'auteurs
 				JSON.parse(data).forEach(function(entry) {
 					if (entry['model']=='auth.user'){
@@ -1139,39 +1333,79 @@ $( document ).ready(function() {
 					}
 				});				
 				
+				//Props
 				JSON.parse(data).forEach(function(entry) {
-					if (entry['model']=='gdpcore.proposition'){
-					
-						elem = addProp(
-									entry['pk'], 
-									entry['fields']['text'], 
-									authorList[entry['fields']['autor']]
-								);
+					elem = fromJsonAddProp(entry);					
+					if (elem) {
 						elem.attr('./display', '');					
 						elem.position(
 							graph.getCell(selectedElement).position()['x'],
 							graph.getCell(selectedElement).position()['y'] + 100
-						)						
-					}
-				});
-				updateCorrespondances()
+						);
+					}										
+				});			
+				
+				updateCorrespondances()				
+				//Links
 				JSON.parse(data).forEach(function(entry) {
-					if (entry['model']=='gdpcore.link'){				
-						li = addLink(
-								entry['pk'], 
-								entry['fields']['left_prop'], 
-								entry['fields']['right_prop'], 
-								entry['fields']['nature'], 
-								authorList[entry['fields']['autor']]
-								);
-						addCircToLink(li);			
-					}			 
+					fromJsonAddLink( entry );					 
 				});
 			}
 		});
 	});
+
+	//Visualisation extrait
+	$("#answer_youtubePreview").click(function() {
+		answer_playerPrev.loadVideoById({
+			'videoId': $("#answer_youtubeId").val(),
+			'startSeconds': $("#answer_youtubeBegin").val(),
+			'endSeconds': $("#answer_youtubeEnd").val(),
+			'suggestedQuality': 'large'
+		});
+	});
 	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#answer_youtubeSubmit").click(function() {
+		$.ajax({
+			type: "POST",
+			url: '/gdpcore/ajax_newanswer/',
+			data: { 
+					nature: 'youtube',
+					id_prop: graph.getCell(selectedElement).get('id_prop'),
+					youtubeTitle: $("#answer_youtubeTitle").val(),
+					youtubeId: $("#answer_youtubeId").val(),
+					youtubeBegin: $("#answer_youtubeBegin").val(),
+					youtubeEnd: $("#answer_youtubeEnd").val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {	
+				$('#modalAnswer').modal('hide');
+				answer_playerPrev.stopVideo();				
+				updateCorrespondances()				
+				JSON.parse(data).forEach(function(entry) {
+
+					el = fromJsonAddProp(entry)
+					el.attr('./display', '');
+					el.position(-originX,-originY);			
+					updateCorrespondances()
+													 
+				});
+				JSON.parse(data).forEach(function(entry) {
+
+					fromJsonAddLink(entry);
+													 
+				});				
+				
+				
+			}
+		});
+	});	
+	
+	
+	
+});
 // Modal forum:
+$(function(){
 	//Mettre le bon titre + loader les comments
 	$('#modalForum').on('show.bs.modal', function (event) {
 		var modal = $(this);
@@ -1185,7 +1419,6 @@ $( document ).ready(function() {
 		  dataType: 'json',
 		  success: function( data ) {
 					
-					console.log(JSON.parse(data));
 					JSON.parse(data).forEach(function(entry) {
 						$('#modalForumContent').append('<li>'
 							+entry['fields']['autor']
@@ -1221,8 +1454,9 @@ $( document ).ready(function() {
 			}
 		});			
 	});
-	
+});
 // Modal edition:
+$(function(){
 	//Mettre le bon texte..
 	$('#modalEdit').on('show.bs.modal', function (event) {
 	  var modal = $(this);
@@ -1256,7 +1490,7 @@ $( document ).ready(function() {
 				updateCorrespondances()				
 				JSON.parse(data).forEach(function(entry) {
 					if (entry['model']=='gdpcore.proposition'){						
-						edit_cell = graph.getCell(id_correspondance[entry['pk']]);
+						edit_cell = graph.getCell(propIdCorrespondance[entry['pk']]);
 						edit_cell.set('text', entry['fields']['text']);
 						edit_cell.set('content', entry['pk'] + ' - ' + entry['fields']['text']);
 
@@ -1266,7 +1500,7 @@ $( document ).ready(function() {
 										
 					if (entry['model']=='gdpcore.link'){
 					
-/*						link = graph.getCell(link_id_correspondance[entry['pk']]);
+/*						link = graph.getCell(linkIdCorrespondance[entry['pk']]);
 						link.label(0, { 
 										attrs: { 
 											position: 0.2, 
@@ -1286,8 +1520,9 @@ $( document ).ready(function() {
 			}
 		});
 	});		
-
+});
 // Modal newprop
+$(function(){
 	// Recherche propositions similaires
 	$("#newprop_recherche_but").click(function() {
 		
@@ -1301,7 +1536,9 @@ $( document ).ready(function() {
 			type: "POST",
 			url: '/gdpcore/ajax_newprop/',
 			data: { 
-					newprop: $("#propnew").val()	
+					nature: 'diagnostic',
+					newprop: $("#propnew").val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
 				},
 			success: function( data ) {	
 				$('#modalNewprop').modal('hide');
@@ -1310,7 +1547,7 @@ $( document ).ready(function() {
 				updateCorrespondances()				
 				JSON.parse(data).forEach(function(entry) {
 					if (entry['model']=='gdpcore.proposition'){	
-						console.log(data);
+	
 						el = addProp(
 							entry['pk'], 
 							entry['fields']['text'], 
@@ -1324,9 +1561,49 @@ $( document ).ready(function() {
 				}) 
 			}
 		});
-	});		
+	});
 
+	//Preview Youtube
+	$("#youtubePreview").click(function() {
+			playerPrev.loadVideoById({
+				'videoId': $("#youtubeId").val(),
+				'startSeconds': $("#youtubeBegin").val(),
+				'endSeconds': $("#youtubeEnd").val(),
+				'suggestedQuality': 'large'
+			});
+	});
+	
+	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
+	$("#youtubeSubmit").click(function() {
+		$.ajax({
+			type: "POST",
+			url: '/gdpcore/ajax_newprop/',
+			data: { 
+					nature: 'youtube',
+					youtubeTitle: $("#youtubeTitle").val(),
+					youtubeId: $("#youtubeId").val(),
+					youtubeBegin: $("#youtubeBegin").val(),
+					youtubeEnd: $("#youtubeEnd").val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {	
+				$('#modalNewprop').modal('hide');
+//				playerPrev.stopVideo();				
+				updateCorrespondances()				
+				JSON.parse(data).forEach(function(entry) {
+					el = fromJsonAddProp(entry)
+					el.attr('./display', '');
+					el.position(-originX,-originY);	
+					updateCorrespondances()
+													 
+				}) 
+			}
+		});
+	});	
+	
+});
 //Modal connectprop
+$(function(){
 	//Mettre le bon titre
 	$('#modalConnect').on('show.bs.modal', function (event) {
 		var modal = $(this);
@@ -1352,15 +1629,9 @@ $( document ).ready(function() {
 	// Mettre la bonne logique
 	$( ".newprop" ).change(function() {
 
-		var traduc = [];
-		traduc["donc"] = "Donc";
-		traduc["car"] = "Car";
-		traduc["ex"] = "Par exemple :";
-		traduc["ccr"] = "est incompatible avec :";
-
-		$( "#connect_logic" ).html( 
+		$( "#connectLogic" ).html( 
 					"<div>"+$( "#ini_prop_connect" ).html()+"</div>"
-					+"<div>"+traduc[$('input[name=connectOptions]:checked').val()]+"</div>"
+					+"<div>"+typesData[$('input[name=connectOptions]:checked').val()]['logic']+"</div>"
 					+"<div>"+$( "#listprops option:Selected" ).text()+"</div>" 
 							);
 	});	
@@ -1374,7 +1645,8 @@ $( document ).ready(function() {
 			data: { 
 					left_prop: graph.getCell(selectedElement).get('id_prop'),
 					right_prop: $("#listprops").val(),					
-					nature: $('input[name=connectOptions]:checked').val()
+					type_id: $('input[name=connectOptions]:checked').val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
 				},
 			success: function( data ) {		
 				$('#modalConnect').modal('hide')
@@ -1392,17 +1664,17 @@ $( document ).ready(function() {
 								entry['pk'], 
 								entry['fields']['left_prop'], 
 								entry['fields']['right_prop'], 
-								entry['fields']['nature'], 
+								entry['fields']['type'], 
 								authorList[entry['fields']['autor']]
-								);
-						addCircToLink(li);			
+								);			
 					}			 
 				});
 			}
 		});
 	});
-	
+});	
 //Modal attack link
+$(function(){
 	//Mettre la bonne logique
 	$('#modalLinkAttack').on('show.bs.modal', function (event) {
 		var modal = $(this);
@@ -1410,7 +1682,7 @@ $( document ).ready(function() {
 		updateCorrespondances;
 		modal.find('#attackLogic').html ( 
 			graph.getCell ( 
-				link_id_correspondance [ 
+				linkIdCorrespondance [ 
 					graph.getCell(selectedElement).get('link_id')
 				]
 			)
@@ -1451,17 +1723,17 @@ $( document ).ready(function() {
 								entry['pk'], 
 								entry['fields']['left_prop'], 
 								entry['fields']['right_prop'], 
-								entry['fields']['nature'], 
+								entry['fields']['type'], 
 								authorList[entry['fields']['autor']]
-								);
-						addCircToLink(li);			
+								);		
 					}			 
 				});
 			}
 		});
 	});		
-	
+});	
 //Modal remove link
+$(function(){
 	//Mettre la bonne logique
 	$('#modalLinkRemove').on('show.bs.modal', function (event) {
 		var modal = $(this);
@@ -1469,7 +1741,7 @@ $( document ).ready(function() {
 		updateCorrespondances;
 		modal.find('#removeLogic').html ( 
 			graph.getCell ( 
-				link_id_correspondance [ 
+				linkIdCorrespondance [ 
 					graph.getCell(selectedElement).get('link_id')
 				]
 			)
@@ -1491,7 +1763,7 @@ $( document ).ready(function() {
 				cir = graph.getCell(selectedElement);			
 				updateCorrespondances();							
 				lin = graph.getCell(
-					link_id_correspondance[
+					linkIdCorrespondance[
 						cir.get('link_id')
 					]
 				);
@@ -1509,7 +1781,7 @@ $( document ).ready(function() {
 			
 		});
 	});			
-	
+});
 
 //NAV PAPER	
 	//Initial Parameters
@@ -1573,10 +1845,14 @@ $( document ).ready(function() {
 		}
 	}
 		
+	
+
+	$( "body" ).on("click", "#adminBut", function(event) {		
+	
+		console.log(JSON.stringify(graph.getCells()));
 		
-	
-	
-});	
+	});
+});
 
 
 	

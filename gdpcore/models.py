@@ -20,26 +20,46 @@ class Proposition(models.Model):
 		('Diagnostic','Diagnostic'),
 		('Action','Action'),
 		('Reference','Reference'),
+		('YT','Youtube'),
+		('SY','Syllogisme')
 	)
 	autor = models.ForeignKey(User)
 	text = models.CharField(max_length = 3000)
+	nature = models.CharField(max_length = 30, choices = NATURE_PROP_CHOICE, default = 'Diagnostic')
+	cycle = models.ForeignKey(Cycle)
 	
 	tags = models.CharField(max_length = 3000, default = '')
 	simil = models.FloatField(default=0)
-	
 	creation_date = models.DateTimeField()
 	modification_date = models.DateTimeField()
-	cycle = models.ForeignKey(Cycle)
-	nature = models.CharField(max_length = 30, choices = NATURE_PROP_CHOICE, default = 'Diagnostic')
 	trafic = models.IntegerField(default=0)
 
 	demande_precision = models.BooleanField(default=False)
 	demande_supplement = models.BooleanField(default=False)
 	demande_attention = models.BooleanField(default=False)
 	
+	ytid = models.CharField(max_length = 30, default = '')
+	videoBeginning = models.IntegerField(default=0)
+	videoEnd = models.IntegerField(default=0)
+	
 	def __str__(self):
 		return str(self.id)
 
+
+
+class LinkType(models.Model):
+	type = models.CharField(max_length = 100)
+	text = models.CharField(max_length = 100, default = '')
+	logic = models.CharField(max_length = 100)
+	sens = models.BooleanField()
+	inverse = models.CharField(max_length = 100)
+	strokeColor = models.CharField(max_length = 100)
+	strokeWidth =  models.IntegerField()
+	arrows = models.IntegerField()
+	
+	def __str__(self):
+		return str(self.id)
+	
 		
 class Link(models.Model):
 	NATURE_LINK_CHOICE = (
@@ -61,6 +81,7 @@ class Link(models.Model):
 	creation_date = models.DateTimeField()
 	modification_date = models.DateTimeField()
 	nature = models.CharField(max_length = 30, choices = NATURE_LINK_CHOICE, default = 'Donc')
+	type = models.ForeignKey(LinkType)
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
 	cycle = models.ForeignKey(Cycle)
 	trafic = models.IntegerField(default=0)
@@ -74,6 +95,7 @@ class Link(models.Model):
 	
 	def __str__(self):
 		return str(self.id)
+
 		
 class Comment(models.Model):
 	NATURE_COMMENT_CHOICE = (
