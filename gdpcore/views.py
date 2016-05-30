@@ -1114,11 +1114,143 @@ def ajax_quicksave(request):
 	return HttpResponse('ok')
 	
 def new_graph(request):
+		
+	graph = Graph(
+		autor = request.user,
+		title = request.POST['graphTitle'],
+		creation_date = datetime.now()
+		)
+	graph.save()
+	
+	return HttpResponseRedirect(reverse('final_viewer', args=(graph.pk,)))
+	
+	
+def init(request):
 
+	json_linktypes = [	
+		{ 
+			'type': 'donc' ,
+			'text': '... donc ...',
+			'logic': '... donc ...',
+			'sens': False,
+			'inverse': 'car',
+			'strokeColor': '#2EC4B6',
+			'strokeWidth': 4,
+			'arrows': 1
+		},
+		{ 
+			'type': 'car',
+			'text': '... car ...',
+			'logic': '... car ...',
+			'sens': True,
+			'inverse': 'donc',
+			'strokeColor': '#2EC4B6',
+			'strokeWidth': 4,
+			'arrows': 1
+		},		
+		{ 
+			'type': 'concurrence',
+			'text': 'Concurrence / Désaccord :',
+			'logic': '... est incompatible avec ...',
+			'sens': False,
+			'inverse': 'concurrence',
+			'strokeColor': '#E71D36',
+			'strokeWidth': 4,
+			'arrows': 2
+		},
+		{ 
+			'type': 'exemple',
+			'text': 'Exemple :',
+			'logic': '... est illustré par ...',
+			'sens': False,
+			'inverse': 'théorie',
+			'strokeColor': '#2EC4B6',
+			'strokeWidth': 4,
+			'arrows': 1
+		},
+		{ 
+			'type': 'théorie',
+			'text': 'Théorisation :',
+			'logic': '... illustre que ...',
+			'sens': True,
+			'inverse': 'exemple',
+			'strokeColor': '#2EC4B6',
+			'strokeWidth': 4,
+			'arrows': 1
+		},
+		{ 
+			'type': 'contre-exemple',
+			'text': 'Contre-exemple :',
+			'logic': '... est invalidé par le fait que ...',
+			'sens': False,
+			'inverse': 'contre-théorie',
+			'strokeColor': '#96281B',
+			'strokeWidth': 4,
+			'arrows': 1
+		},
+		{ 
+			'type': 'contre-théorie',
+			'text': 'Contre-Théorisation :',
+			'logic': '... est un élément qui rend impossible que ...',
+			'sens': True,
+			'inverse': 'contre-exemple',
+			'strokeColor': '#96281B',
+			'strokeWidth': 4,
+			'arrows': 1
+		},
+		{ 
+			'type': 'complément',
+			'text': 'Complément :',
+			'logic': "... traite du même sujet, et n'est pas incompatible avec ...",
+			'sens': False,
+			'inverse': 'complément',
+			'strokeColor': '#4ECDC4',
+			'strokeWidth': 4,
+			'arrows': 2
+		},	
+		{ 
+			'type': 'syllogisme',
+			'text': 'syllogisme',
+			'logic': 'syllogisme' ,
+			'sens': False,
+			'inverse': 'syllogisme',
+			'strokeColor': '#2EC4B6',
+			'strokeWidth': 4,
+			'arrows': 0
+		}	
+	]
+
+	for link_type in json_linktypes:
+	
+		linktype, created = LinkType.objects.update_or_create(
+				type = link_type['type'], 
+				defaults={
+					type: link_type['type'],
+					text: link_type['text'],
+					logic: link_type['logic'],
+					sens: link_type['sens'],
+					inverse: link_type['inverse'],
+					strokeColor: link_type['strokeColor'],
+					strokeWidth:  link_type['strokeWidth'],
+					arrows: link_type['arrows']				
+				})
+	
+		# link_type = LinkType(
+		
+			# type = link_type['type'],
+			# text = link_type['text'],
+			# logic = link_type['logic'],
+			# sens = link_type['sens'],
+			# inverse = link_type['inverse'],
+			# strokeColor = link_type['strokeColor'],
+			# strokeWidth =  link_type['strokeWidth'],
+			# arrows = link_type['arrows']		
+		# )
+		
+		# link_type.save();
 	
 	links = Link.objects.all()
 	
-
 	for link in links:
 		if link.nature == 'Donc':
 			link.type = LinkType.objects.get(type = 'donc')
@@ -1136,13 +1268,5 @@ def new_graph(request):
 				link.type = LinkType.objects.get(type = 'concurrence')				
 			
 		link.save();
-		
-	graph = Graph(
-		autor = request.user,
-		title = request.POST['graphTitle'],
-		creation_date = datetime.now()
-		)
-	graph.save()
 	
-	return HttpResponseRedirect(reverse('final_viewer', args=(graph.pk,)))
-	
+	return HttpResponseRedirect(reverse('index', args=()))
