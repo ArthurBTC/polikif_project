@@ -1181,7 +1181,7 @@ def init(request):
 		{ 
 			'type': 'contre-exemple',
 			'text': 'Contre-exemple :',
-			'logic': '... est invalidé par le fait que ...',
+			'logic': '... est invalidé par le fait que ..',
 			'sens': False,
 			'inverse': 'contre-théorie',
 			'strokeColor': '#96281B',
@@ -1225,14 +1225,14 @@ def init(request):
 		linktype, created = LinkType.objects.update_or_create(
 				type = link_type['type'], 
 				defaults={
-					type: link_type['type'],
-					text: link_type['text'],
-					logic: link_type['logic'],
-					sens: link_type['sens'],
-					inverse: link_type['inverse'],
-					strokeColor: link_type['strokeColor'],
-					strokeWidth:  link_type['strokeWidth'],
-					arrows: link_type['arrows']				
+					'type': link_type['type'],
+					'text': link_type['text'],
+					'logic': link_type['logic'],
+					'sens': link_type['sens'],
+					'inverse': link_type['inverse'],
+					'strokeColor': link_type['strokeColor'],
+					'strokeWidth':  link_type['strokeWidth'],
+					'arrows': link_type['arrows']				
 				})
 	
 		# link_type = LinkType(
@@ -1269,4 +1269,4 @@ def init(request):
 			
 		link.save();
 	
-	return HttpResponseRedirect(reverse('index', args=()))
+	return HttpResponse('Init OK')
