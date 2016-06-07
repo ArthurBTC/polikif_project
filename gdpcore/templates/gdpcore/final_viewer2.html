@@ -2,11 +2,14 @@
 
 {% block content %}
 
+
+
 <!-- Pas de cache, jointjs plante avec du cache -->	
 <meta http-equiv='cache-control' content='no-cache'>
 <meta http-equiv='expires' content='0'>
 <meta http-equiv='pragma' content='no-cache'>
 
+<!-- ^((?!cast_sender).)*$ -->
 
 <div class ="row">
 
@@ -33,6 +36,7 @@
 					<li role="separator" class="divider"></li>
 					<li><a>Ajouter une proposition existante</a></li>
 					<li><a data-toggle="modal" data-target="#modalNewprop">Créer une nouvelle proposition</a></li>
+					<li><a data-toggle="modal" data-target="#modalSyllogism">Créer un Syllogisme</a></li>
 
 				</ul>
 			</div>
@@ -59,6 +63,7 @@
 						<li><a data-toggle="modal" data-target="#modalConnect">Connecter à une proposition existante</a></li>
 						<li role="separator" class="divider"></li>
 						<li><a data-toggle="modal" data-target="#modalForum">Ouvrir le forum</a></li>
+						<li><a data-toggle="modal" data-target="#modalSummary">Voir le résumé</a></li>
 						<li role="separator" class="divider"></li>
 						<li><a data-toggle="modal" data-target="#modalEdit">Modifier la proposition</a></li>
 						<li role="separator" class="divider"></li>
@@ -113,7 +118,7 @@
 				<li role="presentation"><a href="#yt" aria-controls="yt" role="tab" data-toggle="tab">Youtube</a></li>
 			  </ul>
 
-				<div class="tab-content">
+				<div class="tab-content" id ="myTabs" >
 					<div role="tabpanel" class="tab-pane active" id="classic">	
 		  
 						<!-- Proposition initiale-->
@@ -349,8 +354,8 @@
 			
 			
 			  <ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#diag" aria-controls="home" role="tab" data-toggle="tab">Diagnostic</a></li>
-				<li role="presentation"><a href="#youtube" aria-controls="profile" role="tab" data-toggle="tab">Youtube</a></li>
+				<li role="presentation" class="active"><a href="#diag" aria-controls="diag" role="tab" data-toggle="tab">Diagnostic</a></li>
+				<li role="presentation"><a href="#youtube" aria-controls="youtube" role="tab" data-toggle="tab">Youtube</a></li>
 			  </ul>
 			
 			
@@ -444,6 +449,68 @@
 		  <div class="modal-body">		  
 				<div id = "removeLogic"></div>
 				<button id = "submitRemove" class="btn btn-primary">Supprimer le lien</button>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Supprimer un lien -->
+	<div class="modal fade" id="modalSyllogism" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalSyllogismLabel">Créer un syllogisme</h4>
+		  </div>
+		  <div class="modal-body">		  
+				<!-- Choix de prop-->
+				 <div class="form-group syllogismProps">	 
+					 <select id = 'majorPremise' class="form-control">
+					</select>			 
+				  </div>
+				  
+				 <div class="form-group syllogismProps">	 
+					 <select id = 'minorPremise' class="form-control">
+					</select>			 
+				  </div>				  
+
+				 <div class="form-group syllogismProps">	 
+					 <select id = 'syllogismConclusion' class="form-control">
+					</select>			 
+				  </div>
+				  
+				  <!-- Logique générée-->			
+					<div class="alert alert-info" role="alert" id="syllogismLogic"></div>
+				  
+				 <button id ="submitSyllogism" class="btn btn-primary">Créer le syllogisme</button> 
+				  
+				  
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
+	<!-- Voir le résumé -->
+	<div class="modal fade" id="modalSummary" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalSummaryLabel">Créer un syllogisme</h4>
+		  </div>
+		  <div class="modal-body">
+			<div>- Pour</div>
+			<div id="summaryPour"></div>
+			<div>- Contre</div>
+			<div id="summaryContre"></div>
+			<div>- Neutre</div>
+			<div id="summaryNeutre"></div>
 		  </div>
 		  <div class="modal-footer">
 			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
@@ -753,6 +820,7 @@ $( document ).ready(function() {
 			}, joint.shapes.basic.Generic.prototype.defaults)
 		});	
 		var el = new joint.shapes.basic.syllogism();
+		el.attr('./display', 'none');
 		graph.addCell(el);
 		
 		syls.push(el);
@@ -768,6 +836,24 @@ $( document ).ready(function() {
 		logic =  '<div>'+graph.getCell(propIdCorrespondance[id_left_prop]).get('text')+'</div>'
 				+'<div>'+typesData[type_id]['logic']+'</div>'
 				+'<div>'+graph.getCell(propIdCorrespondance[id_right_prop]).get('text')+'</div>'			
+		
+/*		joint.shapes.improvedLink = joint.dia.Link.extend({
+			labelMarkup: '<g class="label"><rect /><text /></g>'
+		});
+		
+		var impLi = new joint.shapes.improvedLink({
+			source: { id: propIdCorrespondance[id_left_prop] },
+			target: { id: propIdCorrespondance[id_right_prop] },
+			attrs: {},
+			id_link: id_link,
+			type_id : type_id,
+			link_autorname: autorname,
+			logic: logic,
+			labels : [
+			{ position: 0.5, attrs: { text: { text: 'impli', 'font-size': 12 } } }
+			]
+		});
+		graph.addCell(impLi) ; */
 		
 		var li = new joint.dia.Link({
 			source: { id: propIdCorrespondance[id_left_prop] },
@@ -958,6 +1044,12 @@ $( document ).ready(function() {
 							entry['fields']['ytend']
 						
 						);
+						
+			} else if (entry['fields']['nature'] == 'SY'){				
+				elem = addSyllogism(
+							entry['pk']
+						);						
+						
 			} else {		
 				elem = '';
 			}
@@ -1165,7 +1257,9 @@ $( document ).ready(function() {
 		//Test de la nature de cell:
 		//Si c'est un lien
 		if (cellView.model instanceof joint.dia.Link) {
-								
+			
+			console.log(cellView.getBBox().center());
+			
 			$("#actionLink").show();			
 			elem = graph.getCell(circleIdCorrespondance[cellView.model.get('id_link')]);
 			$("#logic").html(cellView.model.get('logic'));
@@ -1221,15 +1315,38 @@ $( document ).ready(function() {
 			
 			if (value.attr('./display') == ''){
 			
-				link = graph.getCell(linkIdCorrespondance[value.get('link_id')]);		
+/*				link = graph.getCell(linkIdCorrespondance[value.get('link_id')]);				
 				source_position = link.getSourceElement().get('position');
 				target_position = link.getTargetElement().get('position');
 				var middle_position = {};
 				middle_position['x'] = (source_position['x']+target_position['x'])/2+80;
 				middle_position['y'] = (source_position['y']+target_position['y'])/2+30;			
+				
+				value.position(middle_position['x'], middle_position['y']);   
+				
 
-				value.position(middle_position['x'], middle_position['y']);
-			
+				
+				
+				
+				x_pos = link.findView(paper).getBBox().center()['x'];
+				y_pos = link.findView(paper).getBBox().center()['y'];
+				value.position( x_pos, y_pos );
+				console.log(x_pos);
+				console.log(y_pos);				
+				*/
+				cell = graph.getCell(linkIdCorrespondance[value.get('link_id')]);				
+				
+		//		console.log(cell.findView(paper).getConnectionPoint());
+				
+				var srcId = cell.get('source').id || cell.previous('source').id;
+				var trgId = cell.get('target').id || cell.previous('target').id
+
+				var srcCenter = graph.getCell(srcId).getBBox().center();
+				var trgCenter = graph.getCell(trgId).getBBox().center();
+				var midPoint = g.line(srcCenter, trgCenter).midpoint();			
+					
+				value.position( midPoint['x'] - 20, midPoint['y'] - 20 );
+
 			}
 		});
 		
@@ -1283,8 +1400,14 @@ $( document ).ready(function() {
 	});
 // Modal ajouter réponse + lien:
 $(function(){	
+
+/*	$("#modalAnswer").draggable({
+		handle: ".modal-header"
+	});*/
+	
 	//Mettre le bon titre + init
 	$('#modalAnswer').on('show.bs.modal', function (event) {
+		$('#myTabs a:first').tab('show');
 		var modal = $(this);
 		modal.find('#ini_prop_answer').text(
 			graph.getCell(selectedElement).get('text')
@@ -1488,15 +1611,22 @@ $(function(){
 				},
 			success: function( data ) {	
 				$('#modalEdit').modal('hide');
-			//	console.log(data);
+
 				
 				updateCorrespondances()				
 				JSON.parse(data).forEach(function(entry) {
 					if (entry['model']=='gdpcore.proposition'){						
 						edit_cell = graph.getCell(propIdCorrespondance[entry['pk']]);
-						edit_cell.set('text', entry['fields']['text']);
-						edit_cell.set('content', entry['pk'] + ' - ' + entry['fields']['text']);
-
+										
+						var wraptext = joint.util.breakText(entry['fields']['text'], {
+							width: 145,
+							height: 90,
+							attrs: {		
+								'text-anchor': 'middle'		
+							}
+						});	
+						
+						edit_cell.attr('.word1/text', wraptext);
 					}
 					
 					updateCorrespondances()
@@ -1546,6 +1676,8 @@ $(function(){
 			success: function( data ) {	
 				$('#modalNewprop').modal('hide');
 			//	console.log(data);
+			
+				$("#propnew").val('');
 				
 				updateCorrespondances()				
 				JSON.parse(data).forEach(function(entry) {
@@ -1774,6 +1906,8 @@ $(function(){
 				lin.remove();
 				cir.remove();
 				
+				selectedElement = '';
+				
 				var index = circles.indexOf(cir);
 				if (index > -1) {
 					circles.splice(index, 1);
@@ -1784,6 +1918,144 @@ $(function(){
 			
 		});
 	});			
+});
+//Modal syllogism
+$(function(){
+
+	//Mettre les choix
+	$('#modalSyllogism').on('show.bs.modal', function (event) {
+		var modal = $(this);
+		
+		$('#majorPremise').html('');
+		$('#minorPremise').html('');
+		$('#syllogismConclusion').html('');
+		
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {	
+			if (
+				entry.attr("./display") == ''
+				&& entry.get('text')
+				){
+				$('#majorPremise').append('<option value='+entry.get('id_prop')+'>'+entry.get('text')+'</option>');
+				$('#minorPremise').append('<option value='+entry.get('id_prop')+'>'+entry.get('text')+'</option>');
+				$('#syllogismConclusion').append('<option value='+entry.get('id_prop')+'>'+entry.get('text')+'</option>');
+			}
+		});
+				
+	});
+	
+	// Mettre la bonne logique
+	$( ".syllogismProps" ).change(function() {
+
+		$( "#syllogismLogic" ).html( 
+					"<div>"+$( "#majorPremise option:Selected" ).text()+"</div>"
+					+"<div>Or</div>"
+					+"<div>"+$( "#minorPremise option:Selected" ).text()+"</div>" 
+					+"<div>Donc</div>"
+					+"<div>"+$( "#syllogismConclusion option:Selected" ).text()+"</div>"
+							);
+	});	
+	
+	//Envoyer la requete
+	$("#submitSyllogism").click(function() {
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_newsyllogism/',
+			data: { 
+					majorPremise: $("#majorPremise").val(),
+					minorPremise: $("#minorPremise").val(),					
+					syllogismConclusion: $("#syllogismConclusion").val(),	
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {		
+				$('#modalSyllogism').modal('hide')
+				
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='gdpcore.proposition'){						
+						el = fromJsonAddProp(entry);
+						el.attr('./display', '');
+					}
+		
+					updateCorrespondances()
+										
+					if (entry['model']=='gdpcore.link'){			
+						fromJsonAddLink(entry);
+					}
+				});
+			}
+		});
+	});
+
+});
+//Modal summary
+$(function(){
+	//Mettre les choix
+	$('#modalSummary').on('show.bs.modal', function (event) {
+		var modal = $(this);
+		
+		$('#summaryPour').html('');
+		$('#summaryContre').html('');
+		$('#summaryNeutre').html('');
+				
+		cell = graph.getCell(selectedElement);
+		links = graph.getConnectedLinks(cell, {inbound: true});
+
+		pours = ['donc', 'exemple']
+		contres = ['concurrence', 'contre-exemple']
+		
+		links.forEach(function(entry){
+			voisin = entry.getSourceElement();				
+			if (entry.attr('./display') == '') {
+				if ( ( $.inArray(typesData[entry.get('type_id')]['type'] , pours) > -1) ) {							
+					$("#summaryPour").append(
+						"<div>"
+							+typesData[entry.get('type_id')]['inverse']+' '
+							+voisin.get('text')
+						+'</div>');	
+				} else if ( ( $.inArray(typesData[entry.get('type_id')]['type'] , contres) > -1) ) {				
+					$("#summaryContre").append(
+						"<div>"
+							+typesData[entry.get('type_id')]['inverse']+' '
+							+voisin.get('text')
+						+'</div>');																	
+				} else {			
+					$("#summaryNeutre").append(
+						"<div>"
+							+typesData[entry.get('type_id')]['inverse']+' '
+							+voisin.get('text')
+						+'</div>');																
+				}
+			};
+		});
+
+		links = graph.getConnectedLinks(cell, {outbound: true});
+		links.forEach(function(entry){
+			voisin = entry.getTargetElement();
+			if (entry.attr('./display') == '') {	
+				if ( ( $.inArray(typesData[entry.get('type_id')]['type'] , pours) > -1) ) {							
+					$("#summaryPour").append(
+						"<div>"
+							+typesData[entry.get('type_id')]['type']+' '
+							+voisin.get('text')
+						+'</div>');	
+				} else if ( ( $.inArray(typesData[entry.get('type_id')]['type'] , contres) > -1) ) {				
+					$("#summaryContre").append(
+						"<div>"
+							+typesData[entry.get('type_id')]['type']+' '
+							+voisin.get('text')
+						+'</div>');																	
+				} else {			
+					$("#summaryNeutre").append(
+						"<div>"
+							+typesData[entry.get('type_id')]['type']+' '
+							+voisin.get('text')
+						+'</div>');																
+				}	
+			};
+		});
+	});
+		
 });
 
 //NAV PAPER	

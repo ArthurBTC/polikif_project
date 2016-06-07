@@ -1123,6 +1123,61 @@ def new_graph(request):
 	graph.save()
 	
 	return HttpResponseRedirect(reverse('final_viewer', args=(graph.pk,)))
+
+def ajax_newsyllogism(request):
+	
+	syl = Proposition(
+		autor = request.user,
+		text = '&',
+		nature = 'SY',
+		cycle = Cycle.objects.get(pk=1),	
+		creation_date = datetime.now(),
+		modification_date = datetime.now(),	
+	)
+	
+	syl.save();
+	
+	majorLink = Link(
+		autor = request.user,
+		creation_date = datetime.now(),
+		modification_date = datetime.now(),
+		nature = 'Syl',
+		type = LinkType.objects.get(type = 'syllogisme'),
+		cycle = Cycle.objects.get(pk=1),
+		left_prop = Proposition.objects.get(pk=request.POST['majorPremise']),
+		right_prop = syl		
+	)
+	
+	majorLink.save()
+	
+	minorLink = Link(
+		autor = request.user,
+		creation_date = datetime.now(),
+		modification_date = datetime.now(),
+		nature = 'Syl',
+		type = LinkType.objects.get(type = 'syllogisme'),
+		cycle = Cycle.objects.get(pk=1),
+		left_prop = Proposition.objects.get(pk= request.POST['minorPremise']),
+		right_prop = syl
+	)
+	
+	minorLink.save()
+	
+	conclusionLink = Link(
+		autor = request.user,
+		creation_date = datetime.now(),
+		modification_date = datetime.now(),
+		nature = 'Syl',
+		type = LinkType.objects.get(type = 'donc'),
+		cycle = Cycle.objects.get(pk=1),
+		left_prop = syl,
+		right_prop = Proposition.objects.get(pk=request.POST['syllogismConclusion'])
+	)
+	
+	conclusionLink.save()
+	
+	all_items = list([syl]) + list([majorLink]) + list([minorLink]) + list([conclusionLink])
+	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
 	
 	
 def init(request):
