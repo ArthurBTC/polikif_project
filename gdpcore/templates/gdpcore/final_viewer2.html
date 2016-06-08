@@ -1236,15 +1236,18 @@ $( document ).ready(function() {
 
 		function highlighter(el){
 			if (selectedElement != '') {
-				graph.getCell(selectedElement).attr('rect/stroke', 'black');
-				graph.getCell(selectedElement).attr('rect/stroke-width', 0);
-				graph.getCell(selectedElement).attr('circle/stroke', 'black');
-				graph.getCell(selectedElement).attr('circle/stroke-width', 0);				
+				selected = graph.getCell(selectedElement);
+				selected.attr('rect/stroke', 'black');
+				selected.attr('rect/stroke-width', 0);
+				selected.attr('circle/stroke', 'black');
+				selected.attr('circle/stroke-width', 0);
+				selected.resize(200,100);				
 			}
 			el.attr('circle/stroke',colors['HL']);
 			el.attr('circle/stroke-width', 4);
 			el.attr('rect/stroke',colors['HL']);
-			el.attr('rect/stroke-width', 4);  
+			el.attr('rect/stroke-width', 4);
+			el.resize(200,200);
 		};
 	
 		$("#actionProp").hide();
