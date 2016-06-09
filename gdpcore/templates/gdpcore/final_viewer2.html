@@ -34,7 +34,7 @@
 					<li><a>Partager le graphique</a></li>
 					<li><a>Ouvrir un nouveau graphique</a></li>
 					<li role="separator" class="divider"></li>
-					<li><a>Ajouter une proposition existante</a></li>
+					<li><a data-toggle="modal" data-target="#modalExistingprop">Ajouter une proposition existante</a></li>
 					<li><a data-toggle="modal" data-target="#modalNewprop">Créer une nouvelle proposition</a></li>
 					<li><a data-toggle="modal" data-target="#modalSyllogism">Créer un Syllogisme</a></li>
 
@@ -150,6 +150,8 @@
 						  
 						<!-- Recherche propositions similaires-->
 						  <button type="button" class="btn btn-info" id="recherche_but">Rechercher propositions similaires</button> 
+						  
+						  <div id = 'existingPropsAnswer_modalAnswer'></div>
 						  
 						  <div class="checkbox">
 							<label>
@@ -519,7 +521,36 @@
 	  </div>
 	</div>
 	
+	<!-- Proposition existante -->
+	<div class="modal fade" id="modalExistingprop" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalExistingpropLabel">Ajouter une proposition existante</h4>
+		  </div>
+		  <div class="modal-body">
+		  
+				<div class="form-group">
+					<label for="Implication">Mots clefs</label>
+					<input type="text" class="form-control" id="existingInput" name='existingInput' placeholder="Mots clefs..">
+				</div>
+				<button type="button" id = "existingSeek" class="btn btn-default">Chercher</button>
+				
+				<div id = 'existingPropsAnswer'></div>
+	
+				<button type="button" id = "existingSubmit" class="btn btn-default">Ajouter</button>
+				
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
 		
+
+	
 <!-- pour la recherche de propositions similaires-->
 	<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
 	{% csrf_token %}
@@ -1053,8 +1084,11 @@ $( document ).ready(function() {
 			} else {		
 				elem = '';
 			}
+			return elem;	
+		} else {
+			return null
 		}
-	return elem;
+	
 	};
 
 	//Ajouter des links depuis un Jsons envoyé par le serveur
@@ -1066,9 +1100,11 @@ $( document ).ready(function() {
 					entry['fields']['right_prop'], 
 					entry['fields']['type'], 
 					authorList[entry['fields']['autor']]
-					);			
+					);	
+			return li
+		} else {
+			return null;
 		}
-	return li
 	};
 		
 	//Firstload : main
@@ -1192,7 +1228,7 @@ $( document ).ready(function() {
 				//  Créer tous les nouveux liens (visibilité conditionnelle)
 				JSON.parse(data).forEach(function(entry) {
 					if (!(entry['pk'] in linkIdCorrespondance)){
-						fromJsonAddLink();
+						fromJsonAddLink(entry);
 					}		
 				});
 			}
@@ -1240,14 +1276,47 @@ $( document ).ready(function() {
 				selected.attr('rect/stroke', 'black');
 				selected.attr('rect/stroke-width', 0);
 				selected.attr('circle/stroke', 'black');
-				selected.attr('circle/stroke-width', 0);
-				selected.resize(200,100);				
+				selected.attr('circle/stroke-width', 0);							
+				selected.resize(200,100);	
+				var wraptext = joint.util.breakText(selected.get('text'), {
+					width: 145,
+					height: 90,
+					attrs: {		
+						'text-anchor': 'middle'		
+					}
+				});					
+				selected.attr('.word1/text', wraptext);
+				selected.attr('.word2/transform', 'translate(165,82)');							
 			}
+							
 			el.attr('circle/stroke',colors['HL']);
 			el.attr('circle/stroke-width', 4);
 			el.attr('rect/stroke',colors['HL']);
 			el.attr('rect/stroke-width', 4);
-			el.resize(200,200);
+						
+			if (fulltext = el.get('text') ){
+				heightPrediction = fulltext.length*1.1;
+			} else {
+				heightPrediction = 0;
+			}
+			if (heightPrediction < 100) {
+					heightPrediction = 100
+				}
+			
+			var wraptext = joint.util.breakText(fulltext, {
+				width: 145,
+				height: heightPrediction,
+				attrs: {		
+					'text-anchor': 'middle'		
+				}
+			});	
+			
+			el.resize(200, heightPrediction);		
+			deltaHeight = heightPrediction-20;			
+			el.attr('.word1/text', wraptext);	
+			el.attr('.word2/transform', 'translate(165,'+deltaHeight+')');
+			
+			
 		};
 	
 		$("#actionProp").hide();
@@ -1318,37 +1387,26 @@ $( document ).ready(function() {
 			
 			if (value.attr('./display') == ''){
 			
-/*				link = graph.getCell(linkIdCorrespondance[value.get('link_id')]);				
-				source_position = link.getSourceElement().get('position');
-				target_position = link.getTargetElement().get('position');
-				var middle_position = {};
-				middle_position['x'] = (source_position['x']+target_position['x'])/2+80;
-				middle_position['y'] = (source_position['y']+target_position['y'])/2+30;			
-				
-				value.position(middle_position['x'], middle_position['y']);   
-				
-
-				
-				
-				
-				x_pos = link.findView(paper).getBBox().center()['x'];
-				y_pos = link.findView(paper).getBBox().center()['y'];
-				value.position( x_pos, y_pos );
-				console.log(x_pos);
-				console.log(y_pos);				
-				*/
 				cell = graph.getCell(linkIdCorrespondance[value.get('link_id')]);				
-				
-		//		console.log(cell.findView(paper).getConnectionPoint());
-				
-				var srcId = cell.get('source').id || cell.previous('source').id;
+								
+/*				var srcId = cell.get('source').id || cell.previous('source').id;
 				var trgId = cell.get('target').id || cell.previous('target').id
 
 				var srcCenter = graph.getCell(srcId).getBBox().center();
 				var trgCenter = graph.getCell(trgId).getBBox().center();
-				var midPoint = g.line(srcCenter, trgCenter).midpoint();			
-					
+				var midPoint = g.line(srcCenter, trgCenter).midpoint();		 
 				value.position( midPoint['x'] - 20, midPoint['y'] - 20 );
+
+*/	
+	
+				var linkView = paper.findViewByModel(cell);
+				var connectionEl = linkView.$('.connection')[0];
+				var connectionLength = connectionEl.getTotalLength();
+
+				var position = connectionEl.getPointAtLength(connectionLength/2);
+				
+
+				value.position( position['x'] - 20, position['y'] - 20 );
 
 			}
 		});
@@ -1430,10 +1488,38 @@ $(function(){
 	// Recherche propositions similaires
 	$("#recherche_but").click(function() {
 
-		console.log($( "#newprop" ).val())
-		
-	  $('#new_window_parameter_1').val($( "#newprop" ).val());
-	  $('#invisible_form').submit();
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/getSimil/',
+			data: { 
+					text: $("#newprop").val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {		
+				
+				$("#existingPropsAnswer_modalAnswer").html('');
+				
+				data['hits']['hits'].forEach(function(entry) {
+
+					$("#existingPropsAnswer_modalAnswer").append(
+					
+						'<div class="radio"><label>'
+							+'<input type="radio" name="optionsExisting" value="'+entry['_id']+'">'
+								+entry['_source']['text']+' '
+								+entry['_score']					
+						+'</label"></div>'
+						
+					);	
+				});
+				
+				if (data['hits']['total'] == 0 ) {				
+					$("#existingPropsAnswer_modalAnswer").append('Pas de résultat');
+				}
+			}
+		});		
+	
+	
+	
 	});	
 	
 	//Si tout est bon, on lance la demande, et on modifie le graph avec la réponse
@@ -2060,6 +2146,81 @@ $(function(){
 	});
 		
 });
+//Modal existingprop
+$(function(){
+
+	//Envoyer la requete
+	$("#existingSeek").click(function() {
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/getSimil/',
+			data: { 
+					text: $("#existingInput").val(),
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {		
+				
+				$("#existingPropsAnswer").html('');
+				
+				data['hits']['hits'].forEach(function(entry) {
+
+					$("#existingPropsAnswer").append(
+					
+						'<div class="radio"><label>'
+							+'<input type="radio" name="optionsExisting" value="'+entry['_id']+'">'
+								+entry['_source']['text']+' '
+								+entry['_score']					
+						+'</label"></div>'
+						
+					);	
+				});
+			}
+		});
+	});
+	
+	$("#existingSubmit").click(function() {
+			
+			
+			
+		id_prop = $('input[name=optionsExisting]:checked').val();	
+			
+		$.ajax({
+			url: '/gdpcore/ajax_propenvir/'+id_prop,
+			dataType: "html",
+			success: function (data) {	
+			
+				console.log(data);
+				
+				$('#modalExistingprop').modal('hide')	
+				//Créer le catalogue d'auteurs
+				JSON.parse(data).forEach(function(entry) {
+					if (entry['model']=='auth.user'){
+						authorList[entry['pk']] = entry['fields']['username'];
+					}
+				});				
+				
+				// Créer toutes les nouvelles props (invisibles)
+				JSON.parse(data).forEach(function(entry) {
+					if (!(entry['pk'] in propIdCorrespondance)) {
+						fromJsonAddProp(entry);
+					}
+				});
+				
+				updateCorrespondances()	
+				graph.getCell(propIdCorrespondance[id_prop]).attr('./display', '');
+										
+				//  Créer tous les nouveux liens (visibilité conditionnelle)
+				JSON.parse(data).forEach(function(entry) {
+					if (!(entry['pk'] in linkIdCorrespondance)){
+						fromJsonAddLink(entry);
+					}		
+				});
+			}
+		});	
+	});	
+	
+});
 
 //NAV PAPER	
 	//Initial Parameters
@@ -2130,6 +2291,9 @@ $(function(){
 		console.log(JSON.stringify(graph.getCells()));
 		
 	});
+	
+
+	
 });
 
 

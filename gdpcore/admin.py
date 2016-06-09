@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cycle, Proposition, LinkType, Link, Comment, Notification, Implication, Graph, Elemgraph, UserProfile
+from .models import Cycle, Proposition, LinkType, Link, Comment, Notification, Implication, Graph, Elemgraph, UserProfile, CommentGraph
 
 class CycleAdmin(admin.ModelAdmin):
     # ...
@@ -34,7 +34,10 @@ class ElemgraphAdmin(admin.ModelAdmin):
 	
 class UserProfileAdmin(admin.ModelAdmin):
 	list_display = ('id', 'user', 'picture')
-
+	
+class CommentGraphAdmin(admin.ModelAdmin):
+	list_display = ('id', 'graph', 'text', 'author')
+	
 admin.site.register(Cycle, CycleAdmin)
 admin.site.register(Proposition, PropositionAdmin)
 admin.site.register(LinkType, LinkTypeAdmin)
@@ -45,3 +48,4 @@ admin.site.register(Implication, ImplicationAdmin)
 admin.site.register(Graph, GraphAdmin)
 admin.site.register(Elemgraph, ElemgraphAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
+admin.site.register(CommentGraph, CommentGraphAdmin)

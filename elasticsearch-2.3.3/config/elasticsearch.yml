@@ -92,3 +92,5 @@
 # Require explicit names when deleting indices:
 #
 # action.destructive_requires_name: true
+
+indices.fielddata.cache.size:  20%

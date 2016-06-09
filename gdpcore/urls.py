@@ -4,6 +4,9 @@ from . import views
 
 urlpatterns = [
     url(r'^index', views.index, name='index'),
+	url(r'^esAddProp', views.esAddProp, name='esAddProp'),
+	
+	url(r'^getSimil', views.getSimil, name='getSimil'),
 	
 	url(r'^init', views.init, name='init'),
 	
@@ -50,8 +53,8 @@ urlpatterns = [
 	url(r'^ajax_linkattack', views.ajax_linkattack, name='ajax_linkattack'),
 	url(r'^ajax_linkremove', views.ajax_linkremove, name='ajax_linkremove'),
 	url(r'^ajax_quicksave', views.ajax_quicksave, name='ajax_quicksave'),	
-	url(r'^ajax_newsyllogism', views.ajax_newsyllogism, name='ajax_newsyllogism'),	
-	
+	url(r'^ajax_newsyllogism', views.ajax_newsyllogism, name='ajax_newsyllogism'),
+	url(r'^ajax_addcommentgraph', views.ajax_addcommentgraph, name='ajax_addcommentgraph'),
 	url(r'^new_graph', views.new_graph, name='new_graph'),	
 	
 	url(r'^register', views.register, name='register'),	

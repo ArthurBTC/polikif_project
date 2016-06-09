@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Proposition, LinkType, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph
+from .models import Proposition, LinkType, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph, CommentGraph
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models import F
@@ -12,9 +12,67 @@ from django.contrib.auth.decorators import login_required
 from difflib import SequenceMatcher
 from django.core import serializers
 import json
+import requests
 from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime  
+
+
+def esAddProp(request):
+	
+	indexname = 'newindex'
+
+	# mapping_json = json.dumps(	
+		# {
+		  # "mappings": {
+			# "proposition" : {
+			  # "properties" : {
+				# "text" : {
+				  # "type" :    "string",
+				  # "analyzer": "french"
+				# },
+				# "user_id" : {
+				  # "type" :   "long"
+				# }
+			  # }
+			# }
+		  # }
+		# }
+	# )
+	
+	# r = requests.put('http://localhost:9200/'+indexname, mapping_json)
+	
+	props = Proposition.objects.all()
+	
+	for prop in props:
+		data =  {					
+					"text":   prop.text,
+					"user_id": prop.autor.pk 
+				}	
+	
+		data_json = json.dumps(data)	
+	
+		r = requests.put('http://localhost:9200/'+indexname+'/proposition/'+str(prop.pk), data_json)
+		
+		
+	return HttpResponse(r)
+	
+@csrf_exempt	
+def getSimil(request):
+
+	# j = json.loads(request.body.decode('utf-8'))
+	
+	data =  {	
+				"query": { "match": { "text": request.POST["text"] } }
+			}	
+
+	data_json = json.dumps(data)	
+	
+	r = requests.post('http://localhost:9200/newindex/proposition/_search', data_json)
+	
+	
+	return JsonResponse( r.json() )
+	
 
 def register(request):
     if request.method == 'POST':
@@ -27,8 +85,7 @@ def register(request):
     return render(request, "registration/register.html", {
         'form': form,
     })
-
-
+	
 def index(request):
 	return render(request,'gdpcore/index.html')
 	
@@ -658,6 +715,7 @@ def incremental_viewer(request, id_prop):
 @login_required
 def final_viewer(request, id_graph):
 	graph = Graph.objects.get(id = id_graph)
+	comments_graph = CommentGraph.objects.filter(graph = graph)
 	
 	elems = Elemgraph.objects.filter(graph = graph)
 
@@ -700,14 +758,15 @@ def final_viewer(request, id_graph):
 	link_types = LinkType.objects.all()
 	json_linktypes = serializers.serialize('json', link_types)
 	
-	return render(request,'gdpcore/final_viewer2.html',{
+	return render(request,'gdpcore/final_viewer3.html',{
 					'graph': graph,
 					'link_types': link_types,
 					'json_linktypes': json_linktypes,
 					'props': props,
 					'attributes': attributes, 
 					'links':links,
-					'implications': implications})
+					'implications': implications,
+					'comments_graph': comments_graph})
 	
 def ajax_propenvir(request, id_prop):
 
@@ -1178,7 +1237,21 @@ def ajax_newsyllogism(request):
 	
 	all_items = list([syl]) + list([majorLink]) + list([minorLink]) + list([conclusionLink])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
+
+def ajax_addexistingprop(request):
 	
+	main_prop = Proposition.objects.get(pk = request.POST['id'])
+	
+def	ajax_addcommentgraph(request):
+
+	comment = CommentGraph(
+		graph = Graph.objects.get(pk = request.POST['graph_id']),
+		author = request.user,
+		text = request.POST['text'],
+		creation_date = datetime.now()		
+	)
+	comment.save()
+	return JsonResponse(serializers.serialize('json', [comment]), safe = False)
 	
 def init(request):
 

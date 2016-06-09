@@ -1,0 +1,109 @@
+[2016-06-09 00:14:42,677][INFO ][node                     ] [Fantasia] stopping ...
+[2016-06-09 00:14:42,776][INFO ][node                     ] [Fantasia] stopped
+[2016-06-09 00:14:42,777][INFO ][node                     ] [Fantasia] closing ...
+[2016-06-09 00:14:42,782][INFO ][node                     ] [Fantasia] closed
+[2016-06-09 11:05:00,655][WARN ][bootstrap                ] jvm uses the client vm, make sure to run `java` with the server vm for best performance by adding `-server` to the command line
+[2016-06-09 11:05:00,871][INFO ][node                     ] [Negasonic Teenage Warhead] version[2.3.3], pid[7240], build[218bdf1/2016-05-17T15:40:04Z]
+[2016-06-09 11:05:00,873][INFO ][node                     ] [Negasonic Teenage Warhead] initializing ...
+[2016-06-09 11:05:01,357][INFO ][plugins                  ] [Negasonic Teenage Warhead] modules [reindex, lang-expression, lang-groovy], plugins [], sites []
+[2016-06-09 11:05:01,378][INFO ][env                      ] [Negasonic Teenage Warhead] using [1] data paths, mounts [[Boot (c:)]], net usable_space [1.5tb], net total_space [1.7tb], spins? [unknown], types [NTFS]
+[2016-06-09 11:05:01,380][INFO ][env                      ] [Negasonic Teenage Warhead] heap size [989.8mb], compressed ordinary object pointers [unknown]
+[2016-06-09 11:05:03,737][INFO ][node                     ] [Negasonic Teenage Warhead] initialized
+[2016-06-09 11:05:03,738][INFO ][node                     ] [Negasonic Teenage Warhead] starting ...
+[2016-06-09 11:05:04,062][INFO ][transport                ] [Negasonic Teenage Warhead] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2016-06-09 11:05:04,099][INFO ][discovery                ] [Negasonic Teenage Warhead] elasticsearch/jvwW-bqNRc2E2rabVBGuFw
+[2016-06-09 11:05:08,136][INFO ][cluster.service          ] [Negasonic Teenage Warhead] new_master {Negasonic Teenage Warhead}{jvwW-bqNRc2E2rabVBGuFw}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-join(elected_as_master, [0] joins received)
+[2016-06-09 11:05:08,395][INFO ][http                     ] [Negasonic Teenage Warhead] publish_address {127.0.0.1:9200}, bound_addresses {127.0.0.1:9200}, {[::1]:9200}
+[2016-06-09 11:05:08,397][INFO ][node                     ] [Negasonic Teenage Warhead] started
+[2016-06-09 11:05:08,574][INFO ][gateway                  ] [Negasonic Teenage Warhead] recovered [6] indices into cluster_state
+[2016-06-09 11:05:09,949][INFO ][cluster.routing.allocation] [Negasonic Teenage Warhead] Cluster health status changed from [RED] to [YELLOW] (reason: [shards started [[megacorp][1]] ...]).
+[2016-06-09 12:10:28,573][INFO ][node                     ] [Negasonic Teenage Warhead] stopping ...
+[2016-06-09 12:10:28,665][INFO ][node                     ] [Negasonic Teenage Warhead] stopped
+[2016-06-09 12:10:28,666][INFO ][node                     ] [Negasonic Teenage Warhead] closing ...
+[2016-06-09 12:10:28,674][INFO ][node                     ] [Negasonic Teenage Warhead] closed
+[2016-06-09 12:10:43,952][WARN ][bootstrap                ] jvm uses the client vm, make sure to run `java` with the server vm for best performance by adding `-server` to the command line
+[2016-06-09 12:10:44,168][INFO ][node                     ] [Timberius] version[2.3.3], pid[4988], build[218bdf1/2016-05-17T15:40:04Z]
+[2016-06-09 12:10:44,168][INFO ][node                     ] [Timberius] initializing ...
+[2016-06-09 12:10:44,650][INFO ][plugins                  ] [Timberius] modules [reindex, lang-expression, lang-groovy], plugins [], sites []
+[2016-06-09 12:10:44,670][INFO ][env                      ] [Timberius] using [1] data paths, mounts [[Boot (c:)]], net usable_space [1.5tb], net total_space [1.7tb], spins? [unknown], types [NTFS]
+[2016-06-09 12:10:44,672][INFO ][env                      ] [Timberius] heap size [989.8mb], compressed ordinary object pointers [unknown]
+[2016-06-09 12:10:46,205][INFO ][node                     ] [Timberius] initialized
+[2016-06-09 12:10:46,206][INFO ][node                     ] [Timberius] starting ...
+[2016-06-09 12:10:46,476][INFO ][transport                ] [Timberius] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2016-06-09 12:10:46,482][INFO ][discovery                ] [Timberius] elasticsearch/6pW6jhFWSiqz8F1yq19mtA
+[2016-06-09 12:10:47,754][INFO ][node                     ] [Timberius] stopping ...
+[2016-06-09 12:10:47,773][INFO ][node                     ] [Timberius] stopped
+[2016-06-09 12:10:47,774][INFO ][node                     ] [Timberius] closing ...
+[2016-06-09 12:10:47,776][INFO ][node                     ] [Timberius] closed
+[2016-06-09 13:32:56,913][WARN ][bootstrap                ] jvm uses the client vm, make sure to run `java` with the server vm for best performance by adding `-server` to the command line
+[2016-06-09 13:32:57,119][INFO ][node                     ] [Nightside] version[2.3.3], pid[4608], build[218bdf1/2016-05-17T15:40:04Z]
+[2016-06-09 13:32:57,121][INFO ][node                     ] [Nightside] initializing ...
+[2016-06-09 13:32:57,600][INFO ][plugins                  ] [Nightside] modules [reindex, lang-expression, lang-groovy], plugins [], sites []
+[2016-06-09 13:32:57,620][INFO ][env                      ] [Nightside] using [1] data paths, mounts [[Boot (c:)]], net usable_space [1.5tb], net total_space [1.7tb], spins? [unknown], types [NTFS]
+[2016-06-09 13:32:57,622][INFO ][env                      ] [Nightside] heap size [989.8mb], compressed ordinary object pointers [unknown]
+[2016-06-09 13:32:59,677][INFO ][node                     ] [Nightside] initialized
+[2016-06-09 13:32:59,678][INFO ][node                     ] [Nightside] starting ...
+[2016-06-09 13:33:00,076][INFO ][transport                ] [Nightside] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2016-06-09 13:33:00,105][INFO ][discovery                ] [Nightside] elasticsearch/JKkb_45QStqSQTg5zRhiWw
+[2016-06-09 13:33:04,142][INFO ][cluster.service          ] [Nightside] new_master {Nightside}{JKkb_45QStqSQTg5zRhiWw}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-join(elected_as_master, [0] joins received)
+[2016-06-09 13:33:04,323][INFO ][gateway                  ] [Nightside] recovered [6] indices into cluster_state
+[2016-06-09 13:33:04,406][INFO ][http                     ] [Nightside] publish_address {127.0.0.1:9200}, bound_addresses {127.0.0.1:9200}, {[::1]:9200}
+[2016-06-09 13:33:04,408][INFO ][node                     ] [Nightside] started
+[2016-06-09 13:33:05,451][INFO ][cluster.routing.allocation] [Nightside] Cluster health status changed from [RED] to [YELLOW] (reason: [shards started [[megacorp][3], [megacorp][1]] ...]).
+[2016-06-09 15:27:02,085][INFO ][node                     ] [Nightside] stopping ...
+[2016-06-09 15:27:02,179][INFO ][node                     ] [Nightside] stopped
+[2016-06-09 15:27:02,181][INFO ][node                     ] [Nightside] closing ...
+[2016-06-09 15:27:02,186][INFO ][node                     ] [Nightside] closed
+[2016-06-09 15:27:09,523][WARN ][bootstrap                ] jvm uses the client vm, make sure to run `java` with the server vm for best performance by adding `-server` to the command line
+[2016-06-09 15:27:09,741][INFO ][node                     ] [N'Gabthoth] version[2.3.3], pid[5784], build[218bdf1/2016-05-17T15:40:04Z]
+[2016-06-09 15:27:09,742][INFO ][node                     ] [N'Gabthoth] initializing ...
+[2016-06-09 15:27:10,216][INFO ][plugins                  ] [N'Gabthoth] modules [reindex, lang-expression, lang-groovy], plugins [], sites []
+[2016-06-09 15:27:10,236][INFO ][env                      ] [N'Gabthoth] using [1] data paths, mounts [[Boot (c:)]], net usable_space [1.5tb], net total_space [1.7tb], spins? [unknown], types [NTFS]
+[2016-06-09 15:27:10,239][INFO ][env                      ] [N'Gabthoth] heap size [989.8mb], compressed ordinary object pointers [unknown]
+[2016-06-09 15:27:11,770][INFO ][node                     ] [N'Gabthoth] initialized
+[2016-06-09 15:27:11,771][INFO ][node                     ] [N'Gabthoth] starting ...
+[2016-06-09 15:27:12,024][INFO ][transport                ] [N'Gabthoth] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2016-06-09 15:27:12,029][INFO ][discovery                ] [N'Gabthoth] elasticsearch/kc0hZz5LSR2mCT6DnIgCPw
+[2016-06-09 15:27:16,053][INFO ][cluster.service          ] [N'Gabthoth] new_master {N'Gabthoth}{kc0hZz5LSR2mCT6DnIgCPw}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-join(elected_as_master, [0] joins received)
+[2016-06-09 15:27:16,184][INFO ][gateway                  ] [N'Gabthoth] recovered [6] indices into cluster_state
+[2016-06-09 15:27:16,290][INFO ][http                     ] [N'Gabthoth] publish_address {127.0.0.1:9200}, bound_addresses {127.0.0.1:9200}, {[::1]:9200}
+[2016-06-09 15:27:16,293][INFO ][node                     ] [N'Gabthoth] started
+[2016-06-09 15:27:17,105][INFO ][cluster.routing.allocation] [N'Gabthoth] Cluster health status changed from [RED] to [YELLOW] (reason: [shards started [[megacorp][3], [megacorp][3], [megacorp][4], [megacorp][2], [megacorp][1]] ...]).
+[2016-06-09 15:38:41,766][INFO ][node                     ] [N'Gabthoth] stopping ...
+[2016-06-09 15:38:41,836][INFO ][node                     ] [N'Gabthoth] stopped
+[2016-06-09 15:38:41,841][INFO ][node                     ] [N'Gabthoth] closing ...
+[2016-06-09 15:38:41,841][INFO ][node                     ] [N'Gabthoth] closed
+[2016-06-09 15:38:50,756][WARN ][bootstrap                ] jvm uses the client vm, make sure to run `java` with the server vm for best performance by adding `-server` to the command line
+[2016-06-09 15:38:50,966][INFO ][node                     ] [Alfie O'Meggan] version[2.3.3], pid[13416], build[218bdf1/2016-05-17T15:40:04Z]
+[2016-06-09 15:38:50,966][INFO ][node                     ] [Alfie O'Meggan] initializing ...
+[2016-06-09 15:38:51,449][INFO ][plugins                  ] [Alfie O'Meggan] modules [reindex, lang-expression, lang-groovy], plugins [], sites []
+[2016-06-09 15:38:51,469][INFO ][env                      ] [Alfie O'Meggan] using [1] data paths, mounts [[Boot (c:)]], net usable_space [1.5tb], net total_space [1.7tb], spins? [unknown], types [NTFS]
+[2016-06-09 15:38:51,471][INFO ][env                      ] [Alfie O'Meggan] heap size [989.8mb], compressed ordinary object pointers [unknown]
+[2016-06-09 15:38:53,216][INFO ][node                     ] [Alfie O'Meggan] initialized
+[2016-06-09 15:38:53,217][INFO ][node                     ] [Alfie O'Meggan] starting ...
+[2016-06-09 15:38:53,466][INFO ][transport                ] [Alfie O'Meggan] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2016-06-09 15:38:53,471][INFO ][discovery                ] [Alfie O'Meggan] elasticsearch/ajUFwQjHREu-62rdt5-6jA
+[2016-06-09 15:38:57,500][INFO ][cluster.service          ] [Alfie O'Meggan] new_master {Alfie O'Meggan}{ajUFwQjHREu-62rdt5-6jA}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-join(elected_as_master, [0] joins received)
+[2016-06-09 15:38:57,625][INFO ][gateway                  ] [Alfie O'Meggan] recovered [6] indices into cluster_state
+[2016-06-09 15:38:57,740][INFO ][http                     ] [Alfie O'Meggan] publish_address {127.0.0.1:9200}, bound_addresses {127.0.0.1:9200}, {[::1]:9200}
+[2016-06-09 15:38:57,742][INFO ][node                     ] [Alfie O'Meggan] started
+[2016-06-09 15:38:58,518][INFO ][cluster.routing.allocation] [Alfie O'Meggan] Cluster health status changed from [RED] to [YELLOW] (reason: [shards started [[megacorp][4], [megacorp][0], [megacorp][0]] ...]).
+[2016-06-09 15:39:32,388][INFO ][node                     ] [Alfie O'Meggan] stopping ...
+[2016-06-09 15:39:32,459][INFO ][node                     ] [Alfie O'Meggan] stopped
+[2016-06-09 15:39:32,459][INFO ][node                     ] [Alfie O'Meggan] closing ...
+[2016-06-09 15:39:32,464][INFO ][node                     ] [Alfie O'Meggan] closed
+[2016-06-09 15:54:36,466][WARN ][bootstrap                ] jvm uses the client vm, make sure to run `java` with the server vm for best performance by adding `-server` to the command line
+[2016-06-09 15:54:36,656][INFO ][node                     ] [Elizabeth "Betsy" Braddock] version[2.3.3], pid[11340], build[218bdf1/2016-05-17T15:40:04Z]
+[2016-06-09 15:54:36,658][INFO ][node                     ] [Elizabeth "Betsy" Braddock] initializing ...
+[2016-06-09 15:54:37,091][INFO ][plugins                  ] [Elizabeth "Betsy" Braddock] modules [reindex, lang-expression, lang-groovy], plugins [], sites []
+[2016-06-09 15:54:37,110][INFO ][env                      ] [Elizabeth "Betsy" Braddock] using [1] data paths, mounts [[Boot (C:)]], net usable_space [1.5tb], net total_space [1.7tb], spins? [unknown], types [NTFS]
+[2016-06-09 15:54:37,113][INFO ][env                      ] [Elizabeth "Betsy" Braddock] heap size [989.8mb], compressed ordinary object pointers [unknown]
+[2016-06-09 15:54:38,884][INFO ][node                     ] [Elizabeth "Betsy" Braddock] initialized
+[2016-06-09 15:54:38,885][INFO ][node                     ] [Elizabeth "Betsy" Braddock] starting ...
+[2016-06-09 15:54:39,211][INFO ][transport                ] [Elizabeth "Betsy" Braddock] publish_address {127.0.0.1:9300}, bound_addresses {127.0.0.1:9300}, {[::1]:9300}
+[2016-06-09 15:54:39,219][INFO ][discovery                ] [Elizabeth "Betsy" Braddock] elasticsearch/YIbVktUwRNSUCMFMEIjMlA
+[2016-06-09 15:54:43,291][INFO ][cluster.service          ] [Elizabeth "Betsy" Braddock] new_master {Elizabeth "Betsy" Braddock}{YIbVktUwRNSUCMFMEIjMlA}{127.0.0.1}{127.0.0.1:9300}, reason: zen-disco-join(elected_as_master, [0] joins received)
+[2016-06-09 15:54:43,422][INFO ][gateway                  ] [Elizabeth "Betsy" Braddock] recovered [6] indices into cluster_state
+[2016-06-09 15:54:43,518][INFO ][http                     ] [Elizabeth "Betsy" Braddock] publish_address {127.0.0.1:9200}, bound_addresses {127.0.0.1:9200}, {[::1]:9200}
+[2016-06-09 15:54:43,520][INFO ][node                     ] [Elizabeth "Betsy" Braddock] started
+[2016-06-09 15:54:44,399][INFO ][cluster.routing.allocation] [Elizabeth "Betsy" Braddock] Cluster health status changed from [RED] to [YELLOW] (reason: [shards started [[megacorp][2], [megacorp][3], [megacorp][3]] ...]).

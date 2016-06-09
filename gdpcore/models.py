@@ -183,3 +183,9 @@ class Elemgraph(models.Model):
 class UserProfile(models.Model):
 	user = models.OneToOneField(User)
 	picture = models.ImageField(upload_to='pictures')
+	
+class CommentGraph(models.Model):
+	graph = models.ForeignKey(Graph)
+	author = models.ForeignKey(User)
+	text = models.CharField(max_length = 1000)
+	creation_date = models.DateTimeField()
