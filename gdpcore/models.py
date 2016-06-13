@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+# from polikif import models as polikif_models
 
 
 class Cycle(models.Model):
@@ -13,7 +14,6 @@ class Cycle(models.Model):
 
 	def __str__(self):
 		return str(self.id)
-
 
 class Proposition(models.Model):
 	NATURE_PROP_CHOICE = (
@@ -168,6 +168,9 @@ class Graph(models.Model):
 	originx = models.IntegerField(default=0)
 	originy = models.IntegerField(default=0)
 	creation_date = models.DateTimeField()
+	
+	parti = models.ForeignKey('polikif.Parti')
+	
 	def __str__(self):
 		return str(self.id)
 		

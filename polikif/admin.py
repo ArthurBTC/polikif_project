@@ -12,7 +12,7 @@ class CelluleAdmin(admin.ModelAdmin):
 
 class Adhesion_partiAdmin(admin.ModelAdmin):
     # ...
-    list_display = ('id','user', 'parti')
+    list_display = ('id','user', 'parti','status')
 	
 class Adhesion_celluleAdmin(admin.ModelAdmin):
 	list_display = ('id','user', 'cellule')

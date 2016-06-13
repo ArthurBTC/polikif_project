@@ -34,32 +34,40 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				  </button>
-				  <a class="navbar-brand" href="/gdpcore/index">Polimik</a>
+				  <a class="navbar-brand" href="/gdpcore/index">Polikif</a>
 				</div>
 
 				<!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				  <ul class="nav navbar-nav">
-					<li><a href="/gdpcore/index">Accueil</a></li>
-<!--					<li><a href="/gdpcore/selection_cycle">Cycles</a></li> -->
-					<li><a href="/gdpcore/selection_graph">Graphs</a></li>
-					<li><a href="/gdpcore/search_proposition">Chercher proposition</a></li>
+					<li><a href="/gdpcore/index">Accueil <span class="glyphicon glyphicon-home" aria-hidden="true"></a></li>
+					<li><a href="/polikif/accueilPartis">Partis <span class="glyphicon glyphicon-flag" aria-hidden="true"></a></li>
+					<li><a href="/polikif/travauxListe">Travaux <span class="glyphicon glyphicon-wrench" aria-hidden="true"></a></li>
 
 				  </ul>
 
 				  
 				  <ul class="nav navbar-nav navbar-right">
 				  
-					<li><a href="/gdpcore/tobedone"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true" style="color:red"></span></a></li>
+					<li><a href="/gdpcore/tobedone">Notifications <span class="glyphicon glyphicon-bell" aria-hidden="true"></a></li></span></a></li>
 				 
-					<li><a href="#"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a></li>	
+					<li><a href="#">Messages <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span></a></li>	
 					
-					<li><a href="#">{{ user }}</a></li>
-					<li>      {% if user.is_anonymous %}
-				  <a href="{% url 'django.contrib.auth.views.login' %}">Connexion</a>
-				  {% else %}
-				  <a href="{% url 'django.contrib.auth.views.logout' %}">Deconnexion</a>
-				  {% endif %}</li>
+					{% if user.is_anonymous %}
+						<li><a href="{% url 'django.contrib.auth.views.login' %}">Connexion</a></li>
+					{% else %}
+				  
+				  <li class="dropdown">
+					  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{user.username}} <span class="glyphicon glyphicon-user" aria-hidden="true"><span class="caret"></span></a>
+					  <ul class="dropdown-menu">
+						<li><a href="/polikif/userPresentation/{{user.pk}}">Profil</a></li>
+						<li>	
+							<a href="{% url 'django.contrib.auth.views.logout' %}">Deconnexion</a>
+						</li>
+					  </ul>
+					</li>
+					{% endif %}
+				  
 				  </ul>
 				</div><!-- /.navbar-collapse -->
 			  </div><!-- /.container-fluid -->

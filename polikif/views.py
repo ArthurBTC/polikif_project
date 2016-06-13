@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
 from .models import Parti, Cellule, Adhesion_parti, Selection
+from gdpcore.models import Graph
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models import F
@@ -33,12 +34,12 @@ def index(request):
 	
 
 #Vue des Partis, accueil
-def parti_accueil(request):
+def accueilPartis(request):
 	partis = Parti.objects.all()
-	return render(request,'polikif/parti_accueil.html',{'partis':partis})
+	return render(request,'polikif/accueilPartis.html',{'partis':partis})
 
 #Vue d'un parti
-def parti_presentation(request, id_parti):
+def partiPresentation(request, id_parti):
 
 	if request.method == 'POST':
 		adhpar = Adhesion_parti(user = request.user,
@@ -52,22 +53,52 @@ def parti_presentation(request, id_parti):
 			
 	else :	
 		partis = Parti.objects.all()
-		main_parti = Parti.objects.get(id = id_parti)
-		cellules = Cellule.objects.filter(parti = main_parti)
-		return render(request,'polikif/parti_presentation.html',{'main_parti':main_parti, 'partis':partis, 'cellules':cellules})
+		parti = Parti.objects.get(id = id_parti)
+		cellules = Cellule.objects.filter(parti = parti)
+		return render(request,'polikif/partiPresentation.html',{'parti':parti, 'partis':partis, 'cellules':cellules})
 	
 #Vue d'un programme de parti
-def programme_visualisation(request, id_parti):
+def partiProgramme(request, id_parti):
 	
-	main_parti = Parti.objects.get(id = id_parti)
+	parti = Parti.objects.get(id = id_parti)
 	selections = Selection.objects.filter(parti = Parti.objects.get(id= id_parti))
 	categories = Selection.objects.filter(parti = Parti.objects.get(id= id_parti)).values("category").annotate(n=models.Count("pk"))
 	
-	return render(request,'polikif/programme_visualisation.html',{'selections': selections, 'main_parti': main_parti, 'categories':categories})
+	return render(request,'polikif/partiProgramme.html',{'selections': selections, 'parti': parti, 'categories':categories})
 	
 #Vue des membres d'un parti
-def membres_parti_visualisation(request, id_parti):
-	return render(request,'polikif/index.html')
+def partiMembres(request, id_parti):
+	
+	parti = Parti.objects.get(id = id_parti)
+	adhesions = Adhesion_parti.objects.filter(parti__pk = id_parti)
+	
+	return render(request,'polikif/partiMembres.html',{'parti': parti, 'adhesions':adhesions})	
+	
+def partiPublications(request, id_parti):
+	
+	parti = Parti.objects.get(id = id_parti)
+	
+	return render(request,'polikif/partiPublications.html',{'parti': parti})
+		
+def partiTravaux(request, id_parti):
+	
+	parti = Parti.objects.get(id = id_parti)
+	graphs = Graph.objects.filter(parti__pk = id_parti)
+	
+	return render(request,'polikif/partiTravaux.html',{'parti': parti, 'graphs':graphs})		
+	
+	
+def userPresentation(request, id_user):
+
+	selectedUser = User.objects.get(id = id_user)
+	
+	return render(request,'polikif/userPresentation.html',{'selectedUser': selectedUser})
+	
+def travauxListe(request):
+	
+	graphs = Graph.objects.all()
+
+	return render(request,'polikif/travauxListe.html',{'graphs':graphs})
 	
 #Vue des cellules, accueil
 def cellule_accueil(request):

@@ -9,6 +9,9 @@ class Parti(models.Model):
 	description = models.CharField(max_length = 1000)
 	creation_date = models.DateTimeField()
 	
+	def __str__(self):
+		return str(self.id)
+	
 class Cellule(models.Model):
 	parti = models.ForeignKey(Parti)
 	name = models.CharField(max_length = 1000)
@@ -34,6 +37,8 @@ class Adhesion_parti(models.Model):
 	role = models.CharField(max_length = 30, choices = ROLE_CHOICE, default = 'M')
 	status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
 	creation_date = models.DateTimeField()
+	
+		
 	
 class Adhesion_cellule(models.Model):
 	ROLE_CHOICE = (

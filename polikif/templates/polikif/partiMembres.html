@@ -1,0 +1,25 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div class ="row">
+
+	<div class="col-md-3">
+		{% include "polikif/navLeftPartis.html" %}	
+	</div>
+	
+	
+	<div class="col-md-9">	
+		Membres du parti
+		
+		<ul>
+		{% for adhesion in adhesions %}
+			<li role="presentation"><a href="/polikif/userPresentation/{{adhesion.user.pk}}">{{adhesion.user.username}} : {{adhesion.get_role_display}}</a></li>
+		{% endfor %}		
+		</ul>
+		
+	</div>
+</div>
+
+
+{% endblock %}

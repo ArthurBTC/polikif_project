@@ -795,7 +795,7 @@ $( document ).ready(function() {
 				type: 'basic.youtubeVideo',
 				size: { width: 200, height: 100 },
 				attrs: {
-					'rect': { fill: '#FDE3A7', stroke: '', width: 200, height: 100 },
+					'rect': { fill: '#EEEEEE', stroke: '', width: 200, height: 100 },
 					'text': { 'font-size': 14, text: '', 'ref-x': .5, 'ref-y': .5, ref: 'rect', 'y-alignment': 'middle', 'x-alignment': 'middle', fill: 'black' },
 					'image': { 'ref-x': 2, 'ref-y': 2, ref: 'rect', width: 50, height: 30 }
 				},
@@ -2183,7 +2183,12 @@ $(function(){
 						+'</label"></div>'
 						
 					);	
+
 				});
+				
+				if (data['hits']['total'] == 0 ) {				
+					$("#existingPropsAnswer").append('Pas de résultat');
+				}
 			}
 		});
 	});

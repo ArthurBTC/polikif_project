@@ -1,0 +1,24 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div class ="row">
+
+
+	
+	
+	<div class="col-md-12">
+		<div> Bonjour, bienvenue sur la page d'accueil des partis !	</div>
+		<div>
+		  <ul>
+			{% for parti in partis %}
+				<li role="presentation"><a href="/polikif/partiPresentation/{{parti.id}}">{{parti.name}} : {{parti.description}}</a></li>
+			{% endfor %}	
+		  <ul>
+		</div>
+		
+	</div>
+
+</div>
+
+{% endblock %}

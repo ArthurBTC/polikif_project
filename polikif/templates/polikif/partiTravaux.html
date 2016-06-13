@@ -1,0 +1,29 @@
+{% extends 'gdpcore/base.html' %}
+
+{% block content %}
+
+<div class ="row">
+
+	<div class="col-md-3">
+		<ul class="nav nav-pills nav-stacked">	
+			{% include "polikif/navLeftPartis.html" %}
+		</ul>
+	
+	</div>
+	
+	
+	<div class="col-md-9">	
+
+		<div>Travaux du {{parti.name}} :</div>
+		
+		<ul>
+		{% for graph in graphs %}
+			<li role="presentation"><a href="/gdpcore/final_viewer/{{graph.pk}}">{{graph.title}}</a></li>
+		{% endfor %}		
+		</ul>		
+		
+	</div>
+</div>
+
+
+{% endblock %}

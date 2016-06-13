@@ -22,25 +22,25 @@ def esAddProp(request):
 	
 	indexname = 'newindex'
 
-	# mapping_json = json.dumps(	
-		# {
-		  # "mappings": {
-			# "proposition" : {
-			  # "properties" : {
-				# "text" : {
-				  # "type" :    "string",
-				  # "analyzer": "french"
-				# },
-				# "user_id" : {
-				  # "type" :   "long"
-				# }
-			  # }
-			# }
-		  # }
-		# }
-	# )
+	mapping_json = json.dumps(	
+		{
+		  "mappings": {
+			"proposition" : {
+			  "properties" : {
+				"text" : {
+				  "type" :    "string",
+				  "analyzer": "french"
+				},
+				"user_id" : {
+				  "type" :   "long"
+				}
+			  }
+			}
+		  }
+		}
+	)
 	
-	# r = requests.put('http://localhost:9200/'+indexname, mapping_json)
+	r = requests.put('http://localhost:9200/'+indexname, mapping_json)
 	
 	props = Proposition.objects.all()
 	
