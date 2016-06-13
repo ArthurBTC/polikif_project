@@ -9,17 +9,58 @@
 	</div>
 	
 	
+	
+
 	<div class="col-md-9">	
-		Membres du parti
+
+	<div id="curve_chart" style="width: 900px; height: 500px"></div>
+	
+		Membres actuels du parti
 		
 		<ul>
 		{% for adhesion in adhesions %}
 			<li role="presentation"><a href="/polikif/userPresentation/{{adhesion.user.pk}}">{{adhesion.user.username}} : {{adhesion.get_role_display}}</a></li>
 		{% endfor %}		
 		</ul>
+
 		
 	</div>
 </div>
 
 
 {% endblock %}
+
+{% block script %}
+
+   <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+	
+		
+		var data = google.visualization.arrayToDataTable([
+		
+			['Day', 'number'],
+		{% for mykey,myvalue in baba %}	
+		
+			[ '{{mykey | date:'d m'}}', {{myvalue}} ],
+			
+		{% endfor %}
+		
+		]);		
+		
+		
+
+        var options = {
+          title: 'Nombre de membres',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+	
+{% endblock %}	

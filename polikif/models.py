@@ -2,12 +2,16 @@ from django.db import models
 
 from django.contrib.auth.models import User
 from gdpcore import models as gdpcore_models
-
+from simple_history.models import HistoricalRecords
 
 class Parti(models.Model):
 	name = models.CharField(max_length = 1000)
 	description = models.CharField(max_length = 1000)
 	creation_date = models.DateTimeField()
+	
+	memberCount = models.IntegerField(default = 0)
+	
+	history = HistoricalRecords()
 	
 	def __str__(self):
 		return str(self.id)

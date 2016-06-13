@@ -55,6 +55,8 @@ urlpatterns = [
 	url(r'^ajax_quicksave', views.ajax_quicksave, name='ajax_quicksave'),	
 	url(r'^ajax_newsyllogism', views.ajax_newsyllogism, name='ajax_newsyllogism'),
 	url(r'^ajax_addcommentgraph', views.ajax_addcommentgraph, name='ajax_addcommentgraph'),
+	url(r'^ajax_hidecomment', views.ajax_hidecomment, name='ajax_hidecomment'),
+	
 	url(r'^new_graph', views.new_graph, name='new_graph'),	
 	
 	url(r'^register', views.register, name='register'),	

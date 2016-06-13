@@ -1152,6 +1152,9 @@ def ajax_quicksave(request):
 		j = json.loads(request.POST['graphstring'])
 		
 		graph.save()
+		
+		
+	i = 0;
 	
 	for cell in j['cells']:
 						
@@ -1160,6 +1163,7 @@ def ajax_quicksave(request):
 				display = False
 			else:
 				display = True
+				i = i+1
 			
 			elem, created = Elemgraph.objects.update_or_create(
 					graph=graph, 
@@ -1169,7 +1173,10 @@ def ajax_quicksave(request):
 						'y': cell['position']['y'],
 						'displayed':display
 						})
-
+	
+	graph.propNumber = i
+	graph.save()
+						
 	return HttpResponse('ok')
 	
 def new_graph(request):
@@ -1244,14 +1251,40 @@ def ajax_addexistingprop(request):
 	
 def	ajax_addcommentgraph(request):
 
+	prop = None
+	link = None
+	text = request.POST['text']
+	
+	list_arobase = [word for word in text.split() if word.startswith('@')]
+	if len(list_arobase) > 0:
+		id_prop = int(list_arobase[0].replace('@',''))
+		text = text.replace(list_arobase[0],'')	
+		prop = Proposition.objects.get(pk=id_prop)
+		
+	list_hash = [word for word in text.split() if word.startswith('#')]
+	if len(list_hash) > 0:
+		id_link = int(list_hash[0].replace('#',''))
+		text = text.replace(list_hash[0],'')	
+		link = Link.objects.get(pk=id_link)		
+		
 	comment = CommentGraph(
 		graph = Graph.objects.get(pk = request.POST['graph_id']),
 		author = request.user,
-		text = request.POST['text'],
-		creation_date = datetime.now()		
+		text = text,
+		creation_date = datetime.now(),
+		proposition = prop,
+		link = link
 	)
 	comment.save()
 	return JsonResponse(serializers.serialize('json', [comment]), safe = False)
+	
+def ajax_hidecomment(request):
+	
+	comment = CommentGraph.objects.get(pk = request.POST['comment'])
+	comment.visibility = False
+	comment.save()
+	
+	return HttpResponse('ok')
 	
 def init(request):
 

@@ -13,7 +13,7 @@ from django.http import HttpResponseRedirect
 
 from difflib import SequenceMatcher
 
-from datetime import datetime  
+from datetime import datetime, timedelta
 
 
 
@@ -72,7 +72,20 @@ def partiMembres(request, id_parti):
 	parti = Parti.objects.get(id = id_parti)
 	adhesions = Adhesion_parti.objects.filter(parti__pk = id_parti)
 	
-	return render(request,'polikif/partiMembres.html',{'parti': parti, 'adhesions':adhesions})	
+	data = {}
+	baba = []
+	
+	
+
+	for i in range(0, 30):
+		dataDate = datetime.now() + timedelta(days = i - 29)
+	
+		try:		
+			baba.append( (dataDate, parti.history.as_of(dataDate).memberCount) )
+		except:
+			baba.append( (dataDate, 0 ) )
+
+	return render(request,'polikif/partiMembres.html', {'parti': parti, 'adhesions':adhesions, 'baba':baba})	
 	
 def partiPublications(request, id_parti):
 	

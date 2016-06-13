@@ -13,13 +13,33 @@
 	
 	
 	<div class="col-md-9">	
-		<div class="page-header">
-		  <h1>{{parti.name}}<small> {{parti.description}}</small></h1>
-		</div>	
-			
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalPostuler">
-		  Postuler
-		</button>
+		<div class ="row">
+			<div class="col-md-6">
+				<div class="page-header">
+				  <h1>{{parti.name}}</h1>
+				</div>	
+				<div>
+				Description : {{parti.description}}
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="panel panel-info">
+				  <div class="panel-heading">
+					<h3 class="panel-title">Activité en chiffre</h3>
+				  </div>
+				  <div class="panel-body">
+					<div>Membres : 12</div>
+					<div>Propositions rédigées pendant les 30 derniers jours : 33 </div>
+					<div>Propositions dans le programme officiel : 14</div>
+				  </div>
+				</div>
+				<div>
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModalPostuler">
+						Postuler
+					</button>
+				</div>
+			</div>
+		</div>
 	</div>
 
 </div>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from simple_history.admin import SimpleHistoryAdmin
 from .models import Cycle, Proposition, LinkType, Link, Comment, Notification, Implication, Graph, Elemgraph, UserProfile, CommentGraph
 
 class CycleAdmin(admin.ModelAdmin):
@@ -45,7 +45,9 @@ admin.site.register(Link, LinkAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.register(Implication, ImplicationAdmin)
-admin.site.register(Graph, GraphAdmin)
+#admin.site.register(Graph, GraphAdmin)
 admin.site.register(Elemgraph, ElemgraphAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(CommentGraph, CommentGraphAdmin)
+
+admin.site.register(Graph, SimpleHistoryAdmin)

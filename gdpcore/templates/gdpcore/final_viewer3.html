@@ -12,7 +12,7 @@
 <!-- ^((?!cast_sender).)*$ -->
 
 
-<div id = "actionGraph" class="btn-group" role="group">
+<div id = "actionGraph" class="dropup btn-group" role="group">
 	<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuGraph" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 		<span class="glyphicon glyphicon-th" aria-hidden="true"></span> Graphique
 		<span class="caret"></span>
@@ -31,7 +31,7 @@
 </div>
 
 <!-- Action sur proposition -->
-<div id = "actionProp" class="btn-group" role="group">
+<div id = "actionProp" class="dropup btn-group" role="group">
 	<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuProp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
 		<span class="glyphicon glyphicon-align-center" aria-hidden="true"></span> Proposition
 		<span class="caret"></span>
@@ -67,41 +67,44 @@
 	</ul>		
 </div>
 
+<!-- Chat -->
+<div id="chat">
+	<div id="commentsGraph">
+	{% for comment in comments_graph %}	
+		{% if comment.visibility == True %}
+		<div id = "{{comment.id}}" targ = "{{comment.proposition.id}}" class = "commentGraph {{comment.proposition.id}}">{{comment.author.username}} : {{comment.text}}</div>
+		{% endif %}
+	{% endfor %}
+	</div>
+	
+
+	
+	<div class="input-group">
+	  <input type="text" class="form-control" id="commentGraphInput" name="commentGraphInput" placeholder="Réponse...">
+	  <span class="input-group-btn">
+		<button id ="commentGraphSubmit" class="btn btn-primary">Répondre</button>	
+	  </span>
+	</div>
+
+	
+	
+		
+</div>
+
+<!-- Hidden props envir -->
+<div id="envir_info_container">
+	<div id = "cons_display"></div>							
+</div>
+
 <button id = "quickSave" type="button" class="btn btn-default" aria-label="Left Align">
 	<span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span> Sauvegarde
 </button>
 <div id="savedMessage">Sauvegarde effectuée</div>
 
-<div id="ytplayer"></div>
-
-<div class ="row">
-	<div class="col-md-4">
-	
-		<div id="chat">
-			<div id="commentsGraph">
-			{% for comment in comments_graph %}			
-				<div>{{comment.creation_date|timesince}} - {{comment.author.username}} : {{comment.text}}</div>
-			{% endfor %}
-			</div>
-			
-			<div class="form-group">
-				<input type="text" class="form-control" id="commentGraphInput" name="commentGraphInput" placeholder="Répondre...">
-			</div>	
-			<button id ="commentGraphSubmit" class="btn btn-primary">Répondre</button>					
-		</div>
-
-		<div id="envir_info_container">
-			<div id = "cons_display"></div>							
-		</div>		
-
-	</div>
-	<div class="col-md-8">	
-
-<!-- Paper, liens, actions... -->		
-		<div id="myholder"></div>			
-	</div>
-
+<div id="ytcontainer">
+	<div id="ytplayer"></div>
 </div>
+<div id="myholder"></div>
 
 <!-- Modaux -->		
 	<!-- Réponse Proposition+Lien -->	
@@ -552,7 +555,28 @@
 	  </div>
 	</div>
 		
-
+	<!-- Proposition existante -->
+	<div class="modal fade" id="modalCommentgraph" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalCommentgraphLabel">Comment Graph</h4>
+		  </div>
+		  <div class="modal-body">
+		  		
+				<div id = 'commentGraphText'></div>
+	
+				<button type="button" id = "hideCommentSubmit" class="btn btn-default">Masquer ?</button>
+				
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+	
 	
 <!-- pour la recherche de propositions similaires-->
 	<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
@@ -606,7 +630,7 @@
 			  }			  
 			});
       }
-	 $("#ytplayer").hide();  
+	 $("#ytcontainer").hide();  
 	 
 </script>
 
@@ -666,7 +690,7 @@ $( document ).ready(function() {
 	//Ini paper
     var paper = new joint.dia.Paper({
         el: $('#myholder'),
-        width: 66/100*$(window).width(),
+        width: 100/100*$(window).width(),
         height: $(window).height(),
         model: graph,
         gridSize: 1,
@@ -683,17 +707,15 @@ $( document ).ready(function() {
 	$(function(){
 		var he = $(window).height();
         var wi = $(window).width();
-		$("#chat").height(60/100*he);
-		$("#envir_info_container").height(40/100*he);
-		paper.setDimensions(66/100*wi, 99/100*he);
+
+		paper.setDimensions(100/100*wi, 100/100*he);
 		
 		$(window).resize(function(){
 		
 			var he = $(window).height();
 			var wi = $(window).width();
-			$("#chat").height(60/100*he);
-			$("#envir_info_container").height(40/100*he);
-			paper.setDimensions(66/100*wi, 99/100*he);
+
+			paper.setDimensions(100/100*wi, 100/100*he);
 		})          
 	});
 	
@@ -707,7 +729,7 @@ $( document ).ready(function() {
 	
 	paper.setOrigin(originX, originY);
 
-	
+	$( "#ytcontainer" ).draggable();
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
 
@@ -735,8 +757,8 @@ $( document ).ready(function() {
 				attrs: {
 					rect: { 
 						fill: '#EEEEEE', 
-						stroke: '', 
-						'stroke-width': 1, 
+						stroke: 'white', 
+						'stroke-width': 4, 
 						'follow-scale': true, 
 						width: 150, 
 						height: 80
@@ -1276,9 +1298,140 @@ $( document ).ready(function() {
 		
 	});		
 	
-	// Quand on touche au graph
-	paper.on('cell:pointerdown', function(cellView,evt, x, y) { 
+	
+	function previousElementHandler(elem){
+		type = elem.get('type');
+		if ( type == 'basic.twoTextRect' ) {
+		
+			//Retour à la taille initiale
+			var wraptext = joint.util.breakText(selected.get('text'), {
+				width: 145,
+				height: 90,
+				attrs: {		
+					'text-anchor': 'middle'		
+				}
+			});					
+			elem.attr('.word1/text', wraptext);
+			elem.attr('.word2/transform', 'translate(165,82)');
+			elem.resize(200,100);
 
+			//Retour à la couleur initiale
+			elem.attr('rect/fill', '#EEEEEE')
+			
+			//Masquer le bouton d'action
+			$("#actionProp").hide()
+			
+		} 
+		else if ( type == 'basic.youtubeVideo') {
+					
+			//Arrêter la vidéo
+			$("#ytcontainer").hide();
+			player.stopVideo();
+			
+			//Retour à la couleur initiale
+			elem.attr('rect/fill', '#EEEEEE')
+		
+		} 
+		else if ( type == 'link') {
+		
+		}
+		else if ( type == 'fsa.State') {
+			//Masquer la fenêtre d'action link
+			$("#actionLink").hide();	
+			
+			//Couleur du cercle
+			elem.attr('circle/fill', '');
+			
+		}			
+	}	
+	
+	function newElementHandler(elem) {
+			
+		type = elem.get('type');			
+		if ( type == 'basic.twoTextRect' ) {			
+			//Ajustement de la taille en fonction du texte
+			fulltext = elem.get('text');
+			heightPrediction = fulltext.length*1.1;
+			if (heightPrediction < 100) {
+				heightPrediction = 100;
+			}
+
+			var wraptext = joint.util.breakText(fulltext, {
+				width: 145,
+				height: heightPrediction,
+				attrs: {		
+					'text-anchor': 'middle'		
+				}
+			});	
+			
+			elem.resize(200, heightPrediction);		
+			deltaHeight = heightPrediction-20;			
+			elem.attr('.word1/text', wraptext);	
+			elem.attr('.word2/transform', 'translate(165,'+deltaHeight+')');
+			
+			//On change la couleur
+			elem.attr('rect/fill', '#A2DED0')
+						
+			//Apparition du bouton d'action
+			$("#actionProp").show();
+			
+			//Pré-remplissage du chat
+			$("#commentGraphInput").val('@'+elem.get('id_prop')+' ');
+			$("#commentGraphInput").focus();
+			
+			//Définition du nouvel élément sélectionné
+			selectedElement = elem.id				
+			
+		} 
+		else if ( type == 'basic.youtubeVideo') {
+		
+			//Lancement de la vidéo
+			$("#ytcontainer").show();	
+			
+			player.loadVideoById({
+				'videoId': elem.get('ytid'),
+				'startSeconds': elem.get('ytbeginning'),
+				'endSeconds': elem.get('ytend'),
+				'suggestedQuality': 'large'
+			}); 				
+
+			//On change la couleur
+			elem.attr('rect/fill', '#A2DED0')
+			
+			//Apparition du bouton d'action
+			$("#actionProp").show();
+			
+			//Pré-remplissage du chat
+			$("#commentGraphInput").val('@'+elem.get('id_prop')+' ');
+			$("#commentGraphInput").focus();
+			
+			//Définition du nouvel élément sélectionné
+			selectedElement = elem.id
+					
+		} 
+		else if ( type == 'link' ) {
+			//Apparition de la fenêtre d'action link
+			$("#actionLink").show();			
+			
+			//Selection du cercle
+			elem = graph.getCell(circleIdCorrespondance[elem.get('id_link')]);
+			
+			//Coloriage du cercle
+			elem.attr('circle/fill', '#A2DED0');
+			
+			//Préremplissage chat
+			$("#commentGraphInput").val('#'+elem.get('link_id')+' ');
+			$("#commentGraphInput").focus();
+			
+			//Définition du nouvel élément sélectionné
+			selectedElement = elem.id
+		}		
+	}	
+	
+	// Quand on touche au graph
+	
+	paper.on('cell:pointerdown', function(cellView,evt, x, y) { 
+	
 		function highlighter(el){
 			if (selectedElement != '') {
 				selected = graph.getCell(selectedElement);
@@ -1328,7 +1481,14 @@ $( document ).ready(function() {
 			
 		};
 	
-		$("#actionProp").hide();
+		if (selectedElement != '') {			
+			selected = graph.getCell(selectedElement);
+			previousElementHandler(selected);
+		}	
+		
+		newElementHandler(cellView.model)
+		
+/*		$("#actionProp").hide();
 		$("#actionLink").hide();
 		$("#ytplayer").hide();
 		player.stopVideo();
@@ -1384,8 +1544,23 @@ $( document ).ready(function() {
 		highlighter(elem);
 		updateConDisplay(elem);
 		selectedElement = elem.id
-			
+		
+		$("#commentGraphInput").val('@'+elem.get('id_prop')+' ');
+		$("#commentGraphInput").focus();
+*/
+		
 	});
+	
+	paper.on('blank:pointerclick', function(evt, x, y) {
+	
+		if (selectedElement != '') {			
+			selected = graph.getCell(selectedElement);
+			previousElementHandler(selected);
+			selectedElement = '';
+		}			
+	});
+	
+	
 	
 	//Quand on bouge des propositions : Calcul des positions des cercles
 	graph.on('change', function(cell) { 
@@ -2235,8 +2410,54 @@ $(function(){
 	});	
 	
 });
+//Modal commentgraph
+$(function(){
 
+	//Envoyer la requete
+	$("#hideCommentSubmit").click(function() {
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_hidecomment/',
+			data: { 
+					comment: selectedComment ,
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {		
+				
+				$('#modalCommentgraph').modal('hide');
+				console.log(data);
+				
+				
+				
+				$('#'+selectedComment).hide();
+				
+/*				$("#existingPropsAnswer").html('');
+				
+				data['hits']['hits'].forEach(function(entry) {
 
+					$("#existingPropsAnswer").append(
+					
+						'<div class="radio"><label>'
+							+'<input type="radio" name="optionsExisting" value="'+entry['_id']+'">'
+								+entry['_source']['text']+' '
+								+entry['_score']					
+						+'</label"></div>'
+						
+					);	
+
+				});
+				
+				if (data['hits']['total'] == 0 ) {				
+					$("#existingPropsAnswer").append('Pas de résultat');
+				}*/
+			}
+		});
+	});
+
+});
+
+var selectedComment;
 	
 //NAV PAPER	
 	//Initial Parameters
@@ -2319,11 +2540,14 @@ $(function(){
 					csrfmiddlewaretoken: '{{ csrf_token }}'
 				},
 			success: function( data ) {		
-				
+				$("#commentGraphInput").val('');			
 				console.log(data);
+				
+				newComment = JSON.parse(data)[0];
+				
 				$("#commentsGraph").append(
-					"<div>"
-						+authorList[ JSON.parse(data)[0]['fields']['author'] ] +' '+JSON.parse(data)[0]['fields']['text']
+					"<div id = '"+newComment['pk']+"' targ = '"+newComment['fields']['proposition']+"' class = 'commentGraph "+newComment['fields']['proposition'] +"'>"
+						+authorList[ newComment['fields']['author'] ] +' '+newComment['fields']['text']
 					+'</div>'
 				);	
 				
@@ -2331,9 +2555,63 @@ $(function(){
 			}
 		});
 		
-	});	
+	});
+
+	$( "body" ).on("click", "#commentsGraph", function(event) {		
+	
+		console.log($(event.target).attr('id'));
+		selectedComment = $(event.target).attr('id');
+		
+		$('#commentGraphText').text($(event.target).html());
+		
+		$('#modalCommentgraph').modal('show')   ;
+		
+//		console.log(graph.getCell(propIdCorrespondance[$(event.target).attr('class')]).attr('.word1/text'));
+		
+	});
 	
 
+	$( ".commentGraph" ).hover(
+	  function() {
+		$( this  ).css('border-style', 'solid');
+		$( this  ).css('border-color', colors['HL']);
+		
+		
+		if (el = graph.getCell(propIdCorrespondance[ $( this  ).attr('targ') ]) ) {
+			el.attr('rect/stroke',colors['HL']);
+		}
+	  }, function() {
+		$( this  ).css('border-style', '');
+		$( this  ).css('border-color', '');
+		
+		$(this).children("span").remove();
+		
+		if (el = graph.getCell(propIdCorrespondance[ $( this  ).attr('targ') ]) ) {
+			el.attr('rect/stroke','');
+
+		}
+	  }	  
+	  
+	);
+	
+	paper.on('cell:mouseover', function(cellView, evt) { 	
+		el = cellView.model;	
+		el.attr('rect/stroke',colors['HL']);
+		el.attr('rect/stroke-width', 4);
+		
+		$("[targ='"+cellView.model.get('id_prop')+"']").css('border-style', 'solid');
+		$("[targ='"+cellView.model.get('id_prop')+"']").css('border-color', colors['HL']);
+	})
+	
+	paper.on('cell:mouseout', function(cellView, evt) { 
+		
+		el = cellView.model;	
+		el.attr('rect/stroke','white');
+		
+		$("[targ='"+cellView.model.get('id_prop')+"']").css('border-style', '');
+		$("[targ='"+cellView.model.get('id_prop')+"']").css('border-color', '');
+		
+	})	
 	
 });
 

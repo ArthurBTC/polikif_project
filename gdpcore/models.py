@@ -1,6 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
+from simple_history.models import HistoricalRecords
 # from polikif import models as polikif_models
 
 
@@ -168,8 +169,11 @@ class Graph(models.Model):
 	originx = models.IntegerField(default=0)
 	originy = models.IntegerField(default=0)
 	creation_date = models.DateTimeField()
-	
+	propNumber = models.IntegerField(default=0)	
 	parti = models.ForeignKey('polikif.Parti')
+	
+	history = HistoricalRecords()
+	
 	
 	def __str__(self):
 		return str(self.id)
@@ -192,3 +196,9 @@ class CommentGraph(models.Model):
 	author = models.ForeignKey(User)
 	text = models.CharField(max_length = 1000)
 	creation_date = models.DateTimeField()
+	
+	proposition = models.ForeignKey(Proposition, blank=True, null=True)
+	link = models.ForeignKey(Link, blank=True, null=True)
+	comment = models.ForeignKey('self', blank=True, null=True)
+	
+	visibility = models.BooleanField(default = True)
