@@ -8,7 +8,7 @@
 <meta http-equiv='cache-control' content='no-cache'>
 <meta http-equiv='expires' content='0'>
 <meta http-equiv='pragma' content='no-cache'>
-
+{% load staticfiles %}
 <!-- ^((?!cast_sender).)*$ -->
 
 
@@ -644,7 +644,7 @@ $( document ).ready(function() {
 	  $('[data-toggle="tooltip"]').tooltip()
 	})
  	
-	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#FF9F1C'}		
+	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#BF55EC', 'SEL': '#FDE3A7'}		
 	var typesData = {};
 
 	{% for link_type in link_types %}			
@@ -749,6 +749,7 @@ $( document ).ready(function() {
 						+'</g>'
 						+'<text class = "word1"></text>'
 						+'<text class = "word2"></text>'
+						+'<image/>'
 					+'</g>',
 
 			defaults: joint.util.deepSupplement({
@@ -778,6 +779,13 @@ $( document ).ready(function() {
 						transform: "translate(95,20)" ,
 						fill: 'black',
 						'dy': 100		
+					},
+					'image': { 
+						'ref-x': 2, 
+						'ref-y': 2, 
+						 ref: 'rect', 
+						 width: 50, 
+						 height: 30 
 					}
 				},
 				size: { width: 200, height: 100 },
@@ -786,10 +794,15 @@ $( document ).ready(function() {
 			}, joint.shapes.basic.Generic.prototype.defaults)
 		});
 
-		var el = new joint.shapes.basic.twoTextRect();
+		var el = new joint.shapes.basic.twoTextRect({
+			attrs: { 
+	//			image: { 'xlink:href': "{% static 'gdpcore/speechicon.png' %}" }
+			}
+		});
 		el.attr('.word1/text', wraptext);
 		el.attr('.word2/text', autorname);
 		el.attr('./display', 'none');	
+	
 		graph.addCell(el);
 
 		console.log('prop added to graph - id_prop: '+id_prop+' id: '+el.id)
@@ -810,7 +823,13 @@ $( document ).ready(function() {
 	
 		joint.shapes.basic.youtubeVideo = joint.shapes.basic.Generic.extend({
 
-			markup: '<g class="rotatable"><g class="scalable"><rect/></g><image/><text/></g>',
+			markup: '<g class="rotatable">'
+						+'<g class="scalable">'+
+							'<rect/>'
+						+'</g>'
+						+'<image/>'
+						+'<text/>'
+					+'</g>',
 
 			defaults: joint.util.deepSupplement({
 
@@ -830,7 +849,7 @@ $( document ).ready(function() {
 			}, joint.shapes.basic.Generic.prototype.defaults)
 		});
 		
-		{% load staticfiles %}
+		
 		var el = new joint.shapes.basic.youtubeVideo({
 			position: { x: 0, y: 0 },
 			size: { width: 200, height: 100 },
@@ -1317,6 +1336,7 @@ $( document ).ready(function() {
 
 			//Retour à la couleur initiale
 			elem.attr('rect/fill', '#EEEEEE')
+			$("[targ='"+elem.get('id_prop')+"']").css('background-color', '');
 			
 			//Masquer le bouton d'action
 			$("#actionProp").hide()
@@ -1330,7 +1350,7 @@ $( document ).ready(function() {
 			
 			//Retour à la couleur initiale
 			elem.attr('rect/fill', '#EEEEEE')
-		
+			$("[targ='"+elem.get('id_prop')+"']").css('background-color', '');
 		} 
 		else if ( type == 'link') {
 		
@@ -1369,18 +1389,23 @@ $( document ).ready(function() {
 			elem.attr('.word1/text', wraptext);	
 			elem.attr('.word2/transform', 'translate(165,'+deltaHeight+')');
 			
-			//On change la couleur
-			elem.attr('rect/fill', '#A2DED0')
-						
+			//On change la couleur + chat
+			elem.attr('rect/fill', colors['SEL'])
+			
+			$("[targ='"+elem.get('id_prop')+"']").css('background-color', colors['SEL']);
+			
 			//Apparition du bouton d'action
 			$("#actionProp").show();
 			
 			//Pré-remplissage du chat
 			$("#commentGraphInput").val('@'+elem.get('id_prop')+' ');
-			$("#commentGraphInput").focus();
+			$("#commentGraphInput").focus();			
 			
 			//Définition du nouvel élément sélectionné
-			selectedElement = elem.id				
+			selectedElement = elem.id
+
+					
+			
 			
 		} 
 		else if ( type == 'basic.youtubeVideo') {
@@ -1428,58 +1453,11 @@ $( document ).ready(function() {
 		}		
 	}	
 	
+	
+	
 	// Quand on touche au graph
 	
 	paper.on('cell:pointerdown', function(cellView,evt, x, y) { 
-	
-		function highlighter(el){
-			if (selectedElement != '') {
-				selected = graph.getCell(selectedElement);
-				selected.attr('rect/stroke', 'black');
-				selected.attr('rect/stroke-width', 0);
-				selected.attr('circle/stroke', 'black');
-				selected.attr('circle/stroke-width', 0);							
-				selected.resize(200,100);	
-				var wraptext = joint.util.breakText(selected.get('text'), {
-					width: 145,
-					height: 90,
-					attrs: {		
-						'text-anchor': 'middle'		
-					}
-				});					
-				selected.attr('.word1/text', wraptext);
-				selected.attr('.word2/transform', 'translate(165,82)');							
-			}
-							
-			el.attr('circle/stroke',colors['HL']);
-			el.attr('circle/stroke-width', 4);
-			el.attr('rect/stroke',colors['HL']);
-			el.attr('rect/stroke-width', 4);
-						
-			if (fulltext = el.get('text') ){
-				heightPrediction = fulltext.length*1.1;
-			} else {
-				heightPrediction = 0;
-			}
-			if (heightPrediction < 100) {
-					heightPrediction = 100
-				}
-			
-			var wraptext = joint.util.breakText(fulltext, {
-				width: 145,
-				height: heightPrediction,
-				attrs: {		
-					'text-anchor': 'middle'		
-				}
-			});	
-			
-			el.resize(200, heightPrediction);		
-			deltaHeight = heightPrediction-20;			
-			el.attr('.word1/text', wraptext);	
-			el.attr('.word2/transform', 'translate(165,'+deltaHeight+')');
-			
-			
-		};
 	
 		if (selectedElement != '') {			
 			selected = graph.getCell(selectedElement);
@@ -1487,6 +1465,8 @@ $( document ).ready(function() {
 		}	
 		
 		newElementHandler(cellView.model)
+		
+		updateConDisplay(cellView.model);
 		
 /*		$("#actionProp").hide();
 		$("#actionLink").hide();
