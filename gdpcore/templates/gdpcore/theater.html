@@ -13,13 +13,41 @@
 </div>
 <div id="myholder"></div>
 
-<div id="play">PLAY</div>
+
+<img id="play" src="{% static 'gdpcore/play.png' %}" alt="Play">
+<img id="stop" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
+
+<div id="textDisplay"></div>
 
 <div id="showparts">
-{% for showpart in showparts %}
-	<div>{{showpart.order}} {{showpart.proposition.text}}</div>
-{% endfor %}
+
+
+<table class="table table-bordered">
+	
+	<tr>
+		<td></td>
+		<td>Proposition</td> 
+		<td>Texte</td>
+		<td>Durée</td>
+	</tr>
+	  
+	
+
+	{% for showpart in showparts %}
+	</tr id = 'showpart{{showpart.order}}' class = 'showpart'>
+		<td>{{showpart.order}}</td>
+		<td>{{showpart.proposition.text}}</td>
+		<td>{{showpart.text}}</td>
+		<td><input type="number" step="0.1" value = {{showpart.duration}} style="width: 50px; color:black;" </td>
+	</tr>
+	{% endfor %}
+	
+</table>
+
+
 </div>
+
+
 
 {% endblock %}
 
@@ -63,13 +91,17 @@ $( document ).ready(function() {
 	{% for showpart in showparts %}
 		showparts[{{showpart.order}}] = 
 		{
-			'proposition' : {
-				'id': {{showpart.proposition.pk}},
-				'text': {{showpart.proposition.text}},
-				'name':'dada'
-			}	
-		
-		
+			'id':{{showpart.id}},
+		{% if showpart.proposition %}
+			'proposition' : {{showpart.proposition.pk}},
+		{% endif %}	
+		{% if showpart.link %}		
+			'link' :  {{showpart.link.pk}}, 
+		{% endif %}
+			'text': '{{showpart.text}}',
+			'duration': {{showpart.duration}},
+			'x':{{showpart.x}},
+			'y':{{showpart.y}}
 		}
 	{% endfor %}
 
@@ -540,13 +572,16 @@ $( document ).ready(function() {
 				{% endif %}
 					
 				{% if showpart.proposition.nature == 'YT' %}
-					addYoutube(
+					el = addYoutube(
 						{{showpart.proposition.id}},
 						'{{showpart.proposition.text|escapejs}}',
 						'{{showpart.proposition.ytid}}',
 						'{{showpart.proposition.videoBeginning}}',
 						'{{showpart.proposition.videoEnd}}'
 					);
+					el.attr('./display', '');
+					el.translate( {{showpart.x}} , {{showpart.y}} );					
+					
 				{% endif %}	
 
 				{% if showpart.proposition.nature == 'SY' %}
@@ -559,27 +594,17 @@ $( document ).ready(function() {
 
 		updateCorrespondances()
 
-		//Chargement des attributs
-		{% for key, value in attributes.items %}
-			
-			cell = graph.getCell(propIdCorrespondance[{{key}}]);
-			cell.translate({{value.x}},{{value.y}});
-			cell.attr('./display', '');
-			
-			
-		{% endfor %}
-
 		//Chargement des liens classiques
-		{% for link in links%}
-
-			li = addLink(
-				{{link.id}}, 
-				{{link.left_prop.id}}, 
-				{{link.right_prop.id}}, 
-				{{link.type}}, 
-				'{{link.autor.username|escapejs}}' 
-				);
-			
+		{% for showpart in showparts%}
+			{% if showpart.link %}
+				li = addLink(
+					{{showpart.link.id}}, 
+					{{showpart.link.left_prop.id}}, 
+					{{showpart.link.right_prop.id}}, 
+					{{showpart.link.type}}, 
+					'{{showpart.link.autor.username|escapejs}}' 
+					);
+			{% endif %}
 			
 		{% endfor %}
 
@@ -600,46 +625,115 @@ $( document ).ready(function() {
 		
 	firstLoad();
 	
-	function readshow() {
+	var counter;
+	$("#stop").hide();
 	
-		var counter = 1;
+	function readshow() {
+		
+		$("#play").hide();
+		$("#stop").show();
+		
+		
+		
+		var currentX=0;
+		var currentY=0;
+		
+		updateCorrespondances();
+		counter = 1;
 		
 		allCells = graph.getCells();		
 		allCells.forEach(function(entry) {
 			entry.attr('./display','none');
 		});				
 		
-		function readpart(){
-			//Afficher la proposition
-			
-			//Afficher le lien
-			
-			//Afficher le texte
-			
-			//Changer le focus
-			
-			//Attendre, et lancer le prochain readpart
-						
+		readpart();
 		
+		function readpart(){
+			
+			if (showparts[counter]) {
+				console.log('readpart starting... counter = '+counter)
+				//Afficher la proposition
+				if (showparts[counter]['proposition']) {
+					elem = graph.getCell( propIdCorrespondance[ showparts[counter]['proposition'] ] );
+					elem.attr('./display','');
+				}
+				//Afficher le lien
+				if (showparts[counter]['link']) {
+					li = graph.getCell( linkIdCorrespondance[ showparts[counter]['link'] ] );
+					li.attr('./display','');
+				}			
+				//Afficher le texte
+				$("#textDisplay").text(showparts[counter]['text'])
+				
+				//Changer le focus
+				
+				currentX = currentX;
+				nextX = -showparts[counter]['x'] + 800;			
+				stepX = (nextX - currentX) / 100
+				
+				currentY = currentY;
+				nextY = -showparts[counter]['y'] + 300;			
+				stepY = (nextY - currentY) / 100
+									
+				var i = 1;                     //  set your counter to 1
+
+				function myLoop () {           //  create a loop function
+				   setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+					  currentX = currentX + stepX; 
+					  currentY = currentY + stepY; 
+					  paper.setOrigin( currentX, currentY);
+					  i++;                     //  increment the counter
+					  if (i < 101) {            //  if the counter < 10, call the loop function
+						 myLoop();             //  ..  again which will trigger another 
+					  }                        //  ..  setTimeout()
+				   }, 10)
+				}
+
+				myLoop();  
+				
+//				
+				
+				
+				
+				$("#showpart"+counter).css('background-color','grey');
+				$("#showpart"+(counter-1)).css('background-color','black');
+				
+							
+				//Attendre, et lancer le prochain readpart
+				setTimeout(readpart, showparts[counter]['duration'] * 1000);		
+				counter = counter +1
+					
+			}
+			else {
+				console.log('fin du show');
+				$("#play").show();
+				$("#stop").hide();
+				
+				allCells = graph.getCells();		
+				allCells.forEach(function(entry) {
+					entry.attr('./display','');
+				});
+				
+				paper.setOrigin(0,0);
+				
+			}
 		}
 		
+
 	}
 	
 	$( "body" ).on("click", "#play", function(event) {		
-	
 		readshow();
+	});
+	
+	$( "body" ).on("click", "#stop", function(event) {		
+		counter = 1000;
+		$("#stop").hide();
 	});
 	
 });
 
 </script>
 
-
-<script>
-$( document ).ready(function() {
-
-});
-
-</script>
 
 {% endblock %}

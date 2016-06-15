@@ -20,7 +20,8 @@ from datetime import datetime
 def theater(request, id_show):
 	show = Show.objects.get(pk=id_show)
 	showparts = ShowPart.objects.filter(show = show)
-	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts });
+	link_types = LinkType.objects.all()
+	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts, 'link_types':link_types });
 
 def esAddProp(request):
 	

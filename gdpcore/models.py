@@ -170,7 +170,7 @@ class Graph(models.Model):
 	originy = models.IntegerField(default=0)
 	creation_date = models.DateTimeField()
 	propNumber = models.IntegerField(default=0)	
-	parti = models.ForeignKey('polikif.Parti')
+	parti = models.ForeignKey('polikif.Parti', default = 1)
 	
 	history = HistoricalRecords()
 	
