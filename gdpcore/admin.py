@@ -1,6 +1,6 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
-from .models import Cycle, Proposition, LinkType, Link, Comment, Notification, Implication, Graph, Elemgraph, UserProfile, CommentGraph
+from .models import Cycle, Proposition, LinkType, Link, Comment, Notification, Implication, Graph, Elemgraph, UserProfile, CommentGraph, Show, ShowPart
 
 class CycleAdmin(admin.ModelAdmin):
     # ...
@@ -38,6 +38,12 @@ class UserProfileAdmin(admin.ModelAdmin):
 class CommentGraphAdmin(admin.ModelAdmin):
 	list_display = ('id', 'graph', 'text', 'author')
 	
+class ShowAdmin(admin.ModelAdmin):
+	list_display = ('id', 'title', 'description', 'author')
+
+class ShowPartAdmin(admin.ModelAdmin):
+	list_display = ('id', 'show', 'proposition', 'x', 'y')	
+	
 admin.site.register(Cycle, CycleAdmin)
 admin.site.register(Proposition, PropositionAdmin)
 admin.site.register(LinkType, LinkTypeAdmin)
@@ -49,5 +55,8 @@ admin.site.register(Implication, ImplicationAdmin)
 admin.site.register(Elemgraph, ElemgraphAdmin)
 admin.site.register(UserProfile, UserProfileAdmin)
 admin.site.register(CommentGraph, CommentGraphAdmin)
+admin.site.register(Show, ShowAdmin)
+admin.site.register(ShowPart, ShowPartAdmin)
+
 
 admin.site.register(Graph, SimpleHistoryAdmin)

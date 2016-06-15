@@ -1,14 +1,13 @@
 {% extends 'gdpcore/base.html' %}
 
 {% block content %}
-
-
+{% load staticfiles %}
 
 <!-- Pas de cache, jointjs plante avec du cache -->	
 <meta http-equiv='cache-control' content='no-cache'>
 <meta http-equiv='expires' content='0'>
 <meta http-equiv='pragma' content='no-cache'>
-{% load staticfiles %}
+
 <!-- ^((?!cast_sender).)*$ -->
 
 
@@ -49,11 +48,9 @@
 	</ul>
 </div>
 
-
 <button id = "adminBut" type="button" class="btn btn-default" aria-label="Left Align">
 	<span class="glyphicon glyphicon-align-center" aria-hidden="true"></span> Admin
 </button>
-
 
 <!-- Action link -->
 <div id = "actionLink" class="btn-group" role="group">		

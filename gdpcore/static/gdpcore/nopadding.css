@@ -67,6 +67,16 @@
 	z-index:3;
 }
 
+#savedMessage{
+    position: fixed;
+	display:none;
+    bottom: 70px;
+    left: 26%;
+	z-index:3;
+	color: #2ECC71;
+	
+}
+
 #actionGraph {
     position: fixed;
     bottom: 10px;
@@ -103,15 +113,9 @@
 	border-color: #b31217;
 }
 
-
-
-
-#savedMessage{
-    position: absolute;
-	display:none;
-    top: 93px;
-    left: 33%;
-	z-index:3;
-	color: #2ECC71;
-	
+#showparts{
+    position: fixed;
+    top: 60px;
+    left: 10px;
+	z-index:2;	
 }

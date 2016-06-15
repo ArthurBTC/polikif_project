@@ -41,8 +41,10 @@ urlpatterns = [
 	url(r'^save_graph', views.save_graph, name='save_graph'),
 	url(r'^graph_viewer/(?P<id_graph>[0-9]+)', views.graph_viewer, name='graph_viewer'),
 	url(r'^incremental_viewer/(?P<id_prop>[0-9]+)', views.incremental_viewer, name='incremental_viewer'),
+	
 	url(r'^final_viewer/(?P<id_graph>[0-9]+)', views.final_viewer, name='final_viewer'),
 
+	
 	url(r'^ajax_propenvir/(?P<id_prop>[0-9]+)', views.ajax_propenvir, name='ajax_propenvir'),
 	url(r'^ajax_getcomments/(?P<id_prop>[0-9]+)', views.ajax_getcomments, name='ajax_getcomments'),
 	url(r'^ajax_newanswer', views.ajax_newanswer, name='ajax_newanswer'),
@@ -56,6 +58,8 @@ urlpatterns = [
 	url(r'^ajax_newsyllogism', views.ajax_newsyllogism, name='ajax_newsyllogism'),
 	url(r'^ajax_addcommentgraph', views.ajax_addcommentgraph, name='ajax_addcommentgraph'),
 	url(r'^ajax_hidecomment', views.ajax_hidecomment, name='ajax_hidecomment'),
+	
+	url(r'^theater/(?P<id_show>[0-9]+)', views.theater, name='theater'),
 	
 	url(r'^new_graph', views.new_graph, name='new_graph'),	
 	

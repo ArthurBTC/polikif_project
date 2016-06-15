@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .models import Proposition, LinkType, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph, CommentGraph
+from .models import Proposition, LinkType, Link, Cycle, Comment, Notification, Implication, Graph, Elemgraph, CommentGraph, Show, ShowPart
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.db.models import F
@@ -17,6 +17,10 @@ from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime  
 
+def theater(request, id_show):
+	show = Show.objects.get(pk=id_show)
+	showparts = ShowPart.objects.filter(show = show)
+	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts });
 
 def esAddProp(request):
 	

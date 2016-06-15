@@ -121,7 +121,7 @@ def cellule_accueil(request):
 def cellule_presentation(request, id_cellule):
 	return render(request,'polikif/index.html')
 	
-	
+
 
 	
 	
