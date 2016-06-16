@@ -8,9 +8,12 @@
 <meta http-equiv='expires' content='0'>
 <meta http-equiv='pragma' content='no-cache'>
 
-<div id="ytcontainer">
-	<div id="ytplayer"></div>
-</div>
+<audio id = 'audioplayer' class="audioDemo" controls preload="none" style="display:none;"> 
+   <source src="{% static 'gdpcore/testrcord.mp3' %}" type="audio/mpeg">
+</audio>
+
+<div id="ytshow"></div>
+
 <div id="myholder"></div>
 
 
@@ -20,29 +23,45 @@
 <div id="textDisplay"></div>
 
 <div id="showparts">
+	 
+	<div>Titre : {{show.title}}</div>
+	<div id="save">QUICKSAVE</div>
 
+	<table id = "partsMenu" class="table table-bordered">
+		
+		<thead>
+			<tr>
+				<td>#</td>
+				<td>id</td> 
+				<td>Proposition</td> 
+				<td>Nature</td> 
+				<td>x</td>
+				<td>y</td>
+				<td>Texte</td>
+				<td>Durée</td>		
+				
+			</tr>
+		</thead>
 
-<table class="table table-bordered">
+		<tbody>
+		{% for showpart in showparts %}
+			<tr id = 'showpart{{showpart.order}}' prop ='{{showpart.proposition.id}}'  class = 'showpart'>		
+				<td class = "order">{{showpart.order}}</td>
+				<td class = "propId">{{showpart.proposition.id}}</td>
+				<td class = "propText">{{showpart.proposition.text}}</td>
+				<td class = "propNature">{{showpart.proposition.get_nature_display}}</td>
+				<td class = "propX">{{showpart.x}}</td>
+				<td class = "propY">{{showpart.y}}</td>
+				<td class = "text"><input type="text" value = "{{showpart.text}}" name="fname" style="width: 100px; color:black;"></td>
+				<td class = "duration"><input type="number" step="0.1" value = {{showpart.duration}} style="width: 50px; color:black;"></td>			
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
 	
-	<tr>
-		<td></td>
-		<td>Proposition</td> 
-		<td>Texte</td>
-		<td>Durée</td>
-	</tr>
-	  
 	
-
-	{% for showpart in showparts %}
-	</tr id = 'showpart{{showpart.order}}' class = 'showpart'>
-		<td>{{showpart.order}}</td>
-		<td>{{showpart.proposition.text}}</td>
-		<td>{{showpart.text}}</td>
-		<td><input type="number" step="0.1" value = {{showpart.duration}} style="width: 50px; color:black;" </td>
-	</tr>
-	{% endfor %}
+	<input type="file" name="myfile" />
 	
-</table>
 
 
 </div>
@@ -66,17 +85,25 @@
   // YouTube player after the API code downloads.
       var player;
       function onYouTubeIframeAPIReady() {
-       		player = new YT.Player('ytplayer', {
-			  height: '200',
-			  width: '400',
+       		player = new YT.Player('ytshow', {
+			  height: '300',
+			  width: '600',
 			  videoId: '',
 			  events: {
 				'onReady': console.log('player loaded'),
-				'onStateChange': ''
+				'onStateChange': onPlayerStateChange
 			  }
 			});
       };
-	 $("#ytcontainer").hide();  
+
+		function onPlayerStateChange(event) { 
+
+			if(event.data === 0) {          
+				$("#ytshow").hide();
+			}
+		}	  
+	  
+	 $("#ytshow").hide();  
 	 
 </script>
 
@@ -87,23 +114,6 @@
 $( document ).ready(function() {
 
 	var showparts = {};
-
-	{% for showpart in showparts %}
-		showparts[{{showpart.order}}] = 
-		{
-			'id':{{showpart.id}},
-		{% if showpart.proposition %}
-			'proposition' : {{showpart.proposition.pk}},
-		{% endif %}	
-		{% if showpart.link %}		
-			'link' :  {{showpart.link.pk}}, 
-		{% endif %}
-			'text': '{{showpart.text}}',
-			'duration': {{showpart.duration}},
-			'x':{{showpart.x}},
-			'y':{{showpart.y}}
-		}
-	{% endfor %}
 
 	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#BF55EC', 'SEL': '#FDE3A7'}		
 	var typesData = {};
@@ -186,7 +196,6 @@ $( document ).ready(function() {
 	var sensibility = 20;	
 	
 	
-	$( "#ytcontainer" ).draggable();
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
 
@@ -569,6 +578,16 @@ $( document ).ready(function() {
 					);
 					el.attr('./display', '');
 					el.translate( {{showpart.x}} , {{showpart.y}} );
+							
+					el.on('change:position', function(event) { 
+				
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propX").html( event.get('position')['x'] )
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propY").html( event.get('position')['y'] )
+
+					})
+					
+					
+					
 				{% endif %}
 					
 				{% if showpart.proposition.nature == 'YT' %}
@@ -580,7 +599,15 @@ $( document ).ready(function() {
 						'{{showpart.proposition.videoEnd}}'
 					);
 					el.attr('./display', '');
-					el.translate( {{showpart.x}} , {{showpart.y}} );					
+					el.translate( {{showpart.x}} , {{showpart.y}} );
+
+					el.on('change:position', function(event) { 
+				
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propX").html( event.get('position')['x'] )
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propY").html( event.get('position')['y'] )
+
+					})
+					
 					
 				{% endif %}	
 
@@ -626,12 +653,17 @@ $( document ).ready(function() {
 	firstLoad();
 	
 	var counter;
+	var audioplayer = document.querySelector('#audioplayer');
 	$("#stop").hide();
+	$("#ytshow").hide();
 	
 	function readshow() {
 		
 		$("#play").hide();
 		$("#stop").show();
+		audioplayer.play();
+		
+		//$("#audioplayer").Play();
 		
 		
 		
@@ -650,30 +682,39 @@ $( document ).ready(function() {
 		
 		function readpart(){
 			
-			if (showparts[counter]) {
+			
+		
+			
+			if ( $("#partsMenu #showpart"+(counter)+" .order").html() ) {
+			
 				console.log('readpart starting... counter = '+counter)
 				//Afficher la proposition
-				if (showparts[counter]['proposition']) {
-					elem = graph.getCell( propIdCorrespondance[ showparts[counter]['proposition'] ] );
+				if ( $("#partsMenu #showpart"+(counter)+" .propId").html() ) {
+					elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ] );
 					elem.attr('./display','');
 				}
-				//Afficher le lien
+/*				//Afficher le lien
 				if (showparts[counter]['link']) {
 					li = graph.getCell( linkIdCorrespondance[ showparts[counter]['link'] ] );
 					li.attr('./display','');
-				}			
+				}			*/
+				
 				//Afficher le texte
-				$("#textDisplay").text(showparts[counter]['text'])
+				$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
 				
 				//Changer le focus
+				midX = 0.8*$(window).width() / 2;
+				midY = $(window).height() / 2;
 				
 				currentX = currentX;
-				nextX = -showparts[counter]['x'] + 800;			
-				stepX = (nextX - currentX) / 100
+				nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;			
+				stepX = (nextX - currentX) / 100;
+				
+				console.log( $("#partsMenu #showpart"+(counter)+" .propX").html() );
 				
 				currentY = currentY;
-				nextY = -showparts[counter]['y'] + 300;			
-				stepY = (nextY - currentY) / 100
+				nextY = -$("#partsMenu #showpart"+(counter)+" .propY").html() + midY - 50;			
+				stepY = (nextY - currentY) / 100;
 									
 				var i = 1;                     //  set your counter to 1
 
@@ -691,16 +732,32 @@ $( document ).ready(function() {
 
 				myLoop();  
 				
-//				
+				function startVideo(elem) {				
+					$("#ytshow").show();
+					
+					player.loadVideoById({
+						'videoId': elem.get('ytid'),
+						'startSeconds': elem.get('ytbeginning'),
+						'endSeconds': elem.get('ytend'),
+						'suggestedQuality': 'large'
+					});				
+				}
 				
+				elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ]);	
 				
+				if (elem.get('type') == 'basic.youtubeVideo') {
+							
+					setTimeout(function () {
+						startVideo( elem )
+					}, 1500);				
+				}
 				
-				$("#showpart"+counter).css('background-color','grey');
-				$("#showpart"+(counter-1)).css('background-color','black');
+//				$("#showpart"+counter).css('background-color','grey');
+//				$("#showpart"+(counter-1)).css('background-color','black');
 				
 							
-				//Attendre, et lancer le prochain readpart
-				setTimeout(readpart, showparts[counter]['duration'] * 1000);		
+				//Attendre, et lancer le prochain readpart						
+				setTimeout(readpart, $("#partsMenu #showpart"+(counter)+" .duration input").val() * 1000);		
 				counter = counter +1
 					
 			}
@@ -708,6 +765,8 @@ $( document ).ready(function() {
 				console.log('fin du show');
 				$("#play").show();
 				$("#stop").hide();
+				audioplayer.currentTime = 0;
+				audioplayer.pause();
 				
 				allCells = graph.getCells();		
 				allCells.forEach(function(entry) {
@@ -731,6 +790,81 @@ $( document ).ready(function() {
 		$("#stop").hide();
 	});
 	
+	$( "body" ).on("click", ".order", function(event) {	
+		
+
+		
+	//	$( "#showpart"+ $(event.target).html() ).after( "#showpart"+ ( $(event.target).html()+1)  );
+	
+		order = parseInt ( $(event.target).html() ) ;
+		
+		console.log($( "#showpart3" ).index());
+		
+		$( "#showpart"+order ).after( $( "#showpart"+(order-1)) ) ;
+
+		$( "#showpart"+order).attr('id','showpart'+(order-1))
+		$( "#showpart"+(order-1)).attr('id','showpart'+order)
+		
+		$( "#showpart"+order+" .order" ).html( (order-1) );
+		$( "#showpart"+(order-1)+" .order" ).html( (order) );
+		
+		
+	});
+		
+	$( "body" ).on("click", "#save", function(event) {	
+		
+	
+		var bigjson = [];
+
+		$("#partsMenu tr").each(function() {
+		
+			if ($(this).find("td").eq(0).html() != '#') {
+					
+				item = {
+					'order': $(this).find("td").eq(0).html(),
+					'propId': $(this).find("td").eq(1).html(),
+					'propX': $(this).find("td").eq(4).html(),
+					'propY': $(this).find("td").eq(5).html(),
+					'text': $(this).find("input").eq(0).val(),
+					'duration': $(this).find("input").eq(1).val()
+				}
+				
+				bigjson.push(item);
+			}
+		});
+		
+		console.log(bigjson)
+		
+		bigstring = JSON.stringify({ 'things': bigjson });
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_showsave/',
+			data: { 
+					showId: {{show.pk}},
+					data: bigstring,
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			success: function( data ) {		
+				
+				console.log(data);
+			}
+		});
+			
+		
+		
+	});
+	
+	paper.on('blank:pointerdblclick', function(evt, x, y) { 
+		midX = 0.8*$(window).width() / 2;
+		midY = $(window).height() / 2;
+		
+		paper.setOrigin(-x + midX , -y+midY);
+	});
+	
+		
+			
+		
 });
 
 </script>

@@ -19,7 +19,7 @@
 
 	<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
 		<li><a data-toggle="modal" data-target="#modalSave">Sauvegarder le graphique</a></li>
-		<li><a>Partager le graphique</a></li>
+		<li><a data-toggle="modal" data-target="#modalConvert">Convertir</a></li>
 		<li><a>Ouvrir un nouveau graphique</a></li>
 		<li role="separator" class="divider"></li>
 		<li><a data-toggle="modal" data-target="#modalExistingprop">Ajouter une proposition existante</a></li>
@@ -573,6 +573,32 @@
 		</div>
 	  </div>
 	</div>
+	
+	<!-- Convert Theater -->
+	<div class="modal fade" id="modalConvert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			<h4 class="modal-title" id="modalConvertLabel">Convert graph</h4>
+		  </div>
+		  <div class="modal-body">
+		  		
+				<div class="form-group">
+					<label for="convertTitle">Nouvel intitulé</label>
+					<input type="text" class="form-control" id="convertTitle" name='convertTitle' placeholder="">
+				</div>				
+	
+				<button type="button" id = "convertSubmit" class="btn btn-default">Convertir</button>
+				
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+		  </div>
+		</div>
+	  </div>
+	</div>
+		
 	
 	
 <!-- pour la recherche de propositions similaires-->
@@ -2434,6 +2460,52 @@ $(function(){
 
 });
 
+//Modal commentgraph
+$(function(){
+
+	//Envoyer la requete
+	$("#convertSubmit").click(function() {
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/convertTheater/',
+			data: { 
+					'title': $('#convertTitle').val(),
+					'graphstring': JSON.stringify(graph),				
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+			success: function( data ) {		
+				
+				$('#modalConvert').modal('hide');
+				console.log(data);
+				
+				
+/*				$("#existingPropsAnswer").html('');
+				
+				data['hits']['hits'].forEach(function(entry) {
+
+					$("#existingPropsAnswer").append(
+					
+						'<div class="radio"><label>'
+							+'<input type="radio" name="optionsExisting" value="'+entry['_id']+'">'
+								+entry['_source']['text']+' '
+								+entry['_score']					
+						+'</label"></div>'
+						
+					);	
+
+				});
+				
+				if (data['hits']['total'] == 0 ) {				
+					$("#existingPropsAnswer").append('Pas de résultat');
+				}*/
+			}
+		});
+	});
+
+});
+
+
 var selectedComment;
 	
 //NAV PAPER	
@@ -2570,7 +2642,8 @@ var selectedComment;
 	  }	  
 	  
 	);
-	
+
+/*	
 	paper.on('cell:mouseover', function(cellView, evt) { 	
 		el = cellView.model;	
 		el.attr('rect/stroke',colors['HL']);
@@ -2589,6 +2662,7 @@ var selectedComment;
 		$("[targ='"+cellView.model.get('id_prop')+"']").css('border-color', '');
 		
 	})	
+*/
 	
 });
 

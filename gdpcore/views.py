@@ -23,6 +23,50 @@ def theater(request, id_show):
 	link_types = LinkType.objects.all()
 	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts, 'link_types':link_types });
 
+def convertTheater(request):
+	
+	# graph = Graph.objects.get(id = request.POST['id_graph'])
+	
+	# graph.graphstring = request.POST['graphstring']
+	# graph.creation_date = datetime.now()
+	# graph.originx = request.POST['x']
+	# graph.originy = request.POST['y']
+	
+	show = Show(
+		author = request.user,
+		title = request.POST['title'],
+		description = 'default'
+	)
+	
+	show.save();
+	
+	j = json.loads(request.POST['graphstring'])
+	
+	i = 0;
+	
+	for cell in j['cells']:					
+		if cell["type"] in ["basic.twoTextRect","basic.youtubeVideo"]:
+			if cell['attrs']['.']['display'] == '':
+				i = i+1
+			
+				showpart = ShowPart(			
+					show = show,
+					order = i,
+					text = '',
+					proposition = Proposition.objects.get(id = cell['id_prop']),
+					x= cell['position']['x'],
+					y= cell['position']['y'],
+					duration = 2			
+				)
+				
+				showpart.save()
+				
+	
+	# show.propNumber = i
+	# show.save()			
+	return HttpResponse(show.id)	
+	
+	
 def esAddProp(request):
 	
 	indexname = 'newindex'
@@ -1144,19 +1188,17 @@ def ajax_linkremove(request):
 
 @csrf_exempt	
 def ajax_quicksave(request):
+		
+	graph = Graph.objects.get(id = request.POST['id_graph'])
 	
-	if request.method == 'POST':	
-		
-		graph = Graph.objects.get(id = request.POST['id_graph'])
-		
-		graph.graphstring = request.POST['graphstring']
-		graph.creation_date = datetime.now()
-		graph.originx = request.POST['x']
-		graph.originy = request.POST['y']
-		
-		j = json.loads(request.POST['graphstring'])
-		
-		graph.save()
+	graph.graphstring = request.POST['graphstring']
+	graph.creation_date = datetime.now()
+	graph.originx = request.POST['x']
+	graph.originy = request.POST['y']
+	
+	j = json.loads(request.POST['graphstring'])
+	
+	graph.save()
 		
 		
 	i = 0;
@@ -1290,6 +1332,35 @@ def ajax_hidecomment(request):
 	comment.save()
 	
 	return HttpResponse('ok')
+	
+def ajax_showsave(request):
+	
+	data = request.POST['data']
+	
+	j = json.loads(data)
+	
+	for item in j['things']:
+		item['duration']
+	
+	show = request.POST['showId']
+
+	
+	for item in j['things']:
+		elem, created = ShowPart.objects.update_or_create(
+			show=show,
+			proposition = Proposition.objects.get(id = item['propId']), 
+			defaults={
+				'order': item['order'],
+				'text': item['text'],
+				'x': item['propX'],
+				'y': item['propY'],
+				'duration': item['duration']
+				})
+		
+	return HttpResponse('ok')
+	
+
+	
 	
 def init(request):
 
