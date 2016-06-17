@@ -9,8 +9,10 @@
 <meta http-equiv='pragma' content='no-cache'>
 
 <audio id = 'audioplayer' class="audioDemo" controls preload="none" style="display:none;"> 
-   <source src="{% static 'gdpcore/testrcord.mp3' %}" type="audio/mpeg">
+   <source src="{{MEDIA_URL}}/media/{{show.audio}}" type="audio/mpeg">
 </audio>
+
+
 
 <div id="ytshow"></div>
 
@@ -20,7 +22,9 @@
 <img id="play" src="{% static 'gdpcore/play.png' %}" alt="Play">
 <img id="stop" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
 
-<div id="textDisplay"></div>
+<div id="textContainer">
+	<div id="textDisplay"></div>
+</div>
 
 <div id="showparts">
 	 
@@ -60,8 +64,13 @@
 	</table>
 	
 	
-	<input type="file" name="myfile" />
-	
+	<div>Current audio : {{show.audio}}</div>
+	<form method="post" action="/gdpcore/showAudioUpload/" enctype="multipart/form-data">
+	{% csrf_token %}
+		<input type="number" name="showid" value = {{show.id}} style = "display:none;">
+		<input type="file" name="audiofile">
+		<input type="submit">
+	</form>
 
 
 </div>
@@ -631,10 +640,21 @@ $( document ).ready(function() {
 					{{showpart.link.type}}, 
 					'{{showpart.link.autor.username|escapejs}}' 
 					);
-			{% endif %}
-			
+			{% endif %}		
 		{% endfor %}
-
+		
+		{% for link in links %}
+			li = addLink(
+				{{link.id}}, 
+				{{link.left_prop.id}}, 
+				{{link.right_prop.id}}, 
+				{{link.type}}, 
+				'{{link.autor.username|escapejs}}' 
+			);	
+			li.attr('./display','');
+		
+		{% endfor %}
+		
 		updateCorrespondances()
 
 		//Chargement des implications
@@ -654,6 +674,7 @@ $( document ).ready(function() {
 	
 	var counter;
 	var audioplayer = document.querySelector('#audioplayer');
+	audioplayer.volume=0.05;
 	$("#stop").hide();
 	$("#ytshow").hide();
 	
@@ -662,7 +683,7 @@ $( document ).ready(function() {
 		$("#play").hide();
 		$("#stop").show();
 		audioplayer.play();
-		
+	
 		//$("#audioplayer").Play();
 		
 		
@@ -682,9 +703,7 @@ $( document ).ready(function() {
 		
 		function readpart(){
 			
-			
-		
-			
+
 			if ( $("#partsMenu #showpart"+(counter)+" .order").html() ) {
 			
 				console.log('readpart starting... counter = '+counter)
@@ -692,6 +711,7 @@ $( document ).ready(function() {
 				if ( $("#partsMenu #showpart"+(counter)+" .propId").html() ) {
 					elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ] );
 					elem.attr('./display','');
+					aroundCellVisu(elem);
 				}
 /*				//Afficher le lien
 				if (showparts[counter]['link']) {
@@ -703,8 +723,8 @@ $( document ).ready(function() {
 				$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
 				
 				//Changer le focus
-				midX = 0.8*$(window).width() / 2;
-				midY = $(window).height() / 2;
+				midX = 0.7*$(window).width() / 2;
+				midY = 0.9*$(window).height() / 2;
 				
 				currentX = currentX;
 				nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;			
@@ -798,15 +818,27 @@ $( document ).ready(function() {
 	
 		order = parseInt ( $(event.target).html() ) ;
 		
-		console.log($( "#showpart3" ).index());
+		console.log(order);
 		
 		$( "#showpart"+order ).after( $( "#showpart"+(order-1)) ) ;
 
-		$( "#showpart"+order).attr('id','showpart'+(order-1))
-		$( "#showpart"+(order-1)).attr('id','showpart'+order)
+		var i = 0;
 		
-		$( "#showpart"+order+" .order" ).html( (order-1) );
-		$( "#showpart"+(order-1)+" .order" ).html( (order) );
+		$("#partsMenu tr").each(function() {
+			if (i>0){	
+				$(this).find("td").eq(0).html(i);
+				$(this).attr('id','showpart'+i);
+				//'order': $(this).find("td").eq(0).html()
+			}
+			i = i+1;
+			
+		});		
+		
+//		$( "#showpart"+order).attr('id','showpart'+(order-1))
+//		$( "#showpart"+(order-1)).attr('id','showpart'+order)
+		
+//		$( "#showpart"+order+" .order" ).html( (order-1) );
+//		$( "#showpart"+(order-1)+" .order" ).html( (order) );
 		
 		
 	});
@@ -856,13 +888,13 @@ $( document ).ready(function() {
 	});
 	
 	paper.on('blank:pointerdblclick', function(evt, x, y) { 
-		midX = 0.8*$(window).width() / 2;
-		midY = $(window).height() / 2;
+		midX = 0.7*$(window).width() / 2;
+		midY = 0.9*$(window).height() / 2;
 		
 		paper.setOrigin(-x + midX , -y+midY);
 	});
 	
-		
+
 			
 		
 });

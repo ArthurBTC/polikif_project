@@ -129,18 +129,30 @@
 #play, #stop {
     position: fixed;
     bottom: 0px;
-    left: calc(40% - 30px);
+    right: calc(15% - 30px);
 	width:60px;
 	height:60px;
 	z-index:4;	
 }
 
 #textDisplay {
-    position: fixed;
+    
 	font-size:40px;
-    bottom: 60px;
-    left: 50%;
-	z-index:2;	
+	text-align: center;
+	vertical-align: middle;
+	z-index:4;
+	color:white;
+}
+
+#textContainer{
+	
+	position:fixed;
+	height:10%;
+	bottom:0px;
+	left:0px;
+	width:70%;
+	z-index:3;
+	background-color:black;
 }
 
 #ytshow {

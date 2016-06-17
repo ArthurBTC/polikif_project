@@ -19,9 +19,30 @@ from datetime import datetime
 
 def theater(request, id_show):
 	show = Show.objects.get(pk=id_show)
-	showparts = ShowPart.objects.filter(show = show)
+	showparts = ShowPart.objects.filter(show = show).order_by('order')
+	
+	props = []
+	links = []
+	
+	for showpart in showparts:
+		props.append(showpart.proposition)
+	
+	for prop in props:
+		rightLinks = Link.objects.filter(right_prop = prop)
+		leftLinks = Link.objects.filter(left_prop = prop)
+		
+		for rightLink in rightLinks:
+			if rightLink.left_prop in props:
+				links.append(rightLink)
+		
+		for leftLink in leftLinks:
+			if leftLink.right_prop in props:
+				links.append(leftLink)
+				
+	links = list(set(links))			
+	
 	link_types = LinkType.objects.all()
-	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts, 'link_types':link_types });
+	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts, 'link_types':link_types, 'links':links });
 
 def convertTheater(request):
 	
@@ -66,6 +87,15 @@ def convertTheater(request):
 	# show.save()			
 	return HttpResponse(show.id)	
 	
+
+def showAudioUpload(request):
+	
+	show = Show.objects.get(pk=request.POST['showid'])
+	
+	show.audio = request.FILES['audiofile']
+	show.save();
+	
+	return HttpResponseRedirect(reverse('theater', args=(show.pk,)))
 	
 def esAddProp(request):
 	

@@ -207,7 +207,9 @@ class CommentGraph(models.Model):
 class Show(models.Model):
 	author = models.ForeignKey(User)
 	title = models.CharField(max_length = 100)
-	description = models.CharField(max_length = 1000)
+	description = models.CharField(max_length = 1000, default ='')
+	audio = models.FileField(upload_to="audio", blank=True, null=True)
+	
 	
 class ShowPart(models.Model):
 	show = models.ForeignKey(Show)

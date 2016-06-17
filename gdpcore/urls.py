@@ -1,5 +1,8 @@
 from django.conf.urls import url, include
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 from . import views
 
 urlpatterns = [
@@ -62,7 +65,9 @@ urlpatterns = [
 	url(r'^theater/(?P<id_show>[0-9]+)', views.theater, name='theater'),
 	url(r'^ajax_showsave', views.ajax_showsave, name='ajax_showsave'),
 	
-	url(r'^convertTheater', views.convertTheater, name='convertTheater'),	
+	url(r'^convertTheater', views.convertTheater, name='convertTheater'),
+	url(r'^showAudioUpload', views.showAudioUpload, name='showAudioUpload'),
+	
 	
 	url(r'^new_graph', views.new_graph, name='new_graph'),	
 	
@@ -70,3 +75,6 @@ urlpatterns = [
 	
 	url('^', include('django.contrib.auth.urls')),
 ]
+
+if settings.DEBUG is True:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
