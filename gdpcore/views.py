@@ -25,6 +25,7 @@ def theater(request, id_show):
 	links = []
 	
 	for showpart in showparts:
+		showpart.proposition.timediff = showpart.proposition.videoEnd -showpart.proposition.videoBeginning
 		props.append(showpart.proposition)
 	
 	for prop in props:

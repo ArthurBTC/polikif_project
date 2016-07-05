@@ -53,7 +53,7 @@
 				<td class = "order">{{showpart.order}}</td>
 				<td class = "propId">{{showpart.proposition.id}}</td>
 				<td class = "propText">{{showpart.proposition.text}}</td>
-				<td class = "propNature">{{showpart.proposition.get_nature_display}}</td>
+				<td class = "propNature">{{showpart.proposition.get_nature_display}}{% if showpart.proposition.nature = 'YT' %}({{ showpart.proposition.timediff }}){% endif %}</td>
 				<td class = "propX">{{showpart.x}}</td>
 				<td class = "propY">{{showpart.y}}</td>
 				<td class = "text"><input type="text" value = "{{showpart.text}}" name="fname" style="width: 100px; color:black;"></td>
@@ -284,8 +284,6 @@ $( document ).ready(function() {
 		
 		return(el)
 	}
-
-	
 	
 	//ajouter une vidéo youtube
 	function addYoutube(id_prop, text, ytid, ytbeginning, ytend) {
@@ -439,6 +437,7 @@ $( document ).ready(function() {
 	
 	//Pour ajouter un rond à un lien  (pour pouvoir pointer dessus)
 	function addCircToLink(link){	
+		/*
 		source_position = link.getSourceElement().get('position');
 		target_position = link.getTargetElement().get('position');
 		var middle_position = {};
@@ -463,6 +462,7 @@ $( document ).ready(function() {
 		el.toBack();		
 		circles.push(el);
 		return el
+		*/
 	};
 		
 	//Creation d'une implication (avec bonne visibilité)
@@ -677,137 +677,168 @@ $( document ).ready(function() {
 	audioplayer.volume=0.05;
 	$("#stop").hide();
 	$("#ytshow").hide();
+	var currentX=0;
+	var currentY=0;
+	var selectedElement='';
+	var selectedCounter=1;
+	var selectedAudioTime = 0;
+	var counter = 1;
+	
+	var timeOut;
+	var moveTimeOut;
+	var videoTimeOut;
+	
+	var allCells = graph.getCells();
 	
 	function readshow() {
 		
+		console.log('currentTime : '+audioplayer.currentTime);
+
 		$("#play").hide();
 		$("#stop").show();
-		audioplayer.play();
-	
-		//$("#audioplayer").Play();
-		
-		
-		
-		var currentX=0;
-		var currentY=0;
+		audioplayer.play();		
+		currentX=0;
+		currentY=0;
 		
 		updateCorrespondances();
-		counter = 1;
-		
-		allCells = graph.getCells();		
+	
+		//Affichage des propositions
 		allCells.forEach(function(entry) {
 			entry.attr('./display','none');
-		});				
+		});	
+	
+		var i = 0;
+		
+		$("#partsMenu tr").each(function() {
+			if (i<counter && i != 0){	
+				propId = $(this).find(".propId").text();
+				cell = graph.getCell( propIdCorrespondance[ propId ])
+				cell.attr('./display','');
+				aroundCellVisu(cell);
+			}
+			i = i+1;
+			
+		});			
 		
 		readpart();
+	}
+
+	function stopshow() {
+	
+		console.log('fin du show');
+		$("#play").show();
+		$("#stop").hide();
+		audioplayer.pause();
+			
+		allCells.forEach(function(entry) {
+			entry.attr('./display','');
+		});
 		
-		function readpart(){
+		paper.setOrigin(0,0);		
+		
+		$("#ytshow").hide();
+		player.stopVideo();
+		
+
+		clearTimeout(timeOut);
+		clearTimeout(moveTimeOut);
+		clearTimeout(videoTimeOut);
+		
+		if (selectedElement != '') {
+			counter = selectedCounter;
+			audioplayer.currentTime = selectedAudioTime;
+		} else {
+			counter = 1;
+			audioplayer.currentTime = 0;
+		}
+	}
+	
+	function readpart(){
+
+		if ( $("#partsMenu #showpart"+(counter)+" .order").html() ) {
+		
+			console.log('readpart starting... counter = '+counter)
 			
-
-			if ( $("#partsMenu #showpart"+(counter)+" .order").html() ) {
+			//Afficher la proposition
+			if ( $("#partsMenu #showpart"+(counter)+" .propId").html() ) {
+				elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ] );
+				elem.attr('./display','');
+				aroundCellVisu(elem);
+			}
 			
-				console.log('readpart starting... counter = '+counter)
-				//Afficher la proposition
-				if ( $("#partsMenu #showpart"+(counter)+" .propId").html() ) {
-					elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ] );
-					elem.attr('./display','');
-					aroundCellVisu(elem);
-				}
-/*				//Afficher le lien
-				if (showparts[counter]['link']) {
-					li = graph.getCell( linkIdCorrespondance[ showparts[counter]['link'] ] );
-					li.attr('./display','');
-				}			*/
+			//Afficher le texte
+			$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
+			
+			//Changer le focus
+			midX = 0.7*$(window).width() / 2;
+			midY = 0.9*$(window).height() / 2;
+			
+			currentX = currentX;
+			nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;			
+			stepX = (nextX - currentX) / 100;
 				
-				//Afficher le texte
-				$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
+			currentY = currentY;
+			nextY = -$("#partsMenu #showpart"+(counter)+" .propY").html() + midY - 50;			
+			stepY = (nextY - currentY) / 100;
+								
+			var i = 1;                     //  set your counter to 1
+			
 				
-				//Changer le focus
-				midX = 0.7*$(window).width() / 2;
-				midY = 0.9*$(window).height() / 2;
-				
-				currentX = currentX;
-				nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;			
-				stepX = (nextX - currentX) / 100;
-				
-				console.log( $("#partsMenu #showpart"+(counter)+" .propX").html() );
-				
-				currentY = currentY;
-				nextY = -$("#partsMenu #showpart"+(counter)+" .propY").html() + midY - 50;			
-				stepY = (nextY - currentY) / 100;
-									
-				var i = 1;                     //  set your counter to 1
+			function myLoop () {           //  create a loop function
+			   moveTimeOut = setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+				  currentX = currentX + stepX; 
+				  currentY = currentY + stepY; 
+				  paper.setOrigin( currentX, currentY);
+				  i++;                     //  increment the counter
+				  if (i < 101) {            //  if the counter < 10, call the loop function
+					 myLoop();             //  ..  again which will trigger another 
+				  }                        //  ..  setTimeout()
+			   }, 10)
+			}
 
-				function myLoop () {           //  create a loop function
-				   setTimeout(function () {    //  call a 3s setTimeout when the loop is called
-					  currentX = currentX + stepX; 
-					  currentY = currentY + stepY; 
-					  paper.setOrigin( currentX, currentY);
-					  i++;                     //  increment the counter
-					  if (i < 101) {            //  if the counter < 10, call the loop function
-						 myLoop();             //  ..  again which will trigger another 
-					  }                        //  ..  setTimeout()
-				   }, 10)
-				}
-
-				myLoop();  
+			myLoop();  
+			
+			function startVideo(elem) {				
+				$("#ytshow").show();
 				
-				function startVideo(elem) {				
-					$("#ytshow").show();
-					
-					player.loadVideoById({
-						'videoId': elem.get('ytid'),
-						'startSeconds': elem.get('ytbeginning'),
-						'endSeconds': elem.get('ytend'),
-						'suggestedQuality': 'large'
-					});				
-				}
-				
-				elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ]);	
-				
-				if (elem.get('type') == 'basic.youtubeVideo') {
-							
-					setTimeout(function () {
-						startVideo( elem )
-					}, 1500);				
-				}
-				
+				player.loadVideoById({
+					'videoId': elem.get('ytid'),
+					'startSeconds': elem.get('ytbeginning'),
+					'endSeconds': elem.get('ytend'),
+					'suggestedQuality': 'large'
+				});				
+			}
+			
+			elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ]);	
+			
+			if (elem.get('type') == 'basic.youtubeVideo') {
+						
+				videoTimeOut = setTimeout(function () {
+					startVideo( elem )
+				}, 1100);				
+			}
+			
 //				$("#showpart"+counter).css('background-color','grey');
 //				$("#showpart"+(counter-1)).css('background-color','black');
+			
+						
+			//Attendre, et lancer le prochain readpart						
+			timeOut = setTimeout(readpart, $("#partsMenu #showpart"+(counter)+" .duration input").val() * 1000);		
+			counter = counter +1
 				
-							
-				//Attendre, et lancer le prochain readpart						
-				setTimeout(readpart, $("#partsMenu #showpart"+(counter)+" .duration input").val() * 1000);		
-				counter = counter +1
-					
-			}
-			else {
-				console.log('fin du show');
-				$("#play").show();
-				$("#stop").hide();
-				audioplayer.currentTime = 0;
-				audioplayer.pause();
-				
-				allCells = graph.getCells();		
-				allCells.forEach(function(entry) {
-					entry.attr('./display','');
-				});
-				
-				paper.setOrigin(0,0);
-				
-			}
 		}
-		
-
+		else {
+			stopshow();
+		}
 	}
+	
 	
 	$( "body" ).on("click", "#play", function(event) {		
 		readshow();
 	});
 	
 	$( "body" ).on("click", "#stop", function(event) {		
-		counter = 1000;
-		$("#stop").hide();
+		stopshow();
 	});
 	
 	$( "body" ).on("click", ".order", function(event) {	
@@ -816,10 +847,8 @@ $( document ).ready(function() {
 		
 	//	$( "#showpart"+ $(event.target).html() ).after( "#showpart"+ ( $(event.target).html()+1)  );
 	
-		order = parseInt ( $(event.target).html() ) ;
-		
-		console.log(order);
-		
+		order = parseInt ( $(event.target).html() ) ;		
+		console.log(order);		
 		$( "#showpart"+order ).after( $( "#showpart"+(order-1)) ) ;
 
 		var i = 0;
@@ -842,7 +871,40 @@ $( document ).ready(function() {
 		
 		
 	});
+
+	$( "body" ).on("click", ".propText", function(event) {	
 		
+	//	$( "#showpart"+ $(event.target).html() ).after( "#showpart"+ ( $(event.target).html()+1)  );
+	
+		counter = parseInt($(event.target).parent().find(".order").text()) ;	
+		propId = $(event.target).parent().find(".propId").text() ;		
+		
+		updateCorrespondances()
+		if(selectedElement!=''){
+			selectedElement.attr('rect/fill', "#EEEEEE");
+		};
+		selectedElement = graph.getCell(propIdCorrespondance[propId]);
+		selectedElement.attr('rect/fill', '#EAEEAE');
+		
+		selectedCounter = counter;
+		
+		var cumulatedTime = 0;	
+		i=0;
+		$("#partsMenu tr").each(function() {
+			if (i<counter && i != 0){	
+
+				dur = parseInt($(this).find("input").eq(1).val());
+				cumulatedTime = cumulatedTime + dur;
+			}
+			i = i+1;		
+		});			
+		
+		selectedAudioTime = cumulatedTime;
+		audioplayer.currentTime = selectedAudioTime;
+	});
+
+
+	
 	$( "body" ).on("click", "#save", function(event) {	
 		
 	
