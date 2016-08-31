@@ -598,8 +598,7 @@
 		</div>
 	  </div>
 	</div>
-		
-	
+			
 	
 <!-- pour la recherche de propositions similaires-->
 	<form id="invisible_form" action="/gdpcore/similar_propositions" method="post" target="_blank">
@@ -1394,7 +1393,7 @@ $( document ).ready(function() {
 		if ( type == 'basic.twoTextRect' ) {			
 			//Ajustement de la taille en fonction du texte
 			fulltext = elem.get('text');
-			heightPrediction = fulltext.length*1.1;
+			heightPrediction = 50 + fulltext.length;
 			if (heightPrediction < 100) {
 				heightPrediction = 100;
 			}
@@ -1475,8 +1474,6 @@ $( document ).ready(function() {
 			selectedElement = elem.id
 		}		
 	}	
-	
-	
 	
 	// Quand on touche au graph
 	

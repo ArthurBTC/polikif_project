@@ -63,6 +63,8 @@ urlpatterns = [
 	url(r'^ajax_hidecomment', views.ajax_hidecomment, name='ajax_hidecomment'),
 	
 	url(r'^theater/(?P<id_show>[0-9]+)', views.theater, name='theater'),
+	url(r'^puretheater/(?P<id_show>[0-9]+)', views.puretheater, name='puretheater'),
+	
 	url(r'^ajax_showsave', views.ajax_showsave, name='ajax_showsave'),
 	
 	url(r'^convertTheater', views.convertTheater, name='convertTheater'),

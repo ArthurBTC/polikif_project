@@ -45,6 +45,35 @@ def theater(request, id_show):
 	link_types = LinkType.objects.all()
 	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts, 'link_types':link_types, 'links':links });
 
+	
+def puretheater(request, id_show):
+	show = Show.objects.get(pk=id_show)
+	showparts = ShowPart.objects.filter(show = show).order_by('order')
+	
+	props = []
+	links = []
+	
+	for showpart in showparts:
+		showpart.proposition.timediff = showpart.proposition.videoEnd -showpart.proposition.videoBeginning
+		props.append(showpart.proposition)
+	
+	for prop in props:
+		rightLinks = Link.objects.filter(right_prop = prop)
+		leftLinks = Link.objects.filter(left_prop = prop)
+		
+		for rightLink in rightLinks:
+			if rightLink.left_prop in props:
+				links.append(rightLink)
+		
+		for leftLink in leftLinks:
+			if leftLink.right_prop in props:
+				links.append(leftLink)
+				
+	links = list(set(links))			
+	
+	link_types = LinkType.objects.all()
+	return render(request,'gdpcore/puretheater.html',{'show': show, 'showparts':showparts, 'link_types':link_types, 'links':links });
+	
 def convertTheater(request):
 	
 	# graph = Graph.objects.get(id = request.POST['id_graph'])
