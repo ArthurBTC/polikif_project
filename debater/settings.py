@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 	'gdpcore.apps.GdpcoreConfig',
 	'polikif.apps.PolikifConfig',
+	'univok.apps.UnivokConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

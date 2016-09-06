@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+{% load staticfiles %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
+	
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}">
+	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
+	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	
+	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+
+
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}"></img>
+		</div>
+		<div class="col-md-8">
+			<div id = "title">Evénements</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timer_logo.png' %}"></img>A venir</div>
+	</div>
+	
+	{% for event in events %}
+		{% if event.status = '0' %}
+		<div class="row event" onclick="window.location='/univok/evenement/{{event.id}}';">
+			<div class = "simpletext">{{event.name}}</div>
+			<div class = "simpletext">{{event.date|date:"d/m/Y"}}</div>
+			<div class = "simpletext">{{event.place}}</div>
+		</div>
+		{% endif %}
+	{% endfor %}
+	
+	<div class="row">
+		<div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timerfull_logo.png' %}"></img>Passé</div>
+	</div>
+	
+	{% for event in events %}
+		{% if event.status = '1' %}
+		<div class="row event" onclick="window.location='/univok/evenement/{{event.id}}';">
+			<div class = "simpletext">{{event.name}}</div>
+			<div class = "simpletext">{{event.date|date:"d/m/Y"}}</div>
+			<div class = "simpletext">{{event.place}}</div>
+		</div>
+		{% endif %}
+	{% endfor %}	
+	
+</div>
+
+</body>
+</html>
