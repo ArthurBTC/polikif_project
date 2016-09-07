@@ -21,35 +21,179 @@
 	<script src="{% static 'gdpcore/joint.js' %}"></script>
 	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>
 	
-
 	<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>	
-	
 	
 </head>
 <body>
 
 <div class="container">
-	
-	{% for sentence in sentences %}
-	<div class="row">
-		<div class="col-md-2">{{sentence.0}}</div>
-		<div class="col-md-10">{{sentence.1}}</div>
-	</div>
-	{% endfor %}
-	
+
+
 	<div class="row">
 		<div id="myholder"></div>
 	</div>
 	
+	<div class="row">
+		<input type="checkbox" class="cbas" id="cb0" checked>0
+		<input type="checkbox" class="cbas" id="cb1" checked>1
+		<input type="checkbox" class="cbas" id="cb2" checked>2
+		
+		<textarea rows="4" cols="50" id = "sentences" disabled="yes"></textarea>
+		<textarea rows="4" cols="50" id = "textinput"></textarea>	
+		<select name="author" id ="author">
+			{% for name in names %}
+		  <option value="{{name}}">{{name}}</option>
+			{% endfor %}
+		</select>
+		<button id="addprop" type="button">ADD PROP</button>
+	</div>
 	
+	<div class="row">
+		<table class="table" id="mytable" style="width:100%">
+		  <tr>
+			<th>Status</th>
+			<th>ID</th> 
+			<th>Auteur</th>
+			<th></th>
+			<th>Sentence</th>
+			<th>Prop.</th>
+		  </tr>
+		 
+		{% for sentence in sentences %}
+			<tr>
+				<td>
+					<select class="zaza">
+						<option value=0>0</option>
+						<option value=1>1</option>
+						<option value=2>2</option>
+					</select>
+				</td>
+				<td>{{forloop.counter}}</td>
+				<td>{{sentence.0}}</td>
+				<td><input type="checkbox" class="cbbs"></td>
+				<td>{{sentence.1}}</td>
+				<td></td>
+			<tr>
+		{% endfor %}
+		</table>
+	</div>
 </div>
 
 <script>
+	
+	var indic = 0;
+	var checkedSentences;
+
 	{% include "gdpcore/grapher.js" %}
 
 	$( document ).ready(function() {
-		firstLoad('myholder');	
+		paper = addPaper('myholder');
+		setGridZoom(paper, 'myholder');	
 	});
+	
+	//Addprop
+	$( "#addprop" ).on( "click", function() {
+		addProp(indic, indic+' '+$("#textinput").val(), $("#author").val());
+		
+
+		checkedSentences = $('#mytable tr').filter(function () {
+			return $(this).find('td').eq(3).find(".cbbs").is(':checked')
+		});
+
+		$.each(checkedSentences, function() {
+			$(this).find('td').eq(5).text(indic);
+			$(this).find('td').eq(0).find(".zaza").val('1');
+			$(this).find('td').eq(3).find(".cbbs").prop('checked', false);
+			updateColors();
+			updateSentencesArea();
+			
+			$("#textinput").val('');
+		});		
+		
+		indic++;
+		
+		
+	});
+
+
+	
+	function updateColors(){
+	
+		$('#mytable tr').filter(function () {
+			return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "0"
+		}).children().css('color', '#2980b9');	
+		
+		$('#mytable tr').filter(function () {
+			return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "1"
+		}).children().css('color', '#2ecc71');
+		
+		$('#mytable tr').filter(function () {
+			return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "2"
+		}).children().css('color', '#e67e22');	
+		
+		return 1;
+	};
+	
+	function updateSentencesArea(){
+		checkedSentences = $('#mytable tr').filter(function () {
+			return $(this).find('td').eq(3).find(".cbbs").is(':checked')
+		});
+		
+		$('#sentences').val('');
+		
+		$.each(checkedSentences, function() {
+			console.log( $(this).find('td').eq(4).text() );
+			$('#sentences').val( $('#sentences').val()+ $(this).find('td').eq(4).text()+'\n'  );
+		});		
+	}
+	
+	updateColors();
+	updateSentencesArea();
+	
+	$('.zaza').on('change', function () {
+		updateColors();	
+	});
+	
+	$('.cbbs').on('change', function () {
+		updateSentencesArea();		
+	});	
+
+	//Checkboxes : update visibility...
+	$('.cbas,.zaza').on('change', function () {
+	
+		if($("#cb0").is(':checked')){	
+			var $rowsNo = $('#mytable tr').filter(function () {
+				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "0"
+			}).show();
+		}else{
+			var $rowsNo = $('#mytable tr').filter(function () {
+				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "0"
+			}).hide();
+		};
+		
+		if($("#cb1").is(':checked')){	
+			var $rowsNo = $('#mytable tr').filter(function () {
+				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "1"
+			}).show();
+		}else{
+			var $rowsNo = $('#mytable tr').filter(function () {
+				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "1"
+			}).hide();
+		};		
+	
+		if($("#cb2").is(':checked')){	
+			var $rowsNo = $('#mytable tr').filter(function () {
+				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "2"
+			}).show();
+		}else{
+			var $rowsNo = $('#mytable tr').filter(function () {
+				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "2"
+			}).hide();
+		};
+
+	});
+
+	
 </script>
 
 </body>

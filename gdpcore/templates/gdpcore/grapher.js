@@ -1,5 +1,6 @@
 	{% load staticfiles %}
 
+	
 	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#BF55EC', 'SEL': '#FDE3A7'}		
 	var typesData = {};
 
@@ -38,7 +39,6 @@
 	linkIdCorrespondance = {};
 	circleIdCorrespondance = {};
 	authorList = {};
-//	authorList[{{user.id}}] = '{{user.username|escapejs}}'
 
 	//Ini graph
     var graph = new joint.dia.Graph;
@@ -47,12 +47,10 @@
 	
 	//Variables pour le paper
 	var graphScale = 1;
-	var originX = {{graph.originx}};
-	var originY = {{graph.originy}};
+	var originX = {% if graph %} {{graph.originx}} {% else %}0{% endif %}; 
+	var originY = {% if graph %} {{graph.originy}} {% else %}0{% endif %}; 
 	var sensibility = 20;	
 	
-
-	$( "#ytcontainer" ).draggable();
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
 
@@ -124,7 +122,7 @@
 		});
 		el.attr('.word1/text', wraptext);
 		el.attr('.word2/text', autorname);
-		el.attr('./display', 'none');	
+		el.attr('./display', '');	
 	
 		graph.addCell(el);
 
@@ -470,12 +468,10 @@
 			return null;
 		}
 	};
-		
-	//Firstload : main
-	function firstLoad(holder) {
+				
+	function addPaper(holder){
 		
 		holder = $('#'+holder);
-		//Ini paper
 		var paper = new joint.dia.Paper({
 			el: holder,
 			width: 1000,
@@ -490,7 +486,80 @@
 			return true;
 			}
 		});
-		paper.setOrigin(originX, originY);		
+		paper.setOrigin(originX, originY);	
+		
+		return paper;
+	};
+
+	function setGridZoom(paper, holder) {
+		holder = $('#'+holder);
+			//NAV PAPER	
+		//Initial Parameters
+		var gridsize = 1;
+		var currentScale = 1;
+
+		//Get the div that will hold the graph
+		var targetElement= holder[0];
+
+		//Bonus function use (see below) - create dotted grid
+		setGrid(paper, gridsize*15, '#808080');
+
+		//Setup  svgpan and zoom, with handlers that set the grid sizing on zoom and pan
+		//Handlers not needed if you don't want the dotted grid
+		panAndZoom = svgPanZoom(targetElement.childNodes[0], 
+		{
+			viewportSelector: targetElement.childNodes[0].childNodes[0],
+			fit: false,
+			zoomScaleSensitivity: 0.4,
+			panEnabled: false,
+			onZoom: function(scale){
+				currentScale = scale;
+				setGrid(paper, gridsize*15*currentScale, '#808080');
+			},
+			beforePan: function(oldpan, newpan){
+				setGrid(paper, gridsize*15*currentScale, '#808080', newpan);
+			}
+		});
+
+		//Enable pan when a blank area is click (held) on
+		paper.on('blank:pointerdown', function (evt, x, y) {
+			panAndZoom.enablePan();
+			//console.log(x + ' ' + y);
+		});
+
+		//Disable pan when the mouse button is released
+		paper.on('cell:pointerup blank:pointerup', function(cellView, event) {
+		  panAndZoom.disablePan();
+		});
+
+		//BONUS function - will add a css background of a dotted grid that will scale reasonably
+		//well with zooming and panning.
+		function setGrid(paper, size, color, offset) {
+			// Set grid size on the JointJS paper object (joint.dia.Paper instance)
+			paper.options.gridsize = gridsize;
+			// Draw a grid into the HTML 5 canvas and convert it to a data URI image
+			var canvas = $('<canvas/>', { width: size, height: size });
+			canvas[0].width = size;
+			canvas[0].height = size;
+			var context = canvas[0].getContext('2d');
+			context.beginPath();
+			context.rect(1, 1, 1, 1);
+			context.fillStyle = color || '#AAAAAA';
+			context.fill();
+			// Finally, set the grid background image of the paper container element.
+			var gridBackgroundImage = canvas[0].toDataURL('image/png');
+			$(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
+			if(typeof(offset) != 'undefined'){  
+				$(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
+			}
+		}	
+	}
+			
+	//Firstload : main
+	function firstLoad(holder) {
+		
+		paper = addPaper(holder);	
+		setGridZoom(paper, holder);
 	
 		$("#actionProp").hide();
 		$("#actionLink").hide();
@@ -563,68 +632,6 @@
 			
 		updateCorrespondances();
 		
-		//NAV PAPER	
-	//Initial Parameters
-	var gridsize = 1;
-	var currentScale = 1;
 
-	//Get the div that will hold the graph
-	var targetElement= holder[0];
-
-	//Bonus function use (see below) - create dotted grid
-	setGrid(paper, gridsize*15, '#808080');
-
-	//Setup  svgpan and zoom, with handlers that set the grid sizing on zoom and pan
-	//Handlers not needed if you don't want the dotted grid
-	panAndZoom = svgPanZoom(targetElement.childNodes[0], 
-	{
-		viewportSelector: targetElement.childNodes[0].childNodes[0],
-		fit: false,
-		zoomScaleSensitivity: 0.4,
-		panEnabled: false,
-		onZoom: function(scale){
-			currentScale = scale;
-			setGrid(paper, gridsize*15*currentScale, '#808080');
-		},
-		beforePan: function(oldpan, newpan){
-			setGrid(paper, gridsize*15*currentScale, '#808080', newpan);
-		}
-	});
-
-	//Enable pan when a blank area is click (held) on
-	paper.on('blank:pointerdown', function (evt, x, y) {
-		panAndZoom.enablePan();
-		//console.log(x + ' ' + y);
-	});
-
-	//Disable pan when the mouse button is released
-	paper.on('cell:pointerup blank:pointerup', function(cellView, event) {
-	  panAndZoom.disablePan();
-	});
-
-
-	//BONUS function - will add a css background of a dotted grid that will scale reasonably
-	//well with zooming and panning.
-	function setGrid(paper, size, color, offset) {
-		// Set grid size on the JointJS paper object (joint.dia.Paper instance)
-		paper.options.gridsize = gridsize;
-		// Draw a grid into the HTML 5 canvas and convert it to a data URI image
-		var canvas = $('<canvas/>', { width: size, height: size });
-		canvas[0].width = size;
-		canvas[0].height = size;
-		var context = canvas[0].getContext('2d');
-		context.beginPath();
-		context.rect(1, 1, 1, 1);
-		context.fillStyle = color || '#AAAAAA';
-		context.fill();
-		// Finally, set the grid background image of the paper container element.
-		var gridBackgroundImage = canvas[0].toDataURL('image/png');
-		$(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
-		if(typeof(offset) != 'undefined'){  
-			$(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
-		}
-	}
-		
-		
 	};
 		

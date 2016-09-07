@@ -90,8 +90,7 @@ def ideasViewer(request, id_event):
 					'comments_graph': comments_graph})
 
 def sentencesConverter(request):
-
-		
+	
 	# csvfile = request.FILES['csv']
 	# op = open(/static/gdpcore/csvtobedealtwith/aaa.csv,'rb')
 	from django.conf import settings
@@ -99,14 +98,16 @@ def sentencesConverter(request):
 	text = open(os.path.join(settings.MEDIA_ROOT, 'aaa.csv'), 'r')
 	cr = csv.reader(text, delimiter=';')	
 	sentences=[];
+	names=[];
 	for row in cr:
 		sentences.append(row)
-		
+		names.append(row[0])
+	names = set(list(names))	
 	# with open('aaa.csv') as f:
 		# reader = csv.reader(f)
 		# for row in reader:
 			# sentences.append(row)
 		
-	return render(request,'univok/sentencesConverter.html',{'sentences': sentences });
+	return render(request,'univok/sentencesConverter.html',{'sentences': sentences, 'names':names });
 	# else:
 		# return render(request,'univok/csvUploader.html',{'aaa': 0 });
