@@ -30,14 +30,28 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-2">
-			<img id = "logosmall" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
+		<div class="col-md-3">
+			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
 		</div>
-		<div class="col-md-10">
-			<div id = "title">Idées</div>
+		<div class="col-md-9 titleContainer">
+			<span class = "title">{{event.name}}</span>
 		</div>
 	</div>
 	
+	<div class="row">
+	
+		<ul class="nav nav-tabs">
+		  <li role="presentation"><a href="/univok/evenement/{{event.id}}">Accueil</a></li>
+		  <li role="presentation" class="active"><a href="#">Idées</a></li>
+		  <li role="presentation"><a href="#">Ressources</a></li>
+		</ul>
+	
+
+	</div>	
+	
+	<div class="row">
+		<div class = 'subtitle'>Enregistrements</div>
+	</div>	
 	{% for record in records %}
 	<div class="row">
 		<audio controls>
@@ -49,9 +63,16 @@
 	{% endfor %}
 	
 	<div class="row">
+		<div class = 'subtitle'>Graphique</div>
+	</div>		
+	<div class="row">
 		<div id="myholder"></div>
 	</div>
 	
+	
+	<div class="row">
+		<div class = 'subtitle'>Propos</div>
+	</div>		
 	{% for sentence in sentences %}
 	<div class="row">
 		<div class="col-md-2">{{sentence.speaker.name}}</div>
@@ -66,6 +87,8 @@
 	{% include "gdpcore/grapher.js" %}
 
 	$( document ).ready(function() {
+		paper = addPaper('myholder');
+		setGridZoom(paper, 'myholder');
 		firstLoad('myholder');	
 	});
 </script>

@@ -20,8 +20,10 @@ class Event(models.Model):
 	organisation = models.ForeignKey(Organisation)
 	speakers = models.ManyToManyField(Speaker)
 	graph = models.ForeignKey(gdpcore_models.Graph)
+	show = models.ForeignKey(gdpcore_models.Show)
 	
 	name = models.CharField(max_length = 1000)
+	description = models.CharField(max_length = 2000)
 	date = models.DateTimeField()
 	place = models.CharField(max_length = 1000)
 

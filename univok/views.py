@@ -13,14 +13,47 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 def index(request):
 	events = Event.objects.all()
 	return render(request,'univok/eventsViewer.html',{'events': events });
+
 	
 def eventViewer(request, id_event):
 	event = Event.objects.get(id = id_event)
+	show = event.show
+
+	showparts = ShowPart.objects.filter(show = show).order_by('order')
+	
+	props = []
+	links = []
+	
+	for showpart in showparts:
+		showpart.proposition.timediff = showpart.proposition.videoEnd -showpart.proposition.videoBeginning
+		props.append(showpart.proposition)
+	
+	for prop in props:
+		rightLinks = Link.objects.filter(right_prop = prop)
+		leftLinks = Link.objects.filter(left_prop = prop)
+		
+		for rightLink in rightLinks:
+			if rightLink.left_prop in props:
+				links.append(rightLink)
+		
+		for leftLink in leftLinks:
+			if leftLink.right_prop in props:
+				links.append(leftLink)
+				
+	links = list(set(links))			
+	link_types = LinkType.objects.all()
+		
 
 	if event.status == '1':
 	
 		photos = Photo.objects.filter(event=event)	
-		return render(request,'univok/pastEventViewer.html',{'event': event, 'photos': photos });
+		return render(request,'univok/pastEventViewer.html',{'event': event, 
+					'photos': photos,
+					'show': show,
+					'showparts':showparts,
+					'link_types':link_types,
+					'links':links})
+
 		
 	if event.status == '0':
 		return render(request,'univok/futurEventViewer.html',{'event': event });

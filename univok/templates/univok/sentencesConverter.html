@@ -19,9 +19,8 @@
 	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
 	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
 	<script src="{% static 'gdpcore/joint.js' %}"></script>
-	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>
-	
-	<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>	
+	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>	
+	<script src="{% static 'gdpcore/svg-pan-zoom.min.js' %}"></script>	
 	
 </head>
 <body>
@@ -34,35 +33,49 @@
 	</div>
 	
 	<div class="row">
-		<input type="checkbox" class="cbas" id="cb0" checked>0
-		<input type="checkbox" class="cbas" id="cb1" checked>1
-		<input type="checkbox" class="cbas" id="cb2" checked>2
+
 		
 		<textarea rows="4" cols="50" id = "sentences" disabled="yes"></textarea>
 		<textarea rows="4" cols="50" id = "textinput"></textarea>	
-		<select name="author" id ="author">
-			{% for name in names %}
-		  <option value="{{name}}">{{name}}</option>
-			{% endfor %}
-		</select>
 		<button id="addprop" type="button">ADD PROP</button>
 	</div>
+
+	
+	
 	
 	<div class="row">
 		<table class="table" id="mytable" style="width:100%">
 		  <tr>
-			<th>Status</th>
-			<th>ID</th> 
-			<th>Auteur</th>
+			<th>					
+				<div class="row">
+					<input type="checkbox" class="cbStatus" id="cb0" checked>0
+				</div>
+				<div class="row">
+					<input type="checkbox" class="cbStatus" id="cb1" checked>1
+				</div>
+				<div class="row">
+					<input type="checkbox" class="cbStatus" id="cb2" checked>2
+				</div>		
+			</th>
+			<th></th> 
+			<th>
+			
+			{% for name in names %}
+				<div class="row">
+					<input type="checkbox" class="cbAuthors" checked>{{name}}
+				</div>
+			{% endfor %}
+			
+			</th>
 			<th></th>
-			<th>Sentence</th>
-			<th>Prop.</th>
+			<th></th>
+			<th></th>
 		  </tr>
 		 
 		{% for sentence in sentences %}
 			<tr>
 				<td>
-					<select class="zaza">
+					<select class="selectStatus">
 						<option value=0>0</option>
 						<option value=1>1</option>
 						<option value=2>2</option>
@@ -70,7 +83,7 @@
 				</td>
 				<td>{{forloop.counter}}</td>
 				<td>{{sentence.0}}</td>
-				<td><input type="checkbox" class="cbbs"></td>
+				<td><input type="checkbox" class="cbSentences"></td>
 				<td>{{sentence.1}}</td>
 				<td></td>
 			<tr>
@@ -93,19 +106,24 @@
 	
 	//Addprop
 	$( "#addprop" ).on( "click", function() {
-		addProp(indic, indic+' '+$("#textinput").val(), $("#author").val());
 		
-
+		authorName = $('#mytable tr').filter(function () {
+			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
+		}).find('td').eq(2).text();
+		
+		addProp(indic, indic+' '+$("#textinput").val(), authorName);
+		
 		checkedSentences = $('#mytable tr').filter(function () {
-			return $(this).find('td').eq(3).find(".cbbs").is(':checked')
+			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
 		});
 
 		$.each(checkedSentences, function() {
 			$(this).find('td').eq(5).text(indic);
-			$(this).find('td').eq(0).find(".zaza").val('1');
-			$(this).find('td').eq(3).find(".cbbs").prop('checked', false);
+			$(this).find('td').eq(0).find(".selectStatus").val('1');
+			$(this).find('td').eq(3).find(".cbSentences").prop('checked', false);
 			updateColors();
 			updateSentencesArea();
+			updateCheckboxSentences();
 			
 			$("#textinput").val('');
 		});		
@@ -120,15 +138,15 @@
 	function updateColors(){
 	
 		$('#mytable tr').filter(function () {
-			return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "0"
+			return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "0"
 		}).children().css('color', '#2980b9');	
 		
 		$('#mytable tr').filter(function () {
-			return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "1"
+			return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "1"
 		}).children().css('color', '#2ecc71');
 		
 		$('#mytable tr').filter(function () {
-			return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "2"
+			return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "2"
 		}).children().css('color', '#e67e22');	
 		
 		return 1;
@@ -136,58 +154,84 @@
 	
 	function updateSentencesArea(){
 		checkedSentences = $('#mytable tr').filter(function () {
-			return $(this).find('td').eq(3).find(".cbbs").is(':checked')
+			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
 		});
 		
 		$('#sentences').val('');
 		
 		$.each(checkedSentences, function() {
-			console.log( $(this).find('td').eq(4).text() );
 			$('#sentences').val( $('#sentences').val()+ $(this).find('td').eq(4).text()+'\n'  );
 		});		
+	}
+
+
+	
+	function updateCheckboxSentences(){
+	
+		//masquer les checkbox des autres auteurs
+		checkedSentences = $('#mytable tr').filter(function () {
+			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
+		});
+
+		if(checkedSentences.length > 0) {
+			sentencesPopop = $('#mytable tr').filter(function () {
+				return $(this).find('td').eq(2).text() != $(checkedSentences).find('td').eq(2).text();
+			});		
+			
+			$.each(sentencesPopop, function() {
+				$(this).find('td').eq(3).find(".cbSentences").hide();
+			});
+		} else {			
+			allSentences = $('#mytable tr')
+			$.each(allSentences, function() {
+				$(this).find('td').eq(3).find(".cbSentences").show();
+			});			
+		}
+		
 	}
 	
 	updateColors();
 	updateSentencesArea();
 	
-	$('.zaza').on('change', function () {
+	$('.selectStatus').on('change', function () {
 		updateColors();	
 	});
 	
-	$('.cbbs').on('change', function () {
-		updateSentencesArea();		
+	$('.cbSentences').on('change', function () {
+		updateSentencesArea();
+		updateCheckboxSentences();
 	});	
 
 	//Checkboxes : update visibility...
-	$('.cbas,.zaza').on('change', function () {
+	$('.cbStatus,.selectStatus').on('change', function () {
 	
 		if($("#cb0").is(':checked')){	
 			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "0"
+				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "0"
 			}).show();
 		}else{
 			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "0"
+				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "0"
 			}).hide();
 		};
 		
 		if($("#cb1").is(':checked')){	
 			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "1"
+				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "1"
 			}).show();
 		}else{
 			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "1"
+				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "1"
 			}).hide();
 		};		
 	
 		if($("#cb2").is(':checked')){	
 			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "2"
+				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "2"
 			}).show();
 		}else{
 			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".zaza").val()) == "2"
+				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "2"
 			}).hide();
 		};
 

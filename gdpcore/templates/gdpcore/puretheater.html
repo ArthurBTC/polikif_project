@@ -28,11 +28,6 @@
 	<div class="container-fluid fill">
 		<div class ="row">
 
-		
-
-
-
-
 {% load staticfiles %}
 
 <!-- Pas de cache, jointjs plante avec du cache -->	
@@ -708,8 +703,12 @@ $( document ).ready(function() {
 	firstLoad();
 	
 	var counter;
-	var audioplayer = document.querySelector('#audioplayer');
-	audioplayer.volume=0.05;
+	var audioplayer = $('#audioplayer');
+	
+	if(audioplayer){
+		audioplayer.volume=0.05;
+	}
+	
 	$("#stop").hide();
 	$("#ytshow").hide();
 	var currentX=0;

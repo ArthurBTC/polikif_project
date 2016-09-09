@@ -22,26 +22,27 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-2">
-			<img id = "logosmall" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
+		<div class="col-md-3">
+			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
 		</div>
-		<div class="col-md-10">
-			<div id = "title">{{event.name}}</div>
+		<div class="col-md-9 titleContainer">
+			<span class = "title">{{event.name}}</span>
 		</div>
 	</div>
 	<div class="row">
 		<div class = 'subtitle'>Description</div>
 	</div>
 	<div class="row">
-		<div class = 'simpletext'>Lalalala</div>
+		<div class = 'simpletext'>{{event.description}}</div>
 	</div>	
 
 	
 	<div class="row">
 		<div class = 'subtitle'>Avant-propos</div>
 	</div>
-	<div class="row">
-		<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe>
+	<div class="row animContainer">
+	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
+		<img class="animPlay" src = "{% static 'gdpcore/play.png' %}"></img>
 	</div>
 
 	<div class="row">

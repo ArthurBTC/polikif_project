@@ -9,12 +9,22 @@
 {% load staticfiles %}
 
 	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
-	
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
+	
 	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
 	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	
 	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>
+	
+
+	<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>	
 
 
 </head>
@@ -22,49 +32,36 @@
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-2">
-			<img id = "logosmall" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
+		<div class="col-md-3">
+			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
 		</div>
-		<div class="col-md-10">
-			<div id = "title">{{event.name}}</div>
+		<div class="col-md-9 titleContainer">
+			<span class = "title">{{event.name}}</span>
 		</div>
 	</div>
 	
 	<div class="row">
-		<span>Accueil</span>
-		<span onclick="window.location='/univok/idees/{{event.id}}';">Idées</span>
-		<span>Ressources</span>
+	
+		<ul class="nav nav-tabs">
+		  <li role="presentation" class="active"><a href="#">Accueil</a></li>
+		  <li role="presentation"><a href="/univok/idees/{{event.id}}">Idées</a></li>
+		  <li role="presentation"><a href="#">Ressources</a></li>
+		</ul>
+	
+
 	</div>
 	<div class="row">
 		<div class = 'subtitle'>Photos</div>
 	</div>
 	<div class="row">
-		<div class="slideshow-container">
-		{% for photo in photos %}
-		  <div class="mySlides fade">
-			<div class="numbertext">1 / 1</div>
-			<img src="/media/{{photo.picture}}" style="width:100%">
-			<div class="text">Caption Text</div>
-		  </div>
-		{% endfor %}  
-		  <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-		<a class="next" onclick="plusSlides(1)">&#10095;</a>
-		
-		</div>
-		<br>
-
-		<div style="text-align:center">
-		  <span class="dot" onclick="currentSlide(1)"></span> 
-
-  
-		</div>	
-	
+		<img src = "{% static 'gdpcore/slideshow.png' %}" height="400" width="800" ></img>
 	</div>		
 	<div class="row">
-		<div class = 'subtitle'>Avant-propos</div>
+		<div class = 'subtitle'>Synthèse</div>
 	</div>
-	<div class="row">
-		<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> 
+	<div class="row animContainer">
+	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
+		<img class="animPlay" src = "{% static 'gdpcore/play.png' %}" ></img>
 	</div>
 	<div class="row">
 		<div class = 'subtitle'>Intervenants</div>
@@ -77,38 +74,115 @@
 		</div>
 	{% endfor %}
 
-
-	
 </div>
+
+<img id="blackUnivok" class = "cta anim" src="{% static 'univok/blackUnivok.png' %}" alt="Play">
+
+<div id="myholder" class = "anim"></div>
+<img id="playAnim" class = "anim" src="{% static 'gdpcore/play.png' %}" alt="Play">
+<img id="stopAnim" class = "anim" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
+<img id="closeCross" class = "anim" src="{% static 'gdpcore/closecross.png' %}" alt="Cancel">
+{% include "gdpcore/showparts.html" %}
+
+<div id="callToAction" class = "cta"></div>
+<img id="ctaOk" class = "cta ctaImg" src="{% static 'gdpcore/ctaOk.png' %}" alt="Play">
+<div id="ctaOkText" class = "cta ctaText">J'ai tout compris !</div>
+<img id="ctaNok" class = "cta ctaImg" src="{% static 'gdpcore/ctaNok.png' %}" alt="Play">
+<div id="ctaNokText" class = "cta ctaText">J'ai une question, une remarque...</div>
+<img id="ctaAgain" class = "cta ctaImg" src="{% static 'gdpcore/ctaAgain.png' %}" alt="Play">
+<div id="ctaAgainText" class = "cta ctaText">Relancer la vidéo</div>
+<img id="ctaGraph" class = "cta ctaImg" src="{% static 'gdpcore/ctaGraph.png' %}" alt="Play">
+<div id="ctaGraphText" class = "cta ctaText">Voir le graphe</div>
+
+<div id="ctaMerci" class="cta2">Merci !</div>
+<div id="ctaForm" class="cta2">
+	
+	
+<form class="form-horizontal">
+  
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" rows="3"></textarea>
+    </div>	
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-default">Sign in</button>
+    </div>
+  </div>
+</form>
+<div>
 
 
 <script>
-	var slideIndex = 1;
-	showSlides(slideIndex);
 
-	function plusSlides(n) {
-	  showSlides(slideIndex += n);
-	}
+	{% include "gdpcore/grapher.js" %}
 
-	function currentSlide(n) {
-	  showSlides(slideIndex = n);
-	}
+	$( document ).ready(function() {
+		paper = addPaper('myholder');
+		firstLoadFromShowparts('myholder');
 
-	function showSlides(n) {
-	  var i;
-	  var slides = document.getElementsByClassName("mySlides");
-	  var dots = document.getElementsByClassName("dot");
-	  if (n > slides.length) {slideIndex = 1} 
-	  if (n < 1) {slideIndex = slides.length}
-	  for (i = 0; i < slides.length; i++) {
-		  slides[i].style.display = "none"; 
-	  }
-	  for (i = 0; i < dots.length; i++) {
-		  dots[i].className = dots[i].className.replace(" active", "");
-	  }
-	  slides[slideIndex-1].style.display = "block"; 
-	  dots[slideIndex-1].className += " active";
-	}
+		allCells = graph.getCells();
+		//Affichage des propositions
+		allCells.forEach(function(entry) {
+			entry.attr('./display','none');
+		});	
+		
+		$('.anim').hide();
+		$('.cta').hide();
+//		$(".cta2").hide();
+			
+		$('.animPlay').click(function(e){
+			
+			$(".anim").show();
+			$('.cta').hide();
+			$("#blackUnivok").show();
+			$("#stopAnim").hide();
+			$('#myholder').toggleClass('fullscreen');
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		});	
+
+		$('#closeCross').click(function(e){
+			stopshow();
+			$('#myholder').hide();
+			$('#playAnim').hide();
+			$('#closeCross').hide();
+			$('#myholder').toggleClass('fullscreen');
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		});
+
+		$( "body" ).on("click", "#ctaOk", function(event) {		
+			//location.reload();	
+			$('.ctaImg').not("#ctaOk").addClass('animated bounceOutLeft');
+			$('.ctaText').not("#ctaOkText").addClass('animated bounceOutRight');
+			setTimeout("$('#ctaMerci').show();", 1000);
+			setTimeout("$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
+			setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
+			setTimeout("$('.cta,.anim').hide();", 4000);
+				
+		});
+		
+		$( "body" ).on("click", "#ctaNok", function(event) {		
+			//location.reload();	
+			$('.ctaImg').not("#ctaNok").addClass('animated bounceOutLeft');
+			$('.ctaText').not("#ctaNokText").addClass('animated bounceOutRight');
+			setTimeout("$('#ctaMerci').show();", 1000);
+			setTimeout("$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
+			setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
+			setTimeout("$('.cta,.anim').hide();", 4000);
+				
+		});
+			
+	});
+
+
 </script>
 
 </body>

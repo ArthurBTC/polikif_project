@@ -1,6 +1,6 @@
 	{% load staticfiles %}
 
-	
+	var paper;
 	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#BF55EC', 'SEL': '#FDE3A7'}		
 	var typesData = {};
 
@@ -472,7 +472,7 @@
 	function addPaper(holder){
 		
 		holder = $('#'+holder);
-		var paper = new joint.dia.Paper({
+		paper = new joint.dia.Paper({
 			el: holder,
 			width: 1000,
 			height: 500,
@@ -555,18 +555,15 @@
 		}	
 	}
 			
-	//Firstload : main
+	//Firstload : if fed directly with props and links
 	function firstLoad(holder) {
 		
-		paper = addPaper(holder);	
-		setGridZoom(paper, holder);
-	
-		$("#actionProp").hide();
-		$("#actionLink").hide();
+		holder = $('#'+holder);
+//		$("#actionProp").hide();
+//		$("#actionLink").hide();
 	
 		//Chargement des props (toutes invisibles)
-		{% for prop in props%}
-		
+		{% for prop in props%}		
 			{% if prop.nature == 'Diagnostic' %}
 				addProp(
 					{{prop.id}},
@@ -631,7 +628,281 @@
 		{% endfor %}
 			
 		updateCorrespondances();
-		
-
 	};
+	
+	//Firstload, if fed with showparts..
+	function firstLoadFromShowparts() {
+		//Chargement des props (toutes invisibles)
+		{% for showpart in showparts%}
+			{% if showpart.proposition %}
+				{% if showpart.proposition.nature == 'Diagnostic' %}
+					el = addProp(
+						{{showpart.proposition.id}},
+						'{{showpart.proposition.text|escapejs}}',
+						'{{showpart.proposition.autor.username|escapejs}}'
+					);
+					el.attr('./display', '');
+					el.translate( {{showpart.x}} , {{showpart.y}} );
+							
+					el.on('change:position', function(event) { 
+				
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propX").html( event.get('position')['x'] )
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propY").html( event.get('position')['y'] )
+
+					})
+					
+				{% endif %}
+					
+				{% if showpart.proposition.nature == 'YT' %}
+					el = addYoutube(
+						{{showpart.proposition.id}},
+						'{{showpart.proposition.text|escapejs}}',
+						'{{showpart.proposition.ytid}}',
+						'{{showpart.proposition.videoBeginning}}',
+						'{{showpart.proposition.videoEnd}}'
+					);
+					el.attr('./display', '');
+					el.translate( {{showpart.x}} , {{showpart.y}} );
+
+					el.on('change:position', function(event) { 
+				
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propX").html( event.get('position')['x'] )
+						$("#partsMenu tr[prop="+event.get('id_prop')+"] .propY").html( event.get('position')['y'] )
+
+					})
+					
+					
+				{% endif %}	
+
+				{% if showpart.proposition.nature == 'SY' %}
+					addSyllogism(
+						{{showpart.proposition.id}}
+					);
+				{% endif %}
+			{% endif %}
+		{% endfor %}
+
+		updateCorrespondances()
+
+		//Chargement des liens classiques
+		{% for showpart in showparts%}
+			{% if showpart.link %}
+				li = addLink(
+					{{showpart.link.id}}, 
+					{{showpart.link.left_prop.id}}, 
+					{{showpart.link.right_prop.id}}, 
+					{{showpart.link.type}}, 
+					'{{showpart.link.autor.username|escapejs}}' 
+					);
+			{% endif %}		
+		{% endfor %}
 		
+		{% for link in links %}
+			li = addLink(
+				{{link.id}}, 
+				{{link.left_prop.id}}, 
+				{{link.right_prop.id}}, 
+				{{link.type}}, 
+				'{{link.autor.username|escapejs}}' 
+			);	
+			li.attr('./display','');
+		
+		{% endfor %}
+		
+		updateCorrespondances()
+
+		//Chargement des implications
+		{% for implication in implications%}
+			imp = addImp(
+				'imp{{implication.id}}',
+				{{implication.link.id}},
+				{{implication.proposition.id}},
+				'{{implication.autor.username|escapejs}}'
+				);
+		{% endfor %}		
+		updateCorrespondances();
+	};
+
+	var counter;
+	var audioplayer = document.querySelector('#audioplayer');
+	
+	if(audioplayer){
+		audioplayer.volume=0.05;
+	}
+	
+	$("#stop").hide();
+	$("#ytshow").hide();
+	var currentX=0;
+	var currentY=0;
+	var selectedElement='';
+	var selectedCounter=1;
+	var selectedAudioTime = 0;
+	var counter = 1;
+	
+	var timeOut;
+	var moveTimeOut;
+	var videoTimeOut;
+	
+	var allCells = graph.getCells();
+
+	function readshow() {
+		
+		console.log('currentTime : '+audioplayer.currentTime);
+
+		$("#playAnim").hide();
+		$("#stopAnim").show();
+		audioplayer.play();		
+		currentX=0;
+		currentY=0;
+		
+		updateCorrespondances();
+		
+		allCells = graph.getCells();
+		//Affichage des propositions
+		allCells.forEach(function(entry) {
+			entry.attr('./display','none');
+		});	
+	
+		var i = 0;
+		
+		$("#partsMenu tr").each(function() {
+			if (i<counter && i != 0){	
+				propId = $(this).find(".propId").text();
+				cell = graph.getCell( propIdCorrespondance[ propId ])
+				cell.attr('./display','');
+				aroundCellVisu(cell);
+			}
+			i = i+1;
+			
+		});			
+		
+		readpart();
+	}
+
+	function stopshow() {
+	
+		console.log('fin du show');
+		$("#playAnim").show();
+		$("#stopAnim").hide();
+		audioplayer.pause();
+			
+		allCells.forEach(function(entry) {
+			entry.attr('./display','');
+		});
+		
+		paper.setOrigin(0,0);		
+		
+		$("#ytshow").hide();
+		if (typeof player !== 'undefined'){
+			player.stopVideo();
+		}
+
+		clearTimeout(timeOut);
+		clearTimeout(moveTimeOut);
+		clearTimeout(videoTimeOut);
+		
+		if (selectedElement != '') {
+			counter = selectedCounter;
+			audioplayer.currentTime = selectedAudioTime;
+		} else {
+			counter = 1;
+			audioplayer.currentTime = 0;
+		}
+	}
+	
+	function readpart(){
+
+		if ( $("#partsMenu #showpart"+(counter)+" .order").html() ) {
+		
+			console.log('readpart starting... counter = '+counter)
+			
+			//Afficher la proposition
+			if ( $("#partsMenu #showpart"+(counter)+" .propId").html() ) {
+				elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ] );
+				elem.attr('./display','');
+				aroundCellVisu(elem);
+			}
+			
+			//Afficher le texte
+			$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
+			
+			//Changer le focus
+			midX = 0.7*$(window).width() / 2;
+			midY = 0.9*$(window).height() / 2;
+			
+			currentX = currentX;
+			nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;			
+			stepX = (nextX - currentX) / 100;
+				
+			currentY = currentY;
+			nextY = -$("#partsMenu #showpart"+(counter)+" .propY").html() + midY - 50;			
+			stepY = (nextY - currentY) / 100;
+								
+			var i = 1;                     //  set your counter to 1
+			
+				
+			function myLoop () {           //  create a loop function
+			   moveTimeOut = setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+				  currentX = currentX + stepX; 
+				  currentY = currentY + stepY; 
+				  paper.setOrigin( currentX, currentY);
+				  i++;                     //  increment the counter
+				  if (i < 101) {            //  if the counter < 10, call the loop function
+					 myLoop();             //  ..  again which will trigger another 
+				  }                        //  ..  setTimeout()
+			   }, 10)
+			}
+
+			myLoop();  
+			
+			function startVideo(elem) {				
+				$("#ytshow").show();				
+				player.loadVideoById({
+					'videoId': elem.get('ytid'),
+					'startSeconds': elem.get('ytbeginning'),
+					'endSeconds': elem.get('ytend'),
+					'suggestedQuality': 'large'
+				});				
+			}
+			
+			elem = graph.getCell( propIdCorrespondance[ $("#partsMenu #showpart"+(counter)+" .propId").html() ]);	
+			
+			if (elem.get('type') == 'basic.youtubeVideo') {
+						
+				videoTimeOut = setTimeout(function () {
+					startVideo( elem )
+				}, 1100);				
+			}
+			
+//				$("#showpart"+counter).css('background-color','grey');
+//				$("#showpart"+(counter-1)).css('background-color','black');
+			
+						
+			//Attendre, et lancer le prochain readpart						
+			timeOut = setTimeout(readpart, $("#partsMenu #showpart"+(counter)+" .duration input").val() * 1000);		
+			counter = counter +1
+				
+		}
+		else {
+			stopshow();
+			callToActionFullScreen()
+		}
+	}
+		
+	$( "body" ).on("click", "#playAnim", function(event) {		
+		readshow();
+	});
+	
+	$( "body" ).on("click", "#stopAnim", function(event) {		
+		stopshow();
+	});
+			
+	
+	function callToActionFullScreen(){	
+		$(".cta").show();
+		$('#callToAction').toggleClass('fullscreen');
+		$('.ctaImg').addClass('animated bounceInLeft');
+		$('.ctaText').addClass('animated bounceInRight');
+
+	}
+	
