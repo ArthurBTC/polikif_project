@@ -43,7 +43,7 @@ class Record(models.Model):
 	record = models.FileField(upload_to='records')
 
 	def __str__(self):
-		return str(self.id)
+		return str(self.record)
 		
 		
 class Photo(models.Model):
@@ -60,3 +60,17 @@ class Sentence(models.Model):
 	speaker = models.ForeignKey(Speaker)
 	order = models.IntegerField(default = 0)
 	text = models.CharField(max_length = 1000)
+
+	def __str__(self):
+		return str(self.text)	
+	
+class Question(models.Model):
+	text = models.CharField(max_length = 1000)
+	firstname = models.CharField(max_length = 100, default='')
+	lastname = models.CharField(max_length = 100, default='')
+	email = models.CharField(max_length = 100, default='')
+	phone = models.CharField(max_length = 30, default='')
+	show = models.ForeignKey(gdpcore_models.Show)
+	
+	def __str__(self):
+		return str(self.text)	

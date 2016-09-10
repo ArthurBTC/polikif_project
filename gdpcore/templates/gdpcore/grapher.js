@@ -491,7 +491,7 @@
 		return paper;
 	};
 
-	function setGridZoom(paper, holder) {
+	function setGridZoom(paper, holder, gridOrNot) {
 		holder = $('#'+holder);
 			//NAV PAPER	
 		//Initial Parameters
@@ -535,22 +535,24 @@
 		//BONUS function - will add a css background of a dotted grid that will scale reasonably
 		//well with zooming and panning.
 		function setGrid(paper, size, color, offset) {
-			// Set grid size on the JointJS paper object (joint.dia.Paper instance)
-			paper.options.gridsize = gridsize;
-			// Draw a grid into the HTML 5 canvas and convert it to a data URI image
-			var canvas = $('<canvas/>', { width: size, height: size });
-			canvas[0].width = size;
-			canvas[0].height = size;
-			var context = canvas[0].getContext('2d');
-			context.beginPath();
-			context.rect(1, 1, 1, 1);
-			context.fillStyle = color || '#AAAAAA';
-			context.fill();
-			// Finally, set the grid background image of the paper container element.
-			var gridBackgroundImage = canvas[0].toDataURL('image/png');
-			$(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
-			if(typeof(offset) != 'undefined'){  
-				$(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
+			if(gridOrNot != 0) {
+				// Set grid size on the JointJS paper object (joint.dia.Paper instance)
+				paper.options.gridsize = gridsize;
+				// Draw a grid into the HTML 5 canvas and convert it to a data URI image
+				var canvas = $('<canvas/>', { width: size, height: size });
+				canvas[0].width = size;
+				canvas[0].height = size;
+				var context = canvas[0].getContext('2d');
+				context.beginPath();
+				context.rect(1, 1, 1, 1);
+				context.fillStyle = color || '#AAAAAA';
+				context.fill();
+				// Finally, set the grid background image of the paper container element.
+				var gridBackgroundImage = canvas[0].toDataURL('image/png');
+				$(paper.el.childNodes[0]).css('background-image', 'url("' + gridBackgroundImage + '")');
+				if(typeof(offset) != 'undefined'){  
+					$(paper.el.childNodes[0]).css('background-position', offset.x + 'px ' + offset.y + 'px');
+				}
 			}
 		}	
 	}
@@ -885,24 +887,10 @@
 		}
 		else {
 			stopshow();
-			callToActionFullScreen()
+			initCta()
 		}
 	}
 		
-	$( "body" ).on("click", "#playAnim", function(event) {		
-		readshow();
-	});
-	
-	$( "body" ).on("click", "#stopAnim", function(event) {		
-		stopshow();
-	});
-			
-	
-	function callToActionFullScreen(){	
-		$(".cta").show();
-		$('#callToAction').toggleClass('fullscreen');
-		$('.ctaImg').addClass('animated bounceInLeft');
-		$('.ctaText').addClass('animated bounceInRight');
 
-	}
+
 	

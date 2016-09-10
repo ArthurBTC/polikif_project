@@ -9,6 +9,7 @@
 {% load staticfiles %}
 
 	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/anim.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
 <!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
@@ -61,7 +62,7 @@
 	</div>
 	<div class="row animContainer">
 	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
-		<img class="animPlay" src = "{% static 'gdpcore/play.png' %}" ></img>
+		<img id="starter" class="animPlay" src = "{% static 'gdpcore/play.png' %}" ></img>
 	</div>
 	<div class="row">
 		<div class = 'subtitle'>Intervenants</div>
@@ -94,16 +95,21 @@
 <img id="ctaGraph" class = "cta ctaImg" src="{% static 'gdpcore/ctaGraph.png' %}" alt="Play">
 <div id="ctaGraphText" class = "cta ctaText">Voir le graphe</div>
 
-<div id="ctaMerci" class="cta2">Merci !</div>
-<div id="ctaForm" class="cta2">
-	
-	
-<form class="form-horizontal">
+<div id="ctaMerci" class="cta2">Merci !</div>	
+
+<img id="ctaQueAccurate" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+<div id="ctaQueAccurateText" class = "ctaQue ctaQueText">J'ai une remarque/question sur un point précis de la vidéo</div>
+<img id="ctaQueGeneral" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueGeneral.png' %}">
+<div id="ctaQueGeneralText" class = "ctaQue ctaQueText">J'ai une question d'ordre général</div>
+<img id="ctaQueBack" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueBack.png' %}">
+<div id="ctaQueBackText" class = "ctaQue ctaQueText">Je n'ai plus de question en fait</div>
+
+<div id="ctaForm" class="cta2" class="form-horizontal">
   
   <div class="form-group">
-    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+    <label for="inputEmail3" class="col-sm-2 control-label">Question</label>
     <div class="col-sm-10">
-      <textarea class="form-control" rows="3"></textarea>
+      <textarea class="form-control" rows="3" placeholder="Votre question"></textarea>
     </div>	
   </div>
   <div class="form-group">
@@ -114,71 +120,209 @@
   </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default">Sign in</button>
+      <button id="submitQuestion" class="btn btn-default">Sign in</button>
     </div>
   </div>
-</form>
-<div>
+</div>
 
 
 <script>
 
 	{% include "gdpcore/grapher.js" %}
 
+	var selectTime = 1200;
+	var selectTimeNext = 2000;
+	
+	function selectHandlerAnim(type, elemId){
+	
+		$('.'+type+'Img').removeClass('animated bounceInLeft');
+		$('.'+type+'Text').removeClass('animated bounceInRight');
+	
+		$('.'+type+'Img').not("#"+type+elemId).addClass('animated bounceOutLeft');
+		$('.'+type+'Text').not("#"+type+elemId+"Text").addClass('animated bounceOutRight');
+		
+		setTimeout("$('#"+type+elemId+"').addClass('animated bounceOutLeft');",selectTime);
+		setTimeout("$('#"+type+elemId+"Text').addClass('animated bounceOutRight');",selectTime);	
+		
+	}
+	
+	
+	
+	function initAnim(){
+		console.log('initAnim');
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			entry.attr('./display','none');
+		});		
+		
+		$(".anim").show();
+		$('.cta, .cta2').hide();
+		$("#blackUnivok").show();
+		$("#stopAnim").hide();
+		
+		$('#callToAction').removeClass('fullscreen');		
+		$('#myholder').addClass('fullscreen');
+		paper.setDimensions($('#myholder').width(), $('#myholder').height()); 	
+
+		$("#playAnim").removeClass('animated bounceOutRight');	
+		$("#playAnim").addClass('animated bounceInLeft');			
+	}
+	
+	function initCta(){
+		console.log('initCta');		
+		stopshow();
+		$(".anim, cta2").hide();
+		$(".cta").show();
+		$("#blackUnivok").show();
+		
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+		
+		$('.ctaImg').removeClass('bounceOutLeft');
+		$('.ctaText').removeClass('bounceOutRight');
+		
+		$('.ctaImg').addClass('animated bounceInLeft');
+		$('.ctaText').addClass('animated bounceInRight');
+
+		
+		$( "body" ).one("click", "#ctaOk", function(event) {	
+			selectHandlerAnim('cta','Ok');
+			sayThanks('A bientôt, et merci !','green');
+			setTimeout(initPage,5000)
+		});
+		
+		$( "body" ).one("click", "#ctaNok", function(event) {		
+			selectHandlerAnim('cta','Nok');
+			setTimeout(initCtaQuestion, selectTimeNext);							
+		});
+		
+		$( "body" ).one("click", "#ctaAgain", function(event) {	
+			selectHandlerAnim('cta','Again');
+			setTimeout(initAnim, selectTimeNext);
+		});		
+
+		$( "body" ).one("click", "#ctaGraph", function(event) {	
+			selectHandlerAnim('cta','Graph');
+			setTimeout(initGraph, selectTimeNext);
+		});			
+		
+	}
+
+	function initCtaQuestion(){
+		
+		console.log('initCtaQuestion');		
+		stopshow();
+		$(".anim, cta2").hide();
+		$(".ctaQue").show();
+		$("#blackUnivok").show();
+		
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+		
+		$('.ctaQueImg').removeClass('bounceOutLeft');
+		$('.ctaQueText').removeClass('bounceOutRight');
+		
+		$('.ctaQueImg').addClass('animated bounceInLeft');
+		$('.ctaQueText').addClass('animated bounceInRight');
+
+		
+		$( "body" ).one("click", "#ctaQueAccurate", function(event) {					
+		});		
+
+		$( "body" ).one("click", "#ctaQueGeneral", function(event) {	
+			selectHandlerAnim('ctaQue','General');
+			setTimeout(initGeneralForm, selectTimeNext);
+		});	
+
+		$( "body" ).one("click", "#ctaQueBack", function(event) {	
+			selectHandlerAnim('ctaQue','Back');
+			setTimeout(initCta, selectTimeNext);
+		});	
+		
+	}	
+
+	function initGeneralForm(){
+	
+		$('#ctaForm').removeClass('animated bounceOutRight');	
+		$('#ctaForm').show();
+		$('#ctaForm').addClass('animated bounceInLeft');
+	}
+
+	function initPage(){
+		stopshow();
+		$('.anim, .cta, .cta2, .ctaQue, #blackUnivok').hide();
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').removeClass('fullscreen');
+	}
+	
+	function sayThanks(text, color){
+		$('#ctaMerci').text(text);
+		$('#ctaMerci').css('color',color);
+		
+		$('#ctaMerci').removeClass('animated bounceOutRight');	
+		setTimeout("$('#ctaMerci').show();", 1000);
+		setTimeout("$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
+		setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
+//		setTimeout(initPage, 4000);	
+	}
+
+	function initGraph(){
+		console.log('initGraph');
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			entry.attr('./display','');
+		});		
+
+		$(".anim").show();		
+		$('.cta, .cta2').hide();
+		$("#blackUnivok").show();
+		$("#stopAnim,#playAnim").hide();		
+	
+		$('#callToAction').removeClass('fullscreen');		
+		$('#myholder').addClass('fullscreen');	
+		paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		
+		setGridZoom(paper, 'myholder', 0);
+		
+	}
+
+	
 	$( document ).ready(function() {
 		paper = addPaper('myholder');
 		firstLoadFromShowparts('myholder');
 
-		allCells = graph.getCells();
-		//Affichage des propositions
-		allCells.forEach(function(entry) {
-			entry.attr('./display','none');
-		});	
+		initPage();
 		
-		$('.anim').hide();
-		$('.cta').hide();
-//		$(".cta2").hide();
-			
-		$('.animPlay').click(function(e){
-			
-			$(".anim").show();
-			$('.cta').hide();
-			$("#blackUnivok").show();
-			$("#stopAnim").hide();
-			$('#myholder').toggleClass('fullscreen');
-			paper.setDimensions($('#myholder').width(), $('#myholder').height());
-		});	
-
-		$('#closeCross').click(function(e){
+		$('#starter').click(function(e){		
+			//initAnim();
+			initCta();			
+		});		
+		
+		$( "body" ).on("click", "#playAnim", function(event) {
+			$("#playAnim").removeClass('animated bounceInLeft');			
+			$("#playAnim").addClass('animated bounceOutRight');	
+			setTimeout(readshow,2000);
+		});
+		
+		$( "body" ).on("click", "#stopAnim", function(event) {		
 			stopshow();
-			$('#myholder').hide();
-			$('#playAnim').hide();
-			$('#closeCross').hide();
-			$('#myholder').toggleClass('fullscreen');
-			paper.setDimensions($('#myholder').width(), $('#myholder').height());
 		});
 
-		$( "body" ).on("click", "#ctaOk", function(event) {		
-			//location.reload();	
-			$('.ctaImg').not("#ctaOk").addClass('animated bounceOutLeft');
-			$('.ctaText').not("#ctaOkText").addClass('animated bounceOutRight');
-			setTimeout("$('#ctaMerci').show();", 1000);
-			setTimeout("$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
-			setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
-			setTimeout("$('.cta,.anim').hide();", 4000);
+		$( "body" ).on("click", "#closeCross", function(event) {	
+			//initPage();
+			initCta();
+		});
+		
+		$( "body" ).on("click", "#submitQuestion", function(event) {		
+	
+			$('#ctaForm').removeClass('animated bounceInLeft');
+			$('#ctaForm').addClass('animated bounceOutRight');
+			sayThanks('Votre demande a été prise en compte. Merci !','yellow');
+			setTimeout(initCta, 5000);
 				
 		});
 		
-		$( "body" ).on("click", "#ctaNok", function(event) {		
-			//location.reload();	
-			$('.ctaImg').not("#ctaNok").addClass('animated bounceOutLeft');
-			$('.ctaText').not("#ctaNokText").addClass('animated bounceOutRight');
-			setTimeout("$('#ctaMerci').show();", 1000);
-			setTimeout("$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
-			setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
-			setTimeout("$('.cta,.anim').hide();", 4000);
-				
-		});
+	
 			
 	});
 
