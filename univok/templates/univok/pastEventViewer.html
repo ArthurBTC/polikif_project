@@ -104,6 +104,7 @@
 <img id="ctaQueBack" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueBack.png' %}">
 <div id="ctaQueBackText" class = "ctaQue ctaQueText">Je n'ai plus de question en fait</div>
 
+<img id="ctaQueAccurateClick" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
 <div id="ctaForm" class="cta2" class="form-horizontal">
   
   <div class="form-group">
@@ -146,10 +147,9 @@
 		
 	}
 	
-	
-	
 	function initAnim(){
 		console.log('initAnim');
+		unsetDrag();
 		allCells = graph.getCells();
 		allCells.forEach(function(entry) {
 			entry.attr('./display','none');
@@ -226,7 +226,9 @@
 		$('.ctaQueText').addClass('animated bounceInRight');
 
 		
-		$( "body" ).one("click", "#ctaQueAccurate", function(event) {					
+		$( "body" ).one("click", "#ctaQueAccurate", function(event) {
+			selectHandlerAnim('ctaQue','Accurate');
+			setTimeout(initGraph, selectTimeNext);
 		});		
 
 		$( "body" ).one("click", "#ctaQueGeneral", function(event) {	
@@ -259,15 +261,17 @@
 		$('#ctaMerci').text(text);
 		$('#ctaMerci').css('color',color);
 		
-		$('#ctaMerci').removeClass('animated bounceOutRight');	
-		setTimeout("$('#ctaMerci').show();", 1000);
-		setTimeout("$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
+		$('#ctaMerci').removeClass('animated bounceOutRight');
+		
+		setTimeout("$('#ctaMerci').show();$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
 		setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
 //		setTimeout(initPage, 4000);	
 	}
 
 	function initGraph(){
 		console.log('initGraph');
+		
+		setDrag();
 		allCells = graph.getCells();
 		allCells.forEach(function(entry) {
 			entry.attr('./display','');
@@ -282,7 +286,10 @@
 		$('#myholder').addClass('fullscreen');	
 		paper.setDimensions($('#myholder').width(), $('#myholder').height());
 		
-		setGridZoom(paper, 'myholder', 0);
+		$(window).resize(function(){	
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		}) 		
+		//setGridZoom(paper, 'myholder', 0);
 		
 	}
 

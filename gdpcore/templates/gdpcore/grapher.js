@@ -51,6 +51,8 @@
 	var originY = {% if graph %} {{graph.originy}} {% else %}0{% endif %}; 
 	var sensibility = 20;	
 	
+	var dragger;
+	
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
 
@@ -78,9 +80,9 @@
 				type: 'basic.twoTextRect',
 				attrs: {
 					rect: { 
-						fill: '#EEEEEE', 
+						fill: '#2c3e50', 
 						stroke: 'white', 
-						'stroke-width': 4, 
+						'stroke-width': 0, 
 						'follow-scale': true, 
 						width: 150, 
 						height: 80
@@ -89,7 +91,7 @@
 					'.word2': { 
 						'font-size': 15,
 						'font-weight': 'bold',
-						fill: 'black', 
+						fill: 'white', 
 						'text-anchor':'end',
 						transform: "translate(165,82)" 
 					},
@@ -98,7 +100,7 @@
 						'font-size': 15,
 						'text-anchor':'middle',
 						transform: "translate(95,20)" ,
-						fill: 'black',
+						fill: 'white',
 						'dy': 100		
 					},
 					'image': { 
@@ -256,9 +258,26 @@
 			type_id : type_id,
 			link_autorname: autorname,
 			logic: logic,
-			labels : [
-			{ position: 0.5, attrs: { text: { text: typesData[type_id]['type']+' ('+autorname+')', 'font-size': 12 } } }
-			]
+			labels: [{
+				position: 0.5, 
+				attrs: { 
+					text: { 
+						text: typesData[type_id]['type']+' ('+autorname+')', 
+						fill: '#f6f6f6', 
+						'font-family': 'sans-serif' 
+					}, 
+					rect: { 
+						stroke: '#7c68fc',
+						'stroke-width': 20, 
+						rx: 5, 
+						ry: 5 
+					} 
+				}
+			}]
+			
+//			labels : [
+//			{ position: 0.5, attrs: { text: { text: typesData[type_id]['type']+' ('+autorname+')', 'font-size': 12 } } }
+//			]
 		});
 
 		li.attr({
@@ -266,6 +285,8 @@
 			'.marker-source': typesData[type_id]['source'],
 			'.marker-target': typesData[type_id]['target']
 		});	
+		
+		li.label(0, { attrs: { rect: { stroke: typesData[type_id]['connection']['stroke'] } } } );
 
 		li.attr('./display', 'none');
 		
@@ -275,7 +296,7 @@
 		console.log('link added to graph - id_link: '+id_link+' id: '+li.id)
 		
 		if (typesData[type_id]['type'] != 'syllogisme') {
-			addCircToLink(li);
+//			addCircToLink(li);
 		}
 		
 		return li	
@@ -519,7 +540,7 @@
 			beforePan: function(oldpan, newpan){
 				setGrid(paper, gridsize*15*currentScale, '#808080', newpan);
 			}
-		});
+		}); 
 
 		//Enable pan when a blank area is click (held) on
 		paper.on('blank:pointerdown', function (evt, x, y) {
@@ -556,7 +577,38 @@
 			}
 		}	
 	}
-			
+	
+	
+	
+	function setDrag(){
+		
+		paper.on('blank:pointerdown',
+		function(event, x, y) {
+				dragStartPosition = { x: x, y: y};
+			}
+		);
+		
+		paper.on('cell:pointerup blank:pointerup', function(cellView, x, y) {
+			delete dragStartPosition;
+		});
+		
+		dragger = $("#myholder")
+			.mousemove(function(event) {
+				if (typeof dragStartPosition !== 'undefined')
+					paper.setOrigin(
+						event.offsetX - dragStartPosition.x, 
+						event.offsetY - dragStartPosition.y);
+			});		
+		
+	}
+	
+	function unsetDrag(){ //DOESN'T WORK : SOLUTION TO BE FOUND...
+		
+		console.log('dragger');
+		console.log(dragger);
+		dragger = 0;
+		console.log(dragger);
+	}
 	//Firstload : if fed directly with props and links
 	function firstLoad(holder) {
 		
@@ -752,7 +804,7 @@
 		console.log('currentTime : '+audioplayer.currentTime);
 
 		$("#playAnim").hide();
-		$("#stopAnim").show();
+//		$("#stopAnim").show();
 		audioplayer.play();		
 		currentX=0;
 		currentY=0;
@@ -760,7 +812,6 @@
 		updateCorrespondances();
 		
 		allCells = graph.getCells();
-		//Affichage des propositions
 		allCells.forEach(function(entry) {
 			entry.attr('./display','none');
 		});	
@@ -808,7 +859,7 @@
 			audioplayer.currentTime = selectedAudioTime;
 		} else {
 			counter = 1;
-			audioplayer.currentTime = 0;
+			//audioplayer.currentTime = 0;
 		}
 	}
 	
@@ -829,8 +880,8 @@
 			$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
 			
 			//Changer le focus
-			midX = 0.7*$(window).width() / 2;
-			midY = 0.9*$(window).height() / 2;
+			midX = $(window).width() / 2 - 100;
+			midY = $(window).height() / 2 - 50;
 			
 			currentX = currentX;
 			nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;			
