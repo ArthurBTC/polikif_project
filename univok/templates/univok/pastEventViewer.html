@@ -60,7 +60,7 @@
 	<div class="row">
 		<div class = 'subtitle'>Synthèse</div>
 	</div>
-	<div class="row animContainer">
+	<div class="row">
 	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
 		<img id="starter" class="animPlay" src = "{% static 'gdpcore/play.png' %}" ></img>
 	</div>
@@ -329,6 +329,16 @@
 				
 		});
 		
+		function starterShake(){
+		
+			console.log('shaker');
+	//		$("#starter").removeClass('animated bounce');
+			
+			$('#starter').addClass('animated infinite shake');
+			$("#starter").removeClass('animated infinite shake');	
+			setTimeout(starterShake,3000)
+		}
+
 	
 			
 	});
