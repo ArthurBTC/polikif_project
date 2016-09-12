@@ -135,20 +135,12 @@
 
 #ctaQueAccurateInstruction{
 	position:fixed;
-	left:calc(10% + 150px);
+	left:calc(10%);
 	bottom:40px;
 	z-index:5800;
 	font-size:40px;
 	color:red;
-}
-
-#ctaQueAccurateClick{	
-	position:fixed;
-	left:10%;
-	bottom:40px;
-	width:100px;
-	height:100px;
-	z-index:5800;
+	width:60vw;
 }
 
 #ctaQueAccurateContainer{
@@ -162,3 +154,28 @@
 	font-size:30px;
 	color:red;
 }
+
+.ctaInput{
+	position:fixed;
+	z-index:5800;	
+	right:100px;		
+}
+
+#ctaQueAccurateSelection{
+	top:10%;
+	width:20%;
+	height:200px;	
+}
+
+#ctaQueAccurateInput{
+	top:calc(10% + 230px);
+	width:20%;
+	height:200px;
+}
+
+#ctaQueAccurateClick{	
+	top:calc(10% + 460px);
+	width:100px;
+	height:100px;
+}
+

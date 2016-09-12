@@ -41,28 +41,58 @@
 		</div>
 	</div>
 	
-	<div class="row">
-	
-		<ul class="nav nav-tabs">
-		  <li role="presentation" class="active"><a href="#">Accueil</a></li>
-		  <li role="presentation"><a href="/univok/idees/{{event.id}}">Idées</a></li>
-		  <li role="presentation"><a href="#">Ressources</a></li>
-		</ul>
-	
 
-	</div>
 	<div class="row">
 		<div class = 'subtitle'>Photos</div>
 	</div>
-	<div class="row">
-		<img src = "{% static 'gdpcore/slideshow.png' %}" height="400" width="800" ></img>
-	</div>		
+
+	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+<!-- Indicators -->
+	  <ol class="carousel-indicators">
+		<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+		<li data-target="#carousel-example-generic" data-slide-to="1"></li>
+		<li data-target="#carousel-example-generic" data-slide-to="2"></li>
+	  </ol>
+
+	  <!-- Wrapper for slides -->
+	  <div class="carousel-inner" role="listbox">
+		<div class="item active">
+		  <img src="{% static 'univok/pic1.jpg' %}" alt="...">
+		  <div class="carousel-caption">
+			...
+		  </div>
+		</div>
+		<div class="item">
+		  <img src="{% static 'univok/pic2.jpg' %}" alt="...">
+		  <div class="carousel-caption">
+			...
+		  </div>
+		</div>
+		<div class="item">
+		  <img src="{% static 'univok/pic3.jpg' %}" alt="...">
+		  <div class="carousel-caption">
+			...
+		  </div>
+		</div>
+	  </div>
+
+	  <!-- Controls -->
+	  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+		<span class="sr-only">Previous</span>
+	  </a>
+	  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+		<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+		<span class="sr-only">Next</span>
+	  </a>
+	</div>
+		
 	<div class="row">
 		<div class = 'subtitle'>Synthèse</div>
 	</div>
 	<div class="row">
 	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
-		<img id="starter" class="animPlay" src = "{% static 'gdpcore/play.png' %}" ></img>
+		<img id="starter" class="animPlay" src = "{% static 'univok/clickmeUnivok.png' %}" ></img>
 	</div>
 	<div class="row">
 		<div class = 'subtitle'>Intervenants</div>
@@ -105,9 +135,12 @@
 <div id="ctaQueBackText" class = "ctaQue ctaQueText">Je n'ai plus de question en fait</div>
 
 
-<div id="ctaQueAccurateInstruction" class="cta2">Selectionnez le(s) point(s) en question, puis appuyez sur la cible</div>
-<img id="ctaQueAccurateClick" class="cta2" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+<div id="ctaQueAccurateInstruction" class="cta2">Selectionnez le(s) point(s) concernés, entrez votre question, puis appuyez sur la cible</div>
 <div id="ctaQueAccurateContainer"></div>
+
+<img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+<textarea id="ctaQueAccurateInput" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question"></textarea>
+<textarea id="ctaQueAccurateSelection" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question" disabled></textarea>
 
 <div id="ctaForm" class="cta2" class="form-horizontal">
   
@@ -133,6 +166,10 @@
 
 <script>
 
+	$('.carousel').carousel({
+		interval: false
+	});
+
 	{% include "gdpcore/grapher.js" %}
 
 	var selectTime = 1200;
@@ -151,31 +188,40 @@
 		
 	}
 	
-	function initAnim(){
+	function initAnim(isItFirst){
 		console.log('initAnim');
 		unsetDrag();
 		allCells = graph.getCells();
 		allCells.forEach(function(entry) {
+			paper.findViewByModel(entry).unhighlight();
 			entry.attr('./display','none');
 		});		
 		
 		$(".anim").show();
+		
 		$('.cta, .cta2').hide();
 		$("#blackUnivok").show();
 		$("#stopAnim").hide();
 		
 		$('#callToAction').removeClass('fullscreen');		
-		$('#myholder').addClass('fullscreen');
+		
+		if (isItFirst){
+			$('#myholder').addClass('fullscreen');
+			$('#myholder').removeClass('animated bounceOutRight');
+		}
+		
+		$('#myholder').addClass('animated bounceInLeft');
+		
 		paper.setDimensions($('#myholder').width(), $('#myholder').height()); 	
 
 		$("#playAnim").removeClass('animated bounceOutRight');	
-		$("#playAnim").addClass('animated bounceInLeft');			
+		$("#playAnim").addClass('animated bounceInLeft');	
 	}
 	
 	function initCta(){
 		console.log('initCta');		
 		stopshow();
-		$(".anim, cta2").hide();
+		$(".anim, .cta2").hide();
 		$(".cta").show();
 		$("#blackUnivok").show();
 		
@@ -192,7 +238,16 @@
 		$( "body" ).one("click", "#ctaOk", function(event) {	
 			selectHandlerAnim('cta','Ok');
 			sayThanks('A bientôt, et merci !','green');
+			setTimeout(
+				"$('#callToAction').removeClass('animated bounceInLeft');"
+				+"$('#callToAction').addClass('animated bounceOutRight');"
+				,4000);
 			setTimeout(initPage,5000)
+			setTimeout(
+				"$('#callToAction').show();"
+				+"$('#starter').removeClass('animated bounceOutLeft');"
+				+"$('#starter').addClass('animated bounceInRight');"
+				,6000)
 		});
 		
 		$( "body" ).one("click", "#ctaNok", function(event) {		
@@ -202,7 +257,9 @@
 		
 		$( "body" ).one("click", "#ctaAgain", function(event) {	
 			selectHandlerAnim('cta','Again');
-			setTimeout(initAnim, selectTimeNext);
+			setTimeout(function() {
+				initAnim(false);
+			}, selectTimeNext);
 		});		
 
 		$( "body" ).one("click", "#ctaGraph", function(event) {	
@@ -257,13 +314,20 @@
 
 	function initAccurate(){
 		
-		addPossibleSelection();
-		setTimeout("$('#ctaQueAccurateClick, #ctaQueAccurateInstruction').show();$('#ctaQueAccurateClick, #ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
+		selectedCells = [];
+		setPossibleSelection();
+		setTimeout("$('#ctaQueAccurateInstruction').show();$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
 		
 		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
 		
-			$('#ctaQueAccurateClick, #ctaQueAccurateInstruction').addClass('animated bounceOutDown');
-			initAccurateForm(selectedCells);
+//			$('#ctaQueAccurateInstruction').removeClass('animated bounceInUp');
+//			$('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
+//			initAccurateForm(selectedCells);
+
+			sayThanks('Votre question a été enregistrée, merci', 'yellow');
+			$("#ctaQueAccurateSelection,#ctaQueAccurateInput").val('');
+//			initAccurate();
+//			unsetPossibleSelection();
 		
 		});
 	}
@@ -293,7 +357,6 @@
 		
 	
 	}
-
 	
 	function initPage(){
 		stopshow();
@@ -317,8 +380,10 @@
 		console.log('initGraph');
 		
 		setDrag();
+		unsetPossibleSelection();
 		allCells = graph.getCells();
 		allCells.forEach(function(entry) {
+			paper.findViewByModel(entry).unhighlight();
 			entry.attr('./display','');
 		});		
 
@@ -344,9 +409,15 @@
 
 		initPage();
 		
-		$('#starter').click(function(e){		
-			//initAnim();
-			initCta();			
+		$('#starter').click(function(e){	
+			$("#starter").removeClass('animated bounceInRight');
+			$("#starter").addClass('animated bounceOutLeft');
+			setTimeout(function() {
+				initAnim(true);
+			},1500);
+			//initCta();
+			//initGraph();
+			//initAccurate();
 		});		
 		
 		$( "body" ).on("click", "#playAnim", function(event) {

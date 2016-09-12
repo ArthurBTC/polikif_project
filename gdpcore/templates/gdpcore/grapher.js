@@ -604,11 +604,7 @@
 	}
 	//DOESN'T WORK : SOLUTION TO BE FOUND...
 	function unsetDrag(){ 
-		
-		console.log('dragger');
-		console.log(dragger);
-		dragger = 0;
-		console.log(dragger);
+		paper.off('blank:pointerdown');
 	}
 	//Firstload : if fed directly with props and links
 	function firstLoad(holder) {
@@ -943,9 +939,10 @@
 		}
 	}
 		
-	function addPossibleSelection(){
+	function setPossibleSelection(){
 		selectedCells=[];
-		paper.on('cell:pointerdown', function(cellView,evt, x, y) { 		
+		paper.on('cell:pointerclick', function(cellView,evt, x, y) { 	
+			console.log('pppapapppap');
 			if ($.inArray(cellView.model.id,selectedCells) == -1){
 				selectedCells.push(cellView.model.id);
 				cellView.highlight();
@@ -954,7 +951,25 @@
 				cellView.unhighlight();
 			}
 			
+			if (selectedCells.length == 0){
+				$(".ctaInput").removeClass('animated bounceInRight');
+				$(".ctaInput").addClass('animated bounceOutRight');
+			} else {	
+				$(".ctaInput").show();
+				$(".ctaInput").removeClass('animated bounceOutRight');
+				$(".ctaInput").addClass('animated bounceInRight');
+			}
+			
+			$("#ctaQueAccurateSelection").val('');			
+			selectedCells.forEach(function(entry) {
+				newAuthor = graph.getCell(entry).get('autorname');
+				newText = graph.getCell(entry).get('text');
+				$("#ctaQueAccurateSelection").val( $("#ctaQueAccurateSelection").val()+'\n'+newAuthor+' : '+newText  );
+			});	
 		});
 	}
-
+	
+	function unsetPossibleSelection(){
+		paper.off('cell:pointerclick')
+	}
 	
