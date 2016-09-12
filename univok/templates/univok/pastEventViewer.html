@@ -104,7 +104,11 @@
 <img id="ctaQueBack" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueBack.png' %}">
 <div id="ctaQueBackText" class = "ctaQue ctaQueText">Je n'ai plus de question en fait</div>
 
-<img id="ctaQueAccurateClick" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+
+<div id="ctaQueAccurateInstruction" class="cta2">Selectionnez le(s) point(s) en question, puis appuyez sur la cible</div>
+<img id="ctaQueAccurateClick" class="cta2" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+<div id="ctaQueAccurateContainer"></div>
+
 <div id="ctaForm" class="cta2" class="form-horizontal">
   
   <div class="form-group">
@@ -229,6 +233,7 @@
 		$( "body" ).one("click", "#ctaQueAccurate", function(event) {
 			selectHandlerAnim('ctaQue','Accurate');
 			setTimeout(initGraph, selectTimeNext);
+			setTimeout(initAccurate, selectTimeNext);
 		});		
 
 		$( "body" ).one("click", "#ctaQueGeneral", function(event) {	
@@ -250,6 +255,46 @@
 		$('#ctaForm').addClass('animated bounceInLeft');
 	}
 
+	function initAccurate(){
+		
+		addPossibleSelection();
+		setTimeout("$('#ctaQueAccurateClick, #ctaQueAccurateInstruction').show();$('#ctaQueAccurateClick, #ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
+		
+		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
+		
+			$('#ctaQueAccurateClick, #ctaQueAccurateInstruction').addClass('animated bounceOutDown');
+			initAccurateForm(selectedCells);
+		
+		});
+	}
+	
+	function initAccurateForm(selectedCells){
+
+		console.log('initAccurateForm');		
+		stopshow();
+		$(".anim, cta2").hide();
+		$(".cta").hide();
+		$("#callToAction").show();
+		$("#blackUnivok").show();
+		
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+
+		console.log(selectedCells);
+		selectedCells.forEach(function(entry) {
+		
+			cell = graph.getCell(entry)
+			stri = 
+			"<div class = 'accurateText'>"+cell.get('autorname')+' '+cell.get('text')+'</div>'
+			+"<textarea class='form-control' rows='3' placeholder='Votre remarque...'></textarea>"
+			
+			$("#ctaQueAccurateContainer").append(stri);
+		});	
+		
+	
+	}
+
+	
 	function initPage(){
 		stopshow();
 		$('.anim, .cta, .cta2, .ctaQue, #blackUnivok').hide();
@@ -292,7 +337,6 @@
 		//setGridZoom(paper, 'myholder', 0);
 		
 	}
-
 	
 	$( document ).ready(function() {
 		paper = addPaper('myholder');

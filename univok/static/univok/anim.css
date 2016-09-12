@@ -132,3 +132,33 @@
 	top:20%;
 	z-index:5600;		
 }
+
+#ctaQueAccurateInstruction{
+	position:fixed;
+	left:calc(10% + 150px);
+	bottom:40px;
+	z-index:5800;
+	font-size:40px;
+	color:red;
+}
+
+#ctaQueAccurateClick{	
+	position:fixed;
+	left:10%;
+	bottom:40px;
+	width:100px;
+	height:100px;
+	z-index:5800;
+}
+
+#ctaQueAccurateContainer{
+	position:fixed;
+	z-index:5800;
+	left:10%;
+	top:40px;	
+}
+
+.accurateText{	
+	font-size:30px;
+	color:red;
+}

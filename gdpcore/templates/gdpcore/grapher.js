@@ -52,6 +52,7 @@
 	var sensibility = 20;	
 	
 	var dragger;
+	var selectedCells = [];
 	
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
@@ -113,7 +114,8 @@
 				},
 				size: { width: 200, height: 100 },
 				id_prop : id_prop,
-				text : text
+				text : text,
+				autorname: autorname,
 			}, joint.shapes.basic.Generic.prototype.defaults)
 		});
 
@@ -512,6 +514,7 @@
 		return paper;
 	};
 
+	//Doesn't work with the player... better use setDrag()
 	function setGridZoom(paper, holder, gridOrNot) {
 		holder = $('#'+holder);
 			//NAV PAPER	
@@ -578,8 +581,6 @@
 		}	
 	}
 	
-	
-	
 	function setDrag(){
 		
 		paper.on('blank:pointerdown',
@@ -601,8 +602,8 @@
 			});		
 		
 	}
-	
-	function unsetDrag(){ //DOESN'T WORK : SOLUTION TO BE FOUND...
+	//DOESN'T WORK : SOLUTION TO BE FOUND...
+	function unsetDrag(){ 
 		
 		console.log('dragger');
 		console.log(dragger);
@@ -942,6 +943,18 @@
 		}
 	}
 		
-
+	function addPossibleSelection(){
+		selectedCells=[];
+		paper.on('cell:pointerdown', function(cellView,evt, x, y) { 		
+			if ($.inArray(cellView.model.id,selectedCells) == -1){
+				selectedCells.push(cellView.model.id);
+				cellView.highlight();
+			} else {
+				selectedCells.splice( $.inArray(cellView.model.id, selectedCells), 1 );
+				cellView.unhighlight();
+			}
+			
+		});
+	}
 
 	
