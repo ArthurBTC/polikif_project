@@ -144,3 +144,6 @@ def sentencesConverter(request):
 	return render(request,'univok/sentencesConverter.html',{'sentences': sentences, 'names':names });
 	# else:
 		# return render(request,'univok/csvUploader.html',{'aaa': 0 });
+		
+def collectif(request):
+	return render(request,'univok/collectif.html');

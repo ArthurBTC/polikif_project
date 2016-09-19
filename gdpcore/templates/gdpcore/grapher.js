@@ -778,7 +778,7 @@
 	var audioplayer = document.querySelector('#audioplayer');
 	
 	if(audioplayer){
-		audioplayer.volume=0.05;
+		audioplayer.volume=0.15;
 	}
 	
 	$("#stop").hide();
@@ -800,8 +800,6 @@
 		
 		console.log('currentTime : '+audioplayer.currentTime);
 
-		$("#playAnim").hide();
-//		$("#stopAnim").show();
 		audioplayer.play();		
 		currentX=0;
 		currentY=0;
@@ -832,17 +830,18 @@
 	function stopshow() {
 	
 		console.log('fin du show');
-		$("#playAnim").show();
-		$("#stopAnim").hide();
-		audioplayer.pause();
-			
-		allCells.forEach(function(entry) {
-			entry.attr('./display','');
-		});
+	//	$("#playAnim").show();
+	//	$("#stopAnim").hide();
 		
+			
+	//	allCells.forEach(function(entry) {
+	//		entry.attr('./display','');
+	//	});
+		
+		audioplayer.pause();
 		paper.setOrigin(0,0);		
 		
-		$("#ytshow").hide();
+	//	$("#ytshow").hide();
 		if (typeof player !== 'undefined'){
 			player.stopVideo();
 		}
@@ -856,8 +855,9 @@
 			audioplayer.currentTime = selectedAudioTime;
 		} else {
 			counter = 1;
-			//audioplayer.currentTime = 0;
+			audioplayer.currentTime = 0;
 		}
+		
 	}
 	
 	function readpart(){
@@ -919,10 +919,10 @@
 			
 			if (elem.get('type') == 'basic.youtubeVideo') {
 						
-				videoTimeOut = setTimeout(function () {
+/*				videoTimeOut = setTimeout(function () {
 					startVideo( elem )
 				}, 1100);				
-			}
+*/			}
 			
 //				$("#showpart"+counter).css('background-color','grey');
 //				$("#showpart"+(counter-1)).css('background-color','black');

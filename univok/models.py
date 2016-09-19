@@ -11,6 +11,7 @@ class Organisation(models.Model):
 class Speaker(models.Model):
 	name = models.CharField(max_length = 300)
 	description = models.CharField(max_length = 1000)
+	picture = models.ImageField(upload_to='speakers')
 
 	def __str__(self):
 		return str(self.id)
