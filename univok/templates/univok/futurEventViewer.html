@@ -9,55 +9,82 @@
 {% load staticfiles %}
 
 	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
-	
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/anim.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/open sans.css' %}">
+	
 	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
 	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	
 	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>
 
 
 </head>
 <body>
 
 <div class="container">
-	<div class="row">
+	
+	<div class="row topRow">
 		<div class="col-md-3">
-			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
+			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index/';"></img>
 		</div>
 		<div class="col-md-9 titleContainer">
 			<span class = "title">{{event.name}}</span>
 		</div>
 	</div>
-	<div class="row">
-		<div class = 'subtitle'>Description</div>
-	</div>
-	<div class="row">
-		<div class = 'simpletext'>{{event.description}}</div>
-	</div>	
+
 
 	
-	<div class="row">
-		<div class = 'subtitle'>Avant-propos</div>
-	</div>
-	<div class="row animContainer">
-	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
-		<img class="animPlay" src = "{% static 'gdpcore/play.png' %}"></img>
+	<div id="navbar-example">
+		<ul class="nav nav-pills" role="tablist">
+			<li role="presentation"><a href="#descriptionSubstitle">Description</a></li>
+			  <li role="presentation"><a href="#intervenantsSubstitle">Intervenants</a></li>
+			  <li role="presentation"><a href="#avantproposSubtitle">Avant-propos</a></li>
+		</ul>
 	</div>
 
-	<div class="row">
+	<div class="row subtitleContainer" id="descriptionSubstitle">
+		<div class = 'subtitle'>Description</div>
+	</div>
+	<div class="row simpleText">{{event.description}}</div>	
+
+	<div class="row subtitleContainer" id="intervenantsSubstitle">
 		<div class = 'subtitle'>Intervenants</div>
 	</div>	
 	
 	{% for speaker in event.speakers.all %}
-		<div class="row">
-			<div>{{ speaker.name }}</div>
-			<div>{{ speaker.description }}</div>
+	<div class="row">
+		<div class="col-md-3">
+			<img class = "speakerPicture" src = "/media/{{speaker.picture}}">
 		</div>
+		<div class="col-md-9">
+			<div class = "speakerName">{{ speaker.name }}</div>
+			<div class = "speakerDescription">{{ speaker.description }}</div>
+		</div>
+	</div>
 	{% endfor %}
-	
+
+	<div class="row subtitleContainer" id="avantproposSubtitle">
+		<div class = 'subtitle'>Avant-propos</div>
+	</div>
+	<div class="row">
+		<img id="starter" class="animPlay" src = "{% static 'univok/clickmeUnivok.png' %}" ></img>
+	</div>
 	
 </div>
+
+	{% include "gdpcore/showparts.html" %}
+	{% include "gdpcore/grapher.html" %}
+
+<script>
+	{% include "gdpcore/grapher.js" %}
+</script>
 
 </body>
 </html>

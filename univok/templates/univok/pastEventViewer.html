@@ -11,7 +11,6 @@
 	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'univok/anim.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
-<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
@@ -30,7 +29,7 @@
 
 
 </head>
-<body>
+<body data-spy="scroll" data-target="#navbar-example">
 
 <div id="topBar">
 	<a href="{% url 'collectif' %}">Collectif Fruitay</a>
@@ -48,10 +47,19 @@
 		</div>
 	</div>
 	
-	<div class="row photosRow">
+	<div id="navbar-example">
+		<ul class="nav nav-pills" role="tablist">
+			  <li role="presentation"><a href="#photosSubstitle">Photos</a></li>
+			  <li role="presentation"><a href="#facilitationSubtitle">Facilitation</a></li>
+			  <li role="presentation"><a href="#syntheseSubtitle">Synthèse</a></li>
+			  <li role="presentation"><a href="#intervenantSubtitle">Intervenants</a></li>
+		</ul>
+	  </div>	
+	
+	<div class="row photosRow" id="photosSubstitle">
 		<div class="col-md-12">
 			<div class="row subtitleContainer">
-		<div class = 'subtitle'>Photos</div>
+		<div  class = 'subtitle'>Photos</div>
 	</div>
 
 			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
@@ -96,22 +104,22 @@
 		</div>
 	</div>
 	
-	<div class="row subtitleContainer">
+	<div class="row subtitleContainer" id="facilitationSubtitle">
 		<div class = 'subtitle'>Facilition graphique</div>
 	</div>
 	
-	<div class="row">
+	<div class="row" >
 		<img id="facilitation" src = "{% static 'univok/facilitationJulie.jpg' %}" ></img>
 	</div>	
 	
-	<div class="row subtitleContainer">
+	<div class="row subtitleContainer" id="syntheseSubtitle">
 		<div class = 'subtitle'>Synthèse</div>
 	</div>
 	<div class="row">
-	<!--	<iframe src="/gdpcore/puretheater/4" width="1000" height="500"></iframe> -->
 		<img id="starter" class="animPlay" src = "{% static 'univok/clickmeUnivok.png' %}" ></img>
 	</div>
-	<div class="row subtitleContainer">
+	
+	<div class="row subtitleContainer" id="intervenantSubtitle">
 		<div class = 'subtitle'>Intervenants</div>
 	</div>	
 	
@@ -129,62 +137,8 @@
 
 </div>
 
-<img id="blackUnivok" class = "cta anim" src="{% static 'univok/blackUnivok.png' %}" alt="Play">
-
-<div id="myholder" class = "anim"></div>
-<img id="playAnim" class = "anim" src="{% static 'gdpcore/play.png' %}" alt="Play">
-<img id="stopAnim" class = "anim" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
-<img id="closeCross" class = "anim" src="{% static 'gdpcore/closecross.png' %}" alt="Cancel">
 {% include "gdpcore/showparts.html" %}
-
-<div id="callToAction" class = "cta"></div>
-<img id="ctaOk" class = "cta ctaImg" src="{% static 'gdpcore/ctaOk.png' %}" alt="Play">
-<div id="ctaOkText" class = "cta ctaText">J'ai tout compris !</div>
-<img id="ctaNok" class = "cta ctaImg" src="{% static 'gdpcore/ctaNok.png' %}" alt="Play">
-<div id="ctaNokText" class = "cta ctaText">J'ai une question, une remarque...</div>
-<img id="ctaAgain" class = "cta ctaImg" src="{% static 'gdpcore/ctaAgain.png' %}" alt="Play">
-<div id="ctaAgainText" class = "cta ctaText">Relancer la vidéo</div>
-<img id="ctaGraph" class = "cta ctaImg" src="{% static 'gdpcore/ctaGraph.png' %}" alt="Play">
-<div id="ctaGraphText" class = "cta ctaText">Voir le graphe</div>
-
-<div id="ctaMerci" class="cta2">Merci !</div>	
-
-<img id="ctaQueAccurate" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
-<div id="ctaQueAccurateText" class = "ctaQue ctaQueText">J'ai une remarque/question sur un point précis de la vidéo</div>
-<img id="ctaQueGeneral" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueGeneral.png' %}">
-<div id="ctaQueGeneralText" class = "ctaQue ctaQueText">J'ai une question d'ordre général</div>
-<img id="ctaQueBack" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueBack.png' %}">
-<div id="ctaQueBackText" class = "ctaQue ctaQueText">Je n'ai plus de question en fait</div>
-
-
-<div id="ctaQueAccurateInstruction" class="cta2">Selectionnez le(s) point(s) concernés, entrez votre question, puis appuyez sur la cible</div>
-<div id="ctaQueAccurateContainer"></div>
-
-<img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
-<textarea id="ctaQueAccurateInput" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question"></textarea>
-<textarea id="ctaQueAccurateSelection" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question" disabled></textarea>
-
-<div id="ctaForm" class="cta2" class="form-horizontal">
-  
-  <div class="form-group">
-    <label for="inputEmail3" class="col-sm-2 control-label">Question</label>
-    <div class="col-sm-10">
-      <textarea class="form-control" rows="3" placeholder="Votre question"></textarea>
-    </div>	
-  </div>
-  <div class="form-group">
-    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-    <div class="col-sm-10">
-      <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button id="submitQuestion" class="btn btn-default">Sign in</button>
-    </div>
-  </div>
-</div>
-
+{% include "gdpcore/grapher.html" %}
 
 <script>
 
@@ -194,298 +148,7 @@
 
 	{% include "gdpcore/grapher.js" %}
 
-	var selectTime = 1200;
-	var selectTimeNext = 2000;
-	
-	function selectHandlerAnim(type, elemId){
-	
-		$('.'+type+'Img').removeClass('animated bounceInLeft');
-		$('.'+type+'Text').removeClass('animated bounceInRight');
-	
-		$('.'+type+'Img').not("#"+type+elemId).addClass('animated bounceOutLeft');
-		$('.'+type+'Text').not("#"+type+elemId+"Text").addClass('animated bounceOutRight');
-		
-		setTimeout("$('#"+type+elemId+"').addClass('animated bounceOutLeft');",selectTime);
-		setTimeout("$('#"+type+elemId+"Text').addClass('animated bounceOutRight');",selectTime);	
-		
-	}
-	
-	function initAnim(isItFirst){
-		counter = 1;
-		console.log('initAnim');
-		unsetDrag();
-		allCells = graph.getCells();
-		allCells.forEach(function(entry) {
-			paper.findViewByModel(entry).unhighlight();
-			entry.attr('./display','none');
-		});		
-		
-		$(".anim").show();
-		$('.cta, .cta2').hide();
-		$("#blackUnivok").show();
-		$("#stopAnim").hide();
-		
-		$('#myholder').removeClass('animated bounceInLeft');
-		$('#callToAction').removeClass('animated bounceOutRight');
-		
-		$('#callToAction').removeClass('fullscreen');		
-		$('#myholder').addClass('fullscreen');
 
-		console.log(isItFirst);
-		
-		if (isItFirst != false){		
-			console.log('azeazeazeaz')
-			$('#myholder').removeClass('animated bounceOutRight');
-			$('#myholder').addClass('animated bounceInLeft');
-		} 
-		
-		paper.setDimensions($('#myholder').width(), $('#myholder').height()); 	
-
-		$("#playAnim").removeClass('animated bounceOutRight');	
-		$("#playAnim").addClass('animated bounceInLeft');
-		
-		$( "body" ).one("click", "#playAnim", function(event) {
-			$("#playAnim").removeClass('animated bounceInLeft');			
-			$("#playAnim").addClass('animated bounceOutRight');	
-			setTimeout(readshow,2000);
-		});
-		
-		$( "body" ).one("click", "#closeCross", function(event) {
-			stopshow();
-			initCta();
-		});		
-
-	}
-	
-	function initCta(){
-		console.log('initCta');		
-		$(".anim, .cta2").hide();
-		$(".cta").show();
-		$("#blackUnivok").show();
-		
-		$('#myholder').removeClass('fullscreen');
-		$('#callToAction').addClass('fullscreen');
-		
-		$('.ctaImg').removeClass('bounceOutLeft');
-		$('.ctaText').removeClass('bounceOutRight');
-		
-		$('.ctaImg').addClass('animated bounceInLeft');
-		$('.ctaText').addClass('animated bounceInRight');
-
-		
-		$( "body" ).one("click", "#ctaOk", function(event) {	
-			selectHandlerAnim('cta','Ok');
-			sayThanks('A bientôt, et merci !','green');
-			setTimeout(
-				"$('#callToAction').removeClass('animated bounceInLeft');"
-				+"$('#callToAction').addClass('animated bounceOutRight');"
-				,4000);
-			setTimeout(initPage,5000)
-			setTimeout(
-				"$('#callToAction').show();"
-				+"$('#starter').removeClass('animated bounceOutLeft');"
-				+"$('#starter').addClass('animated bounceInRight');"
-				,6000)
-		});
-		
-		$( "body" ).one("click", "#ctaNok", function(event) {		
-			selectHandlerAnim('cta','Nok');
-			setTimeout(initCtaQuestion, selectTimeNext);							
-		});
-		
-		$( "body" ).one("click", "#ctaAgain", function(event) {	
-			selectHandlerAnim('cta','Again');
-			setTimeout(function() {
-				initAnim(false);
-			}, selectTimeNext);
-		});		
-
-		$( "body" ).one("click", "#ctaGraph", function(event) {	
-			selectHandlerAnim('cta','Graph');
-			setTimeout(initGraph, selectTimeNext);
-		});			
-		
-	}
-
-	function initCtaQuestion(){
-		
-		console.log('initCtaQuestion');		
-		$(".anim, cta2").hide();
-		$(".ctaQue").show();
-		$("#blackUnivok").show();
-		
-		$('#myholder').removeClass('fullscreen');
-		$('#callToAction').addClass('fullscreen');
-		
-		$('.ctaQueImg').removeClass('bounceOutLeft');
-		$('.ctaQueText').removeClass('bounceOutRight');
-		
-		$('.ctaQueImg').addClass('animated bounceInLeft');
-		$('.ctaQueText').addClass('animated bounceInRight');
-
-		
-		$( "body" ).one("click", "#ctaQueAccurate", function(event) {
-			selectHandlerAnim('ctaQue','Accurate');
-			setTimeout(initGraph, selectTimeNext);
-			setTimeout(initAccurate, selectTimeNext);
-		});		
-
-		$( "body" ).one("click", "#ctaQueGeneral", function(event) {	
-			selectHandlerAnim('ctaQue','General');
-			setTimeout(initGeneralForm, selectTimeNext);
-		});	
-
-		$( "body" ).one("click", "#ctaQueBack", function(event) {	
-			selectHandlerAnim('ctaQue','Back');
-			setTimeout(initCta, selectTimeNext);
-		});	
-		
-	}	
-
-	function initGeneralForm(){
-	
-		$('#ctaForm').removeClass('animated bounceOutRight');	
-		$('#ctaForm').show();
-		$('#ctaForm').addClass('animated bounceInLeft');
-	}
-
-	function initAccurate(){
-		
-		selectedCells = [];
-		setPossibleSelection();
-		setTimeout("$('#ctaQueAccurateInstruction').show();$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
-		
-		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
-		
-//			$('#ctaQueAccurateInstruction').removeClass('animated bounceInUp');
-//			$('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
-//			initAccurateForm(selectedCells);
-
-			sayThanks('Votre question a été enregistrée, merci', 'yellow');
-			$("#ctaQueAccurateSelection,#ctaQueAccurateInput").val('');
-//			initAccurate();
-//			unsetPossibleSelection();
-		
-		});
-	}
-	
-	function initAccurateForm(selectedCells){
-
-		console.log('initAccurateForm');		
-		$(".anim, cta2").hide();
-		$(".cta").hide();
-		$("#callToAction").show();
-		$("#blackUnivok").show();
-		
-		$('#myholder').removeClass('fullscreen');
-		$('#callToAction').addClass('fullscreen');
-
-		console.log(selectedCells);
-		selectedCells.forEach(function(entry) {
-		
-			cell = graph.getCell(entry)
-			stri = 
-			"<div class = 'accurateText'>"+cell.get('autorname')+' '+cell.get('text')+'</div>'
-			+"<textarea class='form-control' rows='3' placeholder='Votre remarque...'></textarea>"
-			
-			$("#ctaQueAccurateContainer").append(stri);
-		});	
-		
-	
-	}
-	
-	function initPage(){
-		
-		$('#myholder').removeClass('animated bounceInLeft');
-		$('#callToAction').removeClass('animated bounceOutRight');		
-		$('.anim, .cta, .cta2, .ctaQue, #blackUnivok').hide();
-		$('#myholder').removeClass('fullscreen');
-		$('#callToAction').removeClass('fullscreen');
-		
-		$( "body" ).one("click", '#starter', function(event) {
-			$("#starter").removeClass('animated bounceInRight');
-			$("#starter").addClass('animated bounceOutLeft');
-			setTimeout(function() {
-				initAnim(true);
-			},1500);
-		});	
-	}
-	
-	function sayThanks(text, color){
-		$('#ctaMerci').text(text);
-		$('#ctaMerci').css('color',color);
-		
-		$('#ctaMerci').removeClass('animated bounceOutRight');
-		
-		setTimeout("$('#ctaMerci').show();$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
-		setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
-//		setTimeout(initPage, 4000);	
-	}
-
-	function initGraph(){
-		console.log('initGraph');
-		
-		setDrag();
-		unsetPossibleSelection();
-		allCells = graph.getCells();
-		allCells.forEach(function(entry) {
-			paper.findViewByModel(entry).unhighlight();
-			entry.attr('./display','');
-		});		
-
-		$(".anim").show();		
-		$('.cta, .cta2').hide();
-		$("#blackUnivok").show();
-		$("#stopAnim,#playAnim").hide();		
-
-		$('#myholder').removeClass('animated bounceInLeft');
-		$('#callToAction').removeClass('animated bounceOutRight');		
-		
-		$('#callToAction').removeClass('fullscreen');		
-		$('#myholder').addClass('fullscreen');	
-		paper.setDimensions($('#myholder').width(), $('#myholder').height());
-		
-		$(window).resize(function(){	
-			paper.setDimensions($('#myholder').width(), $('#myholder').height());
-		}) 		
-		//setGridZoom(paper, 'myholder', 0);
-		$( "body" ).one("click", "#closeCross", function(event) {	
-			initCta();
-		});
-		
-	}
-	
-	$( document ).ready(function() {
-		paper = addPaper('myholder');
-		firstLoadFromShowparts('myholder');
-		initPage();
-					
-		$( "body" ).on("click", "#stopAnim", function(event) {		
-			stopshow();
-		});
-		
-		$( "body" ).on("click", "#submitQuestion", function(event) {		
-	
-			$('#ctaForm').removeClass('animated bounceInLeft');
-			$('#ctaForm').addClass('animated bounceOutRight');
-			sayThanks('Votre demande a été prise en compte. Merci !','yellow');
-			setTimeout(initCta, 5000);
-				
-		});
-		
-		function starterShake(){
-		
-			console.log('shaker');
-	//		$("#starter").removeClass('animated bounce');
-			
-			$('#starter').addClass('animated infinite shake');
-			$("#starter").removeClass('animated infinite shake');	
-			setTimeout(starterShake,3000)
-		}
-
-	
-			
-	});
 
 
 </script>

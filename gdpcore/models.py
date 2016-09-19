@@ -46,8 +46,6 @@ class Proposition(models.Model):
 	def __str__(self):
 		return str(self.id)
 
-
-
 class LinkType(models.Model):
 	type = models.CharField(max_length = 100)
 	text = models.CharField(max_length = 100, default = '')
@@ -60,8 +58,7 @@ class LinkType(models.Model):
 	
 	def __str__(self):
 		return str(self.id)
-	
-		
+			
 class Link(models.Model):
 	NATURE_LINK_CHOICE = (
 		('Exemple','Exemple'),
@@ -96,7 +93,6 @@ class Link(models.Model):
 	
 	def __str__(self):
 		return str(self.id)
-
 		
 class Comment(models.Model):
 	NATURE_COMMENT_CHOICE = (
@@ -123,7 +119,6 @@ class Comment(models.Model):
 	def __str__(self):
 		return str(self.id)
 
-	
 class Notification(models.Model):
 	NATURE_NOTIFICATION_CHOICE = (
 		('Reponse','Reponse'),
@@ -202,21 +197,26 @@ class CommentGraph(models.Model):
 	comment = models.ForeignKey('self', blank=True, null=True)
 	
 	visibility = models.BooleanField(default = True)
-	
-	
+		
 class Show(models.Model):
 	author = models.ForeignKey(User)
 	title = models.CharField(max_length = 100)
 	description = models.CharField(max_length = 1000, default ='')
 	audio = models.FileField(upload_to="audio", blank=True, null=True)
-	
+
+	def __str__(self):
+		return str(self.id)	
 	
 class ShowPart(models.Model):
 	show = models.ForeignKey(Show)
 	order = models.IntegerField()
-	text = models.CharField(max_length = 3000)
+	text = models.CharField(max_length = 3000, blank=True, null=True)
 	proposition = models.ForeignKey(Proposition, blank=True, null=True)
 	x = models.IntegerField(default = 0)
 	y = models.IntegerField(default = 0)
 	link = models.ForeignKey(Link, blank=True, null=True)
 	duration = models.FloatField(default = 3)
+	audio = models.FileField(upload_to='audioex', blank=True, null=True)
+	
+	def __str__(self):
+		return str(self.id)		

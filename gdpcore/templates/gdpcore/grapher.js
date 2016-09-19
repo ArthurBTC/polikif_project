@@ -57,9 +57,14 @@
 	//Créer une proposition
 	function addProp(id_prop, text, autorname) {
 
+		heightPrediction = 30 + text.length;
+		if (heightPrediction < 100) {
+			heightPrediction = 100;
+		}
+	
 		var wraptext = joint.util.breakText(text, {
 			width: 145,
-			height: 90,
+			height: heightPrediction,
 			attrs: {		
 				'text-anchor': 'middle'		
 			}
@@ -85,8 +90,8 @@
 						stroke: 'white', 
 						'stroke-width': 0, 
 						'follow-scale': true, 
-						width: 150, 
-						height: 80
+						width: 200, 
+						height: heightPrediction
 					},
 
 					'.word2': { 
@@ -94,7 +99,7 @@
 						'font-weight': 'bold',
 						fill: 'white', 
 						'text-anchor':'end',
-						transform: "translate(165,82)" 
+						transform: "translate(165,"+(heightPrediction-18)+")" 
 					},
 					'.word1': { 
 						'ref': 'rect',
@@ -112,7 +117,7 @@
 						 height: 30 
 					}
 				},
-				size: { width: 200, height: 100 },
+				size: { width: 200, height: heightPrediction },
 				id_prop : id_prop,
 				text : text,
 				autorname: autorname,
@@ -264,7 +269,8 @@
 				position: 0.5, 
 				attrs: { 
 					text: { 
-						text: typesData[type_id]['type']+' ('+autorname+')', 
+//						text: typesData[type_id]['type']+' ('+autorname+')', 
+						text: typesData[type_id]['type'], 
 						fill: '#f6f6f6', 
 						'font-family': 'sans-serif' 
 					}, 
@@ -800,7 +806,7 @@
 		
 		console.log('currentTime : '+audioplayer.currentTime);
 
-		audioplayer.play();		
+		//audioplayer.play();		
 		currentX=0;
 		currentY=0;
 		
@@ -830,38 +836,28 @@
 	function stopshow() {
 	
 		console.log('fin du show');
-	//	$("#playAnim").show();
-	//	$("#stopAnim").hide();
-		
-			
-	//	allCells.forEach(function(entry) {
-	//		entry.attr('./display','');
-	//	});
-		
 		audioplayer.pause();
-		paper.setOrigin(0,0);		
+		paper.setOrigin(0,0);
+		counter = 1;	
+
+		clearTimeout(timeOut);
+		clearTimeout(moveTimeOut);
+		clearTimeout(videoTimeOut);		
 		
 	//	$("#ytshow").hide();
 		if (typeof player !== 'undefined'){
 			player.stopVideo();
 		}
 
-		clearTimeout(timeOut);
-		clearTimeout(moveTimeOut);
-		clearTimeout(videoTimeOut);
-		
-		if (selectedElement != '') {
-			counter = selectedCounter;
-			audioplayer.currentTime = selectedAudioTime;
-		} else {
-			counter = 1;
-			audioplayer.currentTime = 0;
-		}
-		
+
+
 	}
+		
+	
 	
 	function readpart(){
 
+		//Si on n'est pas au bout, on va lire...
 		if ( $("#partsMenu #showpart"+(counter)+" .order").html() ) {
 		
 			console.log('readpart starting... counter = '+counter)
@@ -872,6 +868,12 @@
 				elem.attr('./display','');
 				aroundCellVisu(elem);
 			}
+			
+			//Lancer l'audio
+			audioplayer.setAttribute('src', "{{MEDIA_URL}}/media/"+$("#partsMenu #showpart"+(counter)+" .audioex").text());
+			audioplayer.play();
+			
+			//console.log($("#partsMenu #showpart"+(counter)+" .audioex").text());
 			
 			//Afficher le texte
 			$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
@@ -939,6 +941,269 @@
 		}
 	}
 		
+
+	
+	var selectTime = 1200;
+	var selectTimeNext = 2000;
+	
+	function selectHandlerAnim(type, elemId){
+	
+		$('.'+type+'Img').removeClass('animated bounceInLeft');
+		$('.'+type+'Text').removeClass('animated bounceInRight');
+	
+		$('.'+type+'Img').not("#"+type+elemId).addClass('animated bounceOutLeft');
+		$('.'+type+'Text').not("#"+type+elemId+"Text").addClass('animated bounceOutRight');
+		
+		setTimeout("$('#"+type+elemId+"').addClass('animated bounceOutLeft');",selectTime);
+		setTimeout("$('#"+type+elemId+"Text').addClass('animated bounceOutRight');",selectTime);	
+		
+	}
+	
+	function initAnim(isItFirst){
+		counter = 1;
+		console.log('initAnim');
+		unsetDrag();
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			paper.findViewByModel(entry).unhighlight();
+			entry.attr('./display','none');
+		});		
+		
+		$(".anim").show();
+		$('.cta, .cta2').hide();
+		$("#blackUnivok").show();
+		$("#stopAnim").hide();
+		
+		$('#myholder').removeClass('animated bounceInLeft');
+		$('#callToAction').removeClass('animated bounceOutRight');
+		
+		$('#callToAction').removeClass('fullscreen');		
+		$('#myholder').addClass('fullscreen');
+
+		console.log(isItFirst);
+		
+		if (isItFirst != false){		
+			console.log('azeazeazeaz')
+			$('#myholder').removeClass('animated bounceOutRight');
+			$('#myholder').addClass('animated bounceInLeft');
+		} 
+		
+		paper.setDimensions($('#myholder').width(), $('#myholder').height()); 	
+
+		$("#playAnim").removeClass('animated bounceOutRight');	
+		$("#playAnim").addClass('animated bounceInLeft');
+		
+		$( "body" ).one("click", "#playAnim", function(event) {
+			$("#playAnim").removeClass('animated bounceInLeft');			
+			$("#playAnim").addClass('animated bounceOutRight');	
+			setTimeout(readshow,2000);
+		});
+		
+		$( "body" ).one("click", "#closeCross", function(event) {
+			stopshow();
+			initCta();
+		});		
+
+	}
+	
+	function initCta(){
+		console.log('initCta');		
+		$(".anim, .cta2").hide();
+		$(".cta").show();
+		$("#blackUnivok").show();
+		
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+		
+		$('.ctaImg').removeClass('bounceOutLeft');
+		$('.ctaText').removeClass('bounceOutRight');
+		
+		$('.ctaImg').addClass('animated bounceInLeft');
+		$('.ctaText').addClass('animated bounceInRight');
+
+		
+		$( "body" ).one("click", "#ctaOk", function(event) {	
+			selectHandlerAnim('cta','Ok');
+			sayThanks('A bientôt, et merci !','green');
+			setTimeout(
+				"$('#callToAction').removeClass('animated bounceInLeft');"
+				+"$('#callToAction').addClass('animated bounceOutRight');"
+				,4000);
+			setTimeout(initPage,5000)
+			setTimeout(
+				"$('#callToAction').show();"
+				+"$('#starter').removeClass('animated bounceOutLeft');"
+				+"$('#starter').addClass('animated bounceInRight');"
+				,6000)
+		});
+		
+		$( "body" ).one("click", "#ctaNok", function(event) {		
+			selectHandlerAnim('cta','Nok');
+			setTimeout(initCtaQuestion, selectTimeNext);							
+		});
+		
+		$( "body" ).one("click", "#ctaAgain", function(event) {	
+			selectHandlerAnim('cta','Again');
+			setTimeout(function() {
+				initAnim(false);
+			}, selectTimeNext);
+		});		
+
+		$( "body" ).one("click", "#ctaGraph", function(event) {	
+			selectHandlerAnim('cta','Graph');
+			setTimeout(initGraph, selectTimeNext);
+		});			
+		
+	}
+
+	function initCtaQuestion(){
+		
+		console.log('initCtaQuestion');		
+		$(".anim, cta2").hide();
+		$(".ctaQue").show();
+		$("#blackUnivok").show();
+		
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+		
+		$('.ctaQueImg').removeClass('bounceOutLeft');
+		$('.ctaQueText').removeClass('bounceOutRight');
+		
+		$('.ctaQueImg').addClass('animated bounceInLeft');
+		$('.ctaQueText').addClass('animated bounceInRight');
+
+		
+		$( "body" ).one("click", "#ctaQueAccurate", function(event) {
+			selectHandlerAnim('ctaQue','Accurate');
+			setTimeout(initGraph, selectTimeNext);
+			setTimeout(initAccurate, selectTimeNext);
+		});		
+
+		$( "body" ).one("click", "#ctaQueGeneral", function(event) {	
+			selectHandlerAnim('ctaQue','General');
+			setTimeout(initGeneralForm, selectTimeNext);
+		});	
+
+		$( "body" ).one("click", "#ctaQueBack", function(event) {	
+			selectHandlerAnim('ctaQue','Back');
+			setTimeout(initCta, selectTimeNext);
+		});	
+		
+	}	
+
+	function initGeneralForm(){
+	
+		$('#ctaForm').removeClass('animated bounceOutRight');	
+		$('#ctaForm').show();
+		$('#ctaForm').addClass('animated bounceInLeft');
+	}
+
+	function initAccurate(){
+		
+		selectedCells = [];
+		setPossibleSelection();
+		setTimeout("$('#ctaQueAccurateInstruction').show();$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
+		
+		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
+		
+//			$('#ctaQueAccurateInstruction').removeClass('animated bounceInUp');
+//			$('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
+//			initAccurateForm(selectedCells);
+
+			sayThanks('Votre question a été enregistrée, merci', 'yellow');
+			$("#ctaQueAccurateSelection,#ctaQueAccurateInput").val('');
+//			initAccurate();
+//			unsetPossibleSelection();
+		
+		});
+	}
+	
+	function initAccurateForm(selectedCells){
+
+		console.log('initAccurateForm');		
+		$(".anim, cta2").hide();
+		$(".cta").hide();
+		$("#callToAction").show();
+		$("#blackUnivok").show();
+		
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+
+		console.log(selectedCells);
+		selectedCells.forEach(function(entry) {
+		
+			cell = graph.getCell(entry)
+			stri = 
+			"<div class = 'accurateText'>"+cell.get('autorname')+' '+cell.get('text')+'</div>'
+			+"<textarea class='form-control' rows='3' placeholder='Votre remarque...'></textarea>"
+			
+			$("#ctaQueAccurateContainer").append(stri);
+		});	
+		
+	
+	}
+	
+	function initPage(){
+		
+		$('#myholder').removeClass('animated bounceInLeft');
+		$('#callToAction').removeClass('animated bounceOutRight');		
+		$('.anim, .cta, .cta2, .ctaQue, #blackUnivok').hide();
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').removeClass('fullscreen');
+		
+		$( "body" ).one("click", '#starter', function(event) {
+			$("#starter").removeClass('animated bounceInRight');
+			$("#starter").addClass('animated bounceOutLeft');
+			setTimeout(function() {
+				initAnim(true);
+			},1500);
+		});	
+	}
+	
+	function sayThanks(text, color){
+		$('#ctaMerci').text(text);
+		$('#ctaMerci').css('color',color);
+		
+		$('#ctaMerci').removeClass('animated bounceOutRight');
+		
+		setTimeout("$('#ctaMerci').show();$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
+		setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
+//		setTimeout(initPage, 4000);	
+	}
+
+	function initGraph(){
+		console.log('initGraph');
+		
+		setDrag();
+		unsetPossibleSelection();
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			paper.findViewByModel(entry).unhighlight();
+			entry.attr('./display','');
+		});		
+
+		$(".anim").show();		
+		$('.cta, .cta2').hide();
+		$("#blackUnivok").show();
+		$("#stopAnim,#playAnim").hide();		
+
+		$('#myholder').removeClass('animated bounceInLeft');
+		$('#callToAction').removeClass('animated bounceOutRight');		
+		
+		$('#callToAction').removeClass('fullscreen');		
+		$('#myholder').addClass('fullscreen');	
+		paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		
+		$(window).resize(function(){	
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		}) 		
+		//setGridZoom(paper, 'myholder', 0);
+		$( "body" ).one("click", "#closeCross", function(event) {	
+			initCta();
+		});
+		
+	}
+	
 	function setPossibleSelection(){
 		selectedCells=[];
 		paper.on('cell:pointerclick', function(cellView,evt, x, y) { 	
@@ -973,3 +1238,27 @@
 		paper.off('cell:pointerclick')
 	}
 	
+	function setReadAudio(){
+		
+			
+	}
+	
+	$( document ).ready(function() {
+		paper = addPaper('myholder');
+		firstLoadFromShowparts('myholder');
+		initPage();
+					
+		$( "body" ).on("click", "#stopAnim", function(event) {		
+			stopshow();
+		});
+		
+		$( "body" ).on("click", "#submitQuestion", function(event) {		
+	
+			$('#ctaForm').removeClass('animated bounceInLeft');
+			$('#ctaForm').addClass('animated bounceOutRight');
+			sayThanks('Votre demande a été prise en compte. Merci !','yellow');
+			setTimeout(initCta, 5000);
+				
+		});
+			
+	});	

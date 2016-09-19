@@ -23,10 +23,12 @@ def eventViewer(request, id_event):
 	
 	props = []
 	links = []
+	showlength = 0;
 	
 	for showpart in showparts:
 		showpart.proposition.timediff = showpart.proposition.videoEnd -showpart.proposition.videoBeginning
 		props.append(showpart.proposition)
+		showlength = showlength + showpart.duration
 	
 	for prop in props:
 		rightLinks = Link.objects.filter(right_prop = prop)
@@ -42,6 +44,7 @@ def eventViewer(request, id_event):
 				
 	links = list(set(links))			
 	link_types = LinkType.objects.all()
+	
 		
 
 	if event.status == '1':
@@ -52,11 +55,17 @@ def eventViewer(request, id_event):
 					'show': show,
 					'showparts':showparts,
 					'link_types':link_types,
-					'links':links})
+					'links':links,
+					'showlength':showlenth})
 
 		
 	if event.status == '0':
-		return render(request,'univok/futurEventViewer.html',{'event': event });
+		return render(request,'univok/futurEventViewer.html',{'event': event, 
+					'photos': photos,
+					'show': show,
+					'showparts':showparts,
+					'link_types':link_types,
+					'links':links})
 		
 def ideasViewer(request, id_event):
 	event = Event.objects.get(id = id_event)

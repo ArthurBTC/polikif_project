@@ -1,0 +1,57 @@
+{% load staticfiles %}
+
+<img id="blackUnivok" class = "cta anim" src="{% static 'univok/blackUnivok.png' %}" alt="Play">
+
+<div id="myholder" class = "anim"></div>
+<img id="playAnim" class = "anim" src="{% static 'gdpcore/play.png' %}" alt="Play">
+<img id="stopAnim" class = "anim" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
+<img id="closeCross" class = "anim" src="{% static 'gdpcore/closecross.png' %}" alt="Cancel">
+
+
+<div id="callToAction" class = "cta"></div>
+<img id="ctaOk" class = "cta ctaImg" src="{% static 'gdpcore/ctaOk.png' %}" alt="Play">
+<div id="ctaOkText" class = "cta ctaText">J'ai tout compris !</div>
+<img id="ctaNok" class = "cta ctaImg" src="{% static 'gdpcore/ctaNok.png' %}" alt="Play">
+<div id="ctaNokText" class = "cta ctaText">J'ai une question, une remarque...</div>
+<img id="ctaAgain" class = "cta ctaImg" src="{% static 'gdpcore/ctaAgain.png' %}" alt="Play">
+<div id="ctaAgainText" class = "cta ctaText">Relancer la vidéo</div>
+<img id="ctaGraph" class = "cta ctaImg" src="{% static 'gdpcore/ctaGraph.png' %}" alt="Play">
+<div id="ctaGraphText" class = "cta ctaText">Voir le graphe</div>
+
+<div id="ctaMerci" class="cta2">Merci !</div>	
+
+<img id="ctaQueAccurate" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+<div id="ctaQueAccurateText" class = "ctaQue ctaQueText">J'ai une remarque/question sur un point précis de la vidéo</div>
+<img id="ctaQueGeneral" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueGeneral.png' %}">
+<div id="ctaQueGeneralText" class = "ctaQue ctaQueText">J'ai une question d'ordre général</div>
+<img id="ctaQueBack" class = "ctaQue ctaQueImg" src="{% static 'gdpcore/ctaQueBack.png' %}">
+<div id="ctaQueBackText" class = "ctaQue ctaQueText">Je n'ai plus de question en fait</div>
+
+
+<div id="ctaQueAccurateInstruction" class="cta2">Selectionnez le(s) point(s) concernés, entrez votre question, puis appuyez sur la cible</div>
+<div id="ctaQueAccurateContainer"></div>
+
+<img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
+<textarea id="ctaQueAccurateInput" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question"></textarea>
+<textarea id="ctaQueAccurateSelection" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question" disabled></textarea>
+
+<div id="ctaForm" class="cta2" class="form-horizontal">
+  
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">Question</label>
+    <div class="col-sm-10">
+      <textarea class="form-control" rows="3" placeholder="Votre question"></textarea>
+    </div>	
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button id="submitQuestion" class="btn btn-default">Sign in</button>
+    </div>
+  </div>
+</div>
