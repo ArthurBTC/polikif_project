@@ -33,7 +33,9 @@
 <body>
 
 <div id="topBar">
-	<a href="{% url 'collectif' %}">Fruitay</div>
+	<a href="{% url 'collectif' %}">Collectif Fruitay</a>
+	<img id="twitterIco" class = "socialIco" src = "{% static 'univok/twitter.png' %}" ></img>
+	<img id="facebookIco" class="socialIco" src = "{% static 'univok/facebook.png' %}" ></img>
 </div>
 
 <div class="container">
@@ -94,6 +96,13 @@
 		</div>
 	</div>
 	
+	<div class="row subtitleContainer">
+		<div class = 'subtitle'>Facilition graphique</div>
+	</div>
+	
+	<div class="row">
+		<img id="facilitation" src = "{% static 'univok/facilitationJulie.jpg' %}" ></img>
+	</div>	
 	
 	<div class="row subtitleContainer">
 		<div class = 'subtitle'>Synthèse</div>

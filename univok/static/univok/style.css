@@ -5,21 +5,26 @@ html *{
 
 html,body{
 	overflow-x: hidden;
-	background-color: #2c3e50 !important;
+	background-color: #1C1C1C !important;
 }
 
 #topBar{
-	
-	position:absolute;
-	height:30px;
+	position:fixed;
+	height:50px;
 	background-color:#d35400;
-	top:1px;
+	top:0px;
 	z-index:5000;
 	width:100%;
 }
 #topBar *{
 	color:white;
-	font-size:15px;
+	font-size:30px;
+}
+
+.socialIco {
+	width:40px;
+	height:40px;
+	z-index:5001;
 }
 
 .container{	
@@ -104,9 +109,16 @@ html,body{
     border-width: 5px;
 }
 
-.animPlay{
+#starter{
 	width: 400px;
 	height: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#facilitation{
+	width: 95%;
     display: block;
     margin-left: auto;
     margin-right: auto;
