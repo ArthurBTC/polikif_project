@@ -22,6 +22,26 @@
 	z-index: 5300;	
 }
 
+#soundPicture{
+    position: fixed;
+    top: calc(50% + 100px);
+    left: calc(50% - 150px);
+	width:100px;
+	height:100px;
+	z-index: 5300;	
+}
+
+#soundText{
+    position: fixed;
+    top: calc(50% + 125px);
+    left: calc(50% - 10px);
+	z-index: 5300;
+	color:white;
+	font-size:30px
+}
+
+
+
 #stopAnim {
     position: fixed;
     bottom: 20px;

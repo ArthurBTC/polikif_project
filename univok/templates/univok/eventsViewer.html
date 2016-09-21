@@ -21,8 +21,16 @@
 </head>
 <body>
 
+<div id="topBar">
+	<a href="{% url 'collectif' %}">Collectif Fruitay</a>
+	<img id="twitterIco" class = "socialIco" src = "{% static 'univok/twitter.png' %}" ></img>
+	<img id="facebookIco" class="socialIco" src = "{% static 'univok/facebook.png' %}" ></img>
+</div>
+
+<div id="secondTopBar"></div>
+
 <div class="container">
-	<div class="row">
+	<div class="row topRow">
 		<div class="col-md-3">
 			<img id = "logo" src = "{% static 'gdpcore/ecossolies.png' %}" onclick="window.location='/univok/index';"></img>
 		</div>
@@ -30,6 +38,7 @@
 			<span class = "title">Evénements</span>
 		</div>
 	</div>
+	
 	<div class="row">
 		<div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timer_logo.png' %}"></img>A venir</div>
 	</div>
@@ -37,9 +46,9 @@
 	{% for event in events %}
 		{% if event.status = '0' %}
 		<div class="row event" onclick="window.location='/univok/evenement/{{event.id}}';">
-			<div class = "simpletext">{{event.name}}</div>
-			<div class = "simpletext">{{event.date|date:"d/m/Y"}}</div>
-			<div class = "simpletext">{{event.place}}</div>
+			<div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
+			<div class = "eventName">{{event.name}}</div>
+			<div class = "eventDescription">{{event.description}}</div>
 		</div>
 		{% endif %}
 	{% endfor %}
@@ -51,9 +60,9 @@
 	{% for event in events %}
 		{% if event.status = '1' %}
 		<div class="row event" onclick="window.location='/univok/evenement/{{event.id}}';">
-			<div class = "simpletext">{{event.name}}</div>
-			<div class = "simpletext">{{event.date|date:"d/m/Y"}}</div>
-			<div class = "simpletext">{{event.place}}</div>
+			<div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
+			<div class = "eventName">{{event.name}}</div>
+			<div class = "eventDescription">{{event.description}}</div>
 		</div>
 		{% endif %}
 	{% endfor %}	

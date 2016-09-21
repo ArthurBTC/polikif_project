@@ -1,12 +1,12 @@
 from django.db import models
 
-from django.contrib.auth.models import User
+import django.contrib.auth.models
 from simple_history.models import HistoricalRecords
 # from polikif import models as polikif_models
 
 
 class Cycle(models.Model):
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	text = models.CharField(max_length = 1000)
 	creation_date = models.DateTimeField()
 	proposition_initiale = models.IntegerField(default=0)
@@ -24,7 +24,7 @@ class Proposition(models.Model):
 		('YT','Youtube'),
 		('SY','Syllogisme')
 	)
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	text = models.CharField(max_length = 3000)
 	nature = models.CharField(max_length = 30, choices = NATURE_PROP_CHOICE, default = 'Diagnostic')
 	cycle = models.ForeignKey(Cycle)
@@ -75,7 +75,7 @@ class Link(models.Model):
 		('I','Inactive'),
 		('P','Pending'),
 	)
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	creation_date = models.DateTimeField()
 	modification_date = models.DateTimeField()
 	nature = models.CharField(max_length = 30, choices = NATURE_LINK_CHOICE, default = 'Donc')
@@ -110,7 +110,7 @@ class Comment(models.Model):
 		
 		
 	)
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	nature = models.CharField(max_length = 30, choices = NATURE_COMMENT_CHOICE, default = 'Text')
 	text = models.CharField(max_length = 1000)
 	creation_date = models.DateTimeField()
@@ -140,7 +140,7 @@ class Notification(models.Model):
 		('DV','Demande de validation de lien'),
 		
 	)
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	proposition = models.ForeignKey(Proposition)
 	nature = models.CharField(max_length = 30, choices = NATURE_NOTIFICATION_CHOICE, default = 'Reponse')
 	creation_date = models.DateTimeField()
@@ -150,7 +150,7 @@ class Notification(models.Model):
 		return str(self.id)
 	
 class Implication(models.Model):
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	proposition = models.ForeignKey(Proposition)
 	link = models.ForeignKey(Link)
 	creation_date = models.DateTimeField()
@@ -158,7 +158,7 @@ class Implication(models.Model):
 		return str(self.id)
 
 class Graph(models.Model):
-	autor = models.ForeignKey(User)
+	autor = models.ForeignKey(django.contrib.auth.models.User)
 	graphstring = models.CharField(max_length = 10000, default = '')
 	title = models.CharField(max_length = 300)
 	originx = models.IntegerField(default=0)
@@ -183,12 +183,12 @@ class Elemgraph(models.Model):
 		return str(self.id)	
 
 class UserProfile(models.Model):
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(django.contrib.auth.models.User)
 	picture = models.ImageField(upload_to='pictures')
 	
 class CommentGraph(models.Model):
 	graph = models.ForeignKey(Graph)
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(django.contrib.auth.models.User)
 	text = models.CharField(max_length = 1000)
 	creation_date = models.DateTimeField()
 	
@@ -199,7 +199,7 @@ class CommentGraph(models.Model):
 	visibility = models.BooleanField(default = True)
 		
 class Show(models.Model):
-	author = models.ForeignKey(User)
+	author = models.ForeignKey(django.contrib.auth.models.User)
 	title = models.CharField(max_length = 100)
 	description = models.CharField(max_length = 1000, default ='')
 	audio = models.FileField(upload_to="audio", blank=True, null=True)

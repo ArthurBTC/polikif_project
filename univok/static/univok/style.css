@@ -5,7 +5,8 @@ html *{
 
 html,body{
 	overflow-x: hidden;
-	background-color: #1C1C1C !important;
+	background-color: rgb(225,238,244) !important;
+	height:100%;
 }
 
 body {
@@ -15,9 +16,9 @@ body {
 #topBar{
 	position:fixed;
 	height:50px;
-	background-color:#d35400;
+	background-color:rgb(255,58,39);
 	top:0px;
-	z-index:5000;
+	z-index:2;
 	width:100%;
 }
 #topBar *{
@@ -25,19 +26,36 @@ body {
 	font-size:30px;
 }
 
+#secondTopBar{
+	position:absolute;
+	height:150px;
+	background-color:rgb(223,239,212);
+	top:100px;
+	z-index:1;
+	width:100%;	
+}
+
+
+
 .socialIco {
 	width:40px;
 	height:40px;
-	z-index:5001;
+	z-index:3;
 }
 
 .container{	
 	background-color:white;
-	margin:100px 30px 0px 30px;
+	margin:0px 30px 0px 30px;
+	min-height:100%;
 }
 
-.topRow {
-	background-color:white !important;
+.topRow *{
+
+	z-index:1;
+}
+
+.topRow{
+	margin:100px 0px 20px 0px;
 }
 
 .photosRow{
@@ -45,8 +63,8 @@ body {
 }
 
 #logo {
-	width: 200px;
-	height: 200px;
+	width: 150px;
+	height: 150px;
 }
 #logosmall {
 	width: 100px;
@@ -54,8 +72,8 @@ body {
 }
 
 .titleContainer{
-  height: 200px;
-  line-height: 200px;
+  height: 150px;
+  line-height: 150px;
   text-align: center;
 }
 
@@ -78,7 +96,7 @@ body {
 	border-bottom-width: 1px;
     border-bottom-color: #7f8c8d;*/
 	margin:30px 0px 30px 0px;
-	background-color:#ecf0f1;
+	background-color: rgb(245,245,245);
 }
 
 
@@ -93,8 +111,23 @@ body {
     background-color: #bdc3c7;
 }
 
+.eventName{
+	font-size:20px;
+	font-weight:bold;
+}
+.eventDescription{
+	font-size:14px;
+}
+.eventDatePlace{
+	font-size:17px;
+	font-weight:bold;
+}
+
+
 .simpletext {
-	font-size: 14px;	
+	font-size: 14px;
+	margin-left:10px;
+	padding-left:10px;
 }
 
 

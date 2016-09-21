@@ -23,19 +23,20 @@
 	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
 	<script src="{% static 'gdpcore/joint.js' %}"></script>
 	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>
-	
 
 	<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>	
 
 
 </head>
-<body data-spy="scroll" data-target="#navbar-example">
+<body>
 
 <div id="topBar">
 	<a href="{% url 'collectif' %}">Collectif Fruitay</a>
 	<img id="twitterIco" class = "socialIco" src = "{% static 'univok/twitter.png' %}" ></img>
 	<img id="facebookIco" class="socialIco" src = "{% static 'univok/facebook.png' %}" ></img>
 </div>
+
+<div id="secondTopBar"></div>
 
 <div class="container">
 	<div class="row topRow">

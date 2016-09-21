@@ -28,6 +28,15 @@
 </head>
 <body>
 
+<div id="topBar">
+	<a href="{% url 'collectif' %}">Collectif Fruitay</a>
+	<img id="twitterIco" class = "socialIco" src = "{% static 'univok/twitter.png' %}" ></img>
+	<img id="facebookIco" class="socialIco" src = "{% static 'univok/facebook.png' %}" ></img>
+</div>
+
+<div id="secondTopBar"></div>
+
+
 <div class="container">
 	
 	<div class="row topRow">
@@ -36,23 +45,22 @@
 		</div>
 		<div class="col-md-9 titleContainer">
 			<span class = "title">{{event.name}}</span>
+
 		</div>
 	</div>
 
-
-	
-	<div id="navbar-example">
-		<ul class="nav nav-pills" role="tablist">
-			<li role="presentation"><a href="#descriptionSubstitle">Description</a></li>
-			  <li role="presentation"><a href="#intervenantsSubstitle">Intervenants</a></li>
-			  <li role="presentation"><a href="#avantproposSubtitle">Avant-propos</a></li>
-		</ul>
-	</div>
+			<div id="navbar-example">
+				<ul class="nav nav-pills" role="tablist">
+					<li role="presentation"><a href="#descriptionSubstitle">Description</a></li>
+					<li role="presentation"><a href="#intervenantsSubstitle">Intervenants</a></li>
+					<li role="presentation"><a href="#avantproposSubtitle">Avant-propos</a></li>
+				</ul>
+			</div>
 
 	<div class="row subtitleContainer" id="descriptionSubstitle">
 		<div class = 'subtitle'>Description</div>
 	</div>
-	<div class="row simpleText">{{event.description}}</div>	
+	<div class="row simpletext">{{event.description}}</div>	
 
 	<div class="row subtitleContainer" id="intervenantsSubstitle">
 		<div class = 'subtitle'>Intervenants</div>
