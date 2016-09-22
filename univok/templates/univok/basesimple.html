@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+{% load staticfiles %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/anim.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
+	
+	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
+<!--	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	-->
+	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+<!--	<script src="{% static 'gdpcore/googlecharts.js' %}"></script> -->
+	
+
+<!--	<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>	-->
+
+
+</head>
+<body>
+
+	
+	{% block content %}
+	{% endblock %}	
+	
+</body>

@@ -86,7 +86,7 @@
 				type: 'basic.twoTextRect',
 				attrs: {
 					rect: {
-						fill: '#2c3e50',
+						fill: 'rgb(55,55,55)',
 						stroke: 'white',
 						'stroke-width': 0,
 						'follow-scale': true,
@@ -871,6 +871,15 @@
 			audioplayer.setAttribute('src', "{{MEDIA_URL}}/media/"+$("#partsMenu #showpart"+(counter)+" .audioex").text());
 			audioplayer.play();
 
+			
+			
+			audioplayer.addEventListener("loadedmetadata", function(_event) {
+				//var duration = audioElement.duration;
+				$("#durationIndic").html(audioplayer.duration);
+				
+			});
+			
+			
 			//console.log($("#partsMenu #showpart"+(counter)+" .audioex").text());
 
 			//Afficher le texte
@@ -1020,7 +1029,7 @@
 
 		$( "body" ).one("click", "#ctaOk", function(event) {
 			selectHandlerAnim('cta','Ok');
-			sayThanks('A bientôt, et merci !','green');
+			sayThanks('A bientôt, et merci !','#2ecc71');
 			setTimeout(
 				"$('#callToAction').removeClass('animated bounceInLeft');"
 				+"$('#callToAction').addClass('animated bounceOutRight');"
@@ -1097,23 +1106,27 @@
 	function initAccurate(){
 
 		selectedCells = [];
+		allCells.forEach(function(entry) {
+			paper.findViewByModel(entry).unhighlight();
+			entry.attr('./display','');
+		});
+		$("#ctaQueAccurateSelection,#ctaQueAccurateInput").val('');
+		
 		setPossibleSelection();
 		setTimeout("$('#ctaQueAccurateInstruction').show();$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
 
 		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
 
-//			$('#ctaQueAccurateInstruction').removeClass('animated bounceInUp');
-//			$('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
-//			initAccurateForm(selectedCells);
-
-			sayThanks('Votre question a été enregistrée, merci', 'yellow');
-			$("#ctaQueAccurateSelection,#ctaQueAccurateInput").val('');
-//			initAccurate();
+			$(".ctaInput").removeClass('animated bounceInRight');
+			$(".ctaInput").addClass('animated bounceOutRight');
+			sayThanks('Votre question a été enregistrée, merci', '#2ecc71');
+			selectedCells = [];
+			initAccurate();
 //			unsetPossibleSelection();
 
 		});
 	}
-
+	
 	function initAccurateForm(selectedCells){
 
 		console.log('initAccurateForm');
@@ -1151,7 +1164,8 @@
 			$("#starter").removeClass('animated bounceInRight');
 			$("#starter").addClass('animated bounceOutLeft');
 			setTimeout(function() {
-				initAnim(true);
+				//initAnim(true);
+				initCta();
 			},1500);
 		});
 	}
@@ -1203,11 +1217,15 @@
 	function setPossibleSelection(){
 		selectedCells=[];
 		paper.on('cell:pointerclick', function(cellView,evt, x, y) {
-			console.log('pppapapppap');
+			
+			console.log(selectedCells);
+			
 			if ($.inArray(cellView.model.id,selectedCells) == -1){
 				selectedCells.push(cellView.model.id);
-				cellView.highlight();
+				cellView.highlight();			
+						
 			} else {
+				console.log('already in selectedCells');
 				selectedCells.splice( $.inArray(cellView.model.id, selectedCells), 1 );
 				cellView.unhighlight();
 			}
@@ -1239,6 +1257,45 @@
 
 	}
 
+	function quickSaveShow(){
+		
+		var bigjson = [];
+
+		$("#partsMenu tr").each(function() {
+		
+			if ($(this).find("td").eq(0).html() != '#') {
+					
+				item = {
+					'order': $(this).find("td").eq(0).html(),
+					'propId': $(this).find("td").eq(1).html(),
+					'propX': $(this).find("td").eq(4).html(),
+					'propY': $(this).find("td").eq(5).html(),
+					'text': $(this).find("input").eq(0).val(),
+					'duration': $(this).find("input").eq(1).val()
+				}
+				
+				bigjson.push(item);
+			}
+		});
+		
+		bigstring = JSON.stringify({ 'things': bigjson });
+			
+		$.ajax( {
+			type: "POST",
+			url: '/gdpcore/ajax_showsave/',
+			data: { 
+					showId: {{show.pk}},
+					data: bigstring,
+					csrfmiddlewaretoken: '{{ csrf_token }}'
+			},
+			success: function( data ) {		
+				
+				console.log(data);
+			}
+		});
+				
+	}
+	
 	$( document ).ready(function() {
 		paper = addPaper('myholder');
 		firstLoadFromShowparts('myholder');
@@ -1252,7 +1309,7 @@
 
 			$('#ctaForm').removeClass('animated bounceInLeft');
 			$('#ctaForm').addClass('animated bounceOutRight');
-			sayThanks('Votre demande a été prise en compte. Merci !','yellow');
+			sayThanks('Votre demande a été prise en compte. Merci !','#3498db');
 			setTimeout(initCta, 5000);
 
 		});

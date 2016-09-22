@@ -1,15 +1,17 @@
-<div style="display:none;">	
+<div id="showparts" style="display:none;">	
 	<table id = "partsMenu" class="table table-bordered">
 		<thead>
 			<tr>
 				<td>#</td>
-				<td>id</td> 
+				<td>propId</td> 
 				<td>Proposition</td> 
 				<td>Nature</td> 
 				<td>x</td>
 				<td>y</td>
 				<td>Texte</td>
-				<td>Durée</td>		
+				<td>Durée</td>
+				<td>Audio</td>
+				<td>showpartId</td>
 				
 			</tr>
 		</thead>
@@ -26,6 +28,7 @@
 				<td class = "text"><input type="text" value = "{{showpart.text}}" name="fname" style="width: 100px; color:black;"></td>
 				<td class = "duration"><input type="number" step="0.1" value = {{showpart.duration}} style="width: 50px; color:black;"></td>
 				<td class = "audioex">{{showpart.audio}}</td>
+				<td class = "showpartId">{{showpart.id}}</td>
 			</tr>
 		{% endfor %}
 		</tbody>

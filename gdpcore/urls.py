@@ -69,6 +69,8 @@ urlpatterns = [
 	
 	url(r'^convertTheater', views.convertTheater, name='convertTheater'),
 	url(r'^showAudioUpload', views.showAudioUpload, name='showAudioUpload'),
+	url(r'^showpartAudioUpload', views.showpartAudioUpload, name='showpartAudioUpload'),
+	
 	
 	
 	url(r'^new_graph', views.new_graph, name='new_graph'),	

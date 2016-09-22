@@ -127,6 +127,18 @@ def showAudioUpload(request):
 	
 	return HttpResponseRedirect(reverse('theater', args=(show.pk,)))
 	
+def showpartAudioUpload(request):
+	
+	show = Show.objects.get(pk=request.POST['showid'])
+	showpart = ShowPart.objects.get(pk=request.POST['showpartid'])
+	
+	showpart.audio = request.FILES['audiofile']
+	showpart.save();
+	
+	return HttpResponseRedirect(reverse('theater', args=(show.pk,)))	
+	
+	
+	
 def esAddProp(request):
 	
 	indexname = 'newindex'
