@@ -1,4 +1,5 @@
 from django.db import models
+import django.contrib.auth.models
 from gdpcore import models as gdpcoreModels
 
 
@@ -12,6 +13,7 @@ class Organisation(models.Model):
 
 class Speaker(models.Model):
     name = models.CharField(max_length=300)
+    account = models.ForeignKey(django.contrib.auth.models.User, blank=True, null=True)
     description = models.CharField(max_length=1000)
     picture = models.ImageField(upload_to='speakers')
 
@@ -72,11 +74,11 @@ class Sentence(models.Model):
 
 class Question(models.Model):
     text = models.CharField(max_length=1000)
-    firstname = models.CharField(max_length=100, default='')
-    lastname = models.CharField(max_length=100, default='')
-    email = models.CharField(max_length=100, default='')
-    phone = models.CharField(max_length=30, default='')
-    show = models.ForeignKey(gdpcoreModels.Show)
+    firstname = models.CharField(max_length=100, default='', blank=True, null=True)
+    lastname = models.CharField(max_length=100, default='', blank=True, null=True)
+    email = models.CharField(max_length=100, default='', blank=True, null=True)
+    phone = models.CharField(max_length=30, default='', blank=True, null=True)
+    showpart = models.ManyToManyField(gdpcoreModels.ShowPart)
 
     def __str__(self):
         return str(self.text)

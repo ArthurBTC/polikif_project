@@ -8,4 +8,5 @@ urlpatterns = [
 	url(r'^idees/(?P<id_event>[0-9]+)', views.ideasViewer, name='ideasViewer'),
 	url(r'^sentences', views.sentencesConverter, name='sentencesConverter'),
 	url(r'^collectif', views.collectif, name='collectif'),
+    url(r'^ajax_newquestion', views.ajax_newquestion, name='ajax_newquestion'),
 ]

@@ -1576,6 +1576,6 @@ def init(request):
 		if link.nature == 'C':
 				link.type = LinkType.objects.get(type = 'concurrence')				
 			
-		link.save();
+		link.save()
 	
 	return HttpResponse('Init OK')

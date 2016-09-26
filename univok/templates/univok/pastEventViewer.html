@@ -6,7 +6,7 @@
 <div class="container">
 	<div class="row topRow">
 		<div class="col-md-3">
-			<img id = "logo" src = "{% static 'univok/ECS.png' %}" onclick="window.location='/univok/index/';"></img>
+			<img id = "logo" class="hvr-grow" src = "{% static 'univok/ECS.png' %}" onclick="window.location='/univok/index/';"></img>
 		</div>
 		<div class="col-md-9 titleContainer">
 			<span class = "title">{{event.name}}</span>
@@ -82,7 +82,7 @@
 		<div class = 'subtitle'>Synthèse</div>
 	</div>
 	<div class="row">
-		<img id="starter" class="animPlay" src = "{% static 'univok/clickmeUnivok.png' %}" ></img>
+		<img id="starter" class="animPlay hvr-buzz" src = "{% static 'univok/clickmeUnivok.png' %}" ></img>
 	</div>
 	
 	<div class="row subtitleContainer" id="intervenantSubtitle">
@@ -113,6 +113,12 @@
 	});
 
 	{% include "gdpcore/grapher.js" %}
+    
+    $( document ).ready(function() {
+		paper = addPaper('myholder');
+		firstLoadFromShowparts('myholder');
+		initPage();
+    });
 
 </script>
 

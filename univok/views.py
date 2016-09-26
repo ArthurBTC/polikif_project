@@ -4,8 +4,8 @@ from django.core import serializers
 from django.shortcuts import render
 
 from gdpcore.models import *
-from .models import Event, Record, Photo, Sentence
-
+from .models import Event, Record, Photo, Sentence, Question
+from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
@@ -22,11 +22,15 @@ def eventViewer(request, id_event):
     props = []
     links = []
     showlength = 0
-
+    sentences = Sentence.objects.filter(event = event)
+	
     for showpart in showparts:
         showpart.proposition.timediff = showpart.proposition.videoEnd - showpart.proposition.videoBeginning
         props.append(showpart.proposition)
         showlength = showlength + showpart.duration
+
+        showpart.proposition.sentences = Sentence.objects.filter(proposition = showpart.proposition)
+#        showpart.proposition.authorPicture = Speaker.objects.filter()
 
     for prop in props:
         rightLinks = Link.objects.filter(right_prop=prop)
@@ -42,6 +46,12 @@ def eventViewer(request, id_event):
 
     links = list(set(links))
     link_types = LinkType.objects.all()
+    
+    minutes = int(float(showlength) // 60)
+    seconds = int(showlength - minutes*60)
+    show.seconds = seconds
+    show.minutes = minutes
+ #   show.showlength.minutes = minutes
 
     if event.status == '1':
         assert isinstance(event, object)
@@ -51,8 +61,7 @@ def eventViewer(request, id_event):
                                                                'show': show,
                                                                'showparts': showparts,
                                                                'link_types': link_types,
-                                                               'links': links,
-                                                               'showlength': showlength})
+                                                               'links': links})
 
     if event.status == '0':
         photos = Photo.objects.filter(event=event)
@@ -151,3 +160,22 @@ def sentencesConverter(request):
 
 def collectif(request):
     return render(request, 'univok/collectif.html');
+
+def ajax_newquestion(request):
+    
+    
+    
+    question = Question(
+        text = request.POST['text'],
+        firstname = request.POST['name'],
+        lastname = request.POST['name'],
+        email = request.POST['email'],
+        phone = request.POST['phone'],
+    )    
+    question.save()
+    
+    showparts = request.POST.getlist('showpartIds[]')
+    for showpart in showparts:
+        question.showpart.add(ShowPart.objects.get(pk=showpart))
+    
+    return HttpResponse(question.pk)

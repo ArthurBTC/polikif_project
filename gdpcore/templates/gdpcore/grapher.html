@@ -7,13 +7,13 @@
 <img id="blackUnivok" class = "cta anim" src="{% static 'univok/blackUnivok.png' %}" alt="Play">
 
 <div id="myholder" class = "anim"></div>
-<img id="playAnim" class = "anim" src="{% static 'gdpcore/play.png' %}" alt="Play">
+<img id="playAnim" class = "anim hvr-grow" src="{% static 'gdpcore/play.png' %}" alt="Play">
 <img id="soundPicture" class = "anim" src="{% static 'gdpcore/soundPicture.png' %}" alt="Play">
-<div id="soundText" class = "anim">Il y a du son</div>
+<div id="soundText" class = "anim">Il y a du son <br /> L'animation dure {{show.minutes}} minute(s) et {{show.seconds}} seconde(s)</div>
 
 <img id="stopAnim" class = "anim" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
 <img id="closeCross" class = "anim" src="{% static 'gdpcore/closecross.png' %}" alt="Cancel">
-
+<div id="animClock" class="anim"><span id="clockGoing">0:00</span> / {{show.minutes}}:{{show.seconds}}</div>
 
 <div id="callToAction" class = "cta"></div>
 <img id="ctaOk" class = "cta ctaImg" src="{% static 'gdpcore/ctaOk.png' %}" alt="Play">
@@ -23,7 +23,7 @@
 <img id="ctaAgain" class = "cta ctaImg" src="{% static 'gdpcore/ctaAgain.png' %}" alt="Play">
 <div id="ctaAgainText" class = "cta ctaText">Relancer la vidéo</div>
 <img id="ctaGraph" class = "cta ctaImg" src="{% static 'gdpcore/ctaGraph.png' %}" alt="Play">
-<div id="ctaGraphText" class = "cta ctaText">Voir le graphe</div>
+<div id="ctaGraphText" class = "cta ctaText">Je souhaite revenir sur un point précis</div>
 
 <div id="ctaMerci" class="cta2">Merci !</div>	
 
@@ -39,8 +39,14 @@
 <div id="ctaQueAccurateContainer"></div>
 
 <img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
-<textarea id="ctaQueAccurateInput" class="cta2 form-control ctaInput" rows="3" placeholder=""></textarea>
-<textarea id="ctaQueAccurateSelection" class="cta2 form-control ctaInput" rows="3" placeholder="Votre question" disabled></textarea>
+<textarea id="ctaQueAccurateInput" class="cta2 ctaInput" rows="3" placeholder="Posez votre question ici"></textarea>
+<div id="ctaQueAccurateSelection" class="cta2 ctaInput"></div>
+
+<div id="ctaQueAccurateHowto" class="cta2 ctaInput2">Comment pouvons-nous vous contacter ?</div>
+<input id="ctaQueAccurateName" class="cta2 ctaInput2" type="text" placeholder="Nom et prénom"></input>
+<input id="ctaQueAccurateEmail" class="cta2 ctaInput2" type="email" placeholder="Email"></input>
+<input id="ctaQueAccuratePhone" class="cta2 ctaInput2" type="tel" placeholder="Téléphone"></input>
+
 
 <div id="ctaForm" class="cta2" class="form-horizontal">
   <div class="form-group">
@@ -60,4 +66,18 @@
       <button id="submitQuestion" class="btn btn-default">Envoyer votre question</button>
     </div>
   </div>
+</div>
+
+<div id="sentencesContainer" class="graphElems"></div>
+<img id="authorPictureContainer" class="graphElems"></img>
+<div id="questionsCb" class="checkbox graphElems">
+    <label class="graphElems">
+      <input type="checkbox" class="graphElems"> Questions
+    </label>
+</div>
+
+<div id="detailsCb" class="checkbox graphElems">
+    <label class="graphElems">
+      <input type="checkbox" class="graphElems"> Details
+    </label>
 </div>

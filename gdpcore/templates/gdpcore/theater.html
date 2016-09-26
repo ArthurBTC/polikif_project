@@ -20,7 +20,6 @@
 	
 <div>Current audio : {{show.audio}}</div>
 
-
 <form id = "audioSender"  method="post" action="/gdpcore/showpartAudioUpload/" enctype="multipart/form-data">
 {% csrf_token %}
 	<input type="number" name="showid" value = {{show.id}} style="display:none;">
@@ -29,23 +28,20 @@
 	<input type="submit">
 </form>
 
-
-
 <script type="text/javascript">
 
 {% include "gdpcore/grapher.js" %}
 var propId;
-
-
 
 $( document ).ready(function() {
 
 	$("#showparts, #myholder, #playAnim").show();
 	$("#showparts, #myholder, #playAnim").addClass('theatermode');
 
-	paper.setDimensions($('#myholder').width(), $('#myholder').height());
+    paper = addPaper('myholder');
+    paper.setDimensions($('#myholder').width(), $('#myholder').height());
+    firstLoadFromShowparts('myholder');  
 	setDrag();
-
 	
 	$( "body" ).one("click", "#playAnim", function(event) {		
 		readshow();
@@ -89,10 +85,13 @@ $( document ).ready(function() {
 	$( "body" ).on("click", ".propText", function(event) {	
 		
 	//	$( "#showpart"+ $(event.target).html() ).after( "#showpart"+ ( $(event.target).html()+1)  );
+
+		counter = parseInt($(event.target).parent().find(".order").text()) ;
 	
-		
+		audioplayer.setAttribute('src', "{{MEDIA_URL}}/media/"+$("#partsMenu #showpart"+(counter)+" .audioex").text());
+		audioplayer.play();
 	
-		counter = parseInt($(event.target).parent().find(".order").text()) ;	
+			
 		propId = $(event.target).parent().find(".propId").text() ;		
 		showpartId = $(event.target).parent().find(".showpartId").text() ;	
 		
@@ -128,7 +127,38 @@ $( document ).ready(function() {
 		quickSaveShow();
 	});
 	
-/*	paper.on('blank:pointerdblclick', function(evt, x, y) { 
+	paper.on('cell:pointerclick', function(cellView,evt, x, y) {
+		
+		console.log(selectedCells);
+		
+		if ($.inArray(cellView.model.id,selectedCells) == -1){
+			selectedCells.push(cellView.model.id);
+			cellView.highlight();			
+					
+		} else {
+			console.log('already in selectedCells');
+			selectedCells.splice( $.inArray(cellView.model.id, selectedCells), 1 );
+			cellView.unhighlight();
+		}
+
+		if (selectedCells.length == 0){
+			$(".ctaInput").removeClass('animated bounceInRight');
+			$(".ctaInput").addClass('animated bounceOutRight');
+		} else {
+			$(".ctaInput").show();
+			$(".ctaInput").removeClass('animated bounceOutRight');
+			$(".ctaInput").addClass('animated bounceInRight');
+		}
+
+		$("#ctaQueAccurateSelection").val('');
+		selectedCells.forEach(function(entry) {
+			newAuthor = graph.getCell(entry).get('autorname');
+			newText = graph.getCell(entry).get('text');
+			$("#ctaQueAccurateSelection").val( $("#ctaQueAccurateSelection").val()+'\n'+newAuthor+' : '+newText  );
+		});
+	});	
+
+	/*	paper.on('blank:pointerdblclick', function(evt, x, y) { 
 		midX = 0.7*$(window).width() / 2;
 		midY = 0.9*$(window).height() / 2;
 		

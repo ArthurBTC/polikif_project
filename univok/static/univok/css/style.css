@@ -119,9 +119,6 @@ body {
 	background-color: #ecf0f1;
 }
 
-.event:hover { 
-    background-color: #bdc3c7;
-}
 
 .eventName{
 	font-size:20px;
@@ -172,8 +169,6 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
-
-
 
 .speakerPicture{
 	width:200px;

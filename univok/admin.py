@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Organisation, Speaker, Event, Record, Photo, Sentence
+from .models import Organisation, Speaker, Event, Record, Photo, Sentence, Question
 
 class OrganisationAdmin(admin.ModelAdmin):
     # ...
@@ -24,6 +24,10 @@ class PhotoAdmin(admin.ModelAdmin):
 class SentenceAdmin(admin.ModelAdmin):
     # ...
     list_display = ('id','proposition')
+    
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ('id','text')
+    
 	
 admin.site.register(Organisation, OrganisationAdmin)
 admin.site.register(Speaker, SpeakerAdmin)
@@ -31,3 +35,4 @@ admin.site.register(Event, EventAdmin)
 admin.site.register(Record, RecordAdmin)	
 admin.site.register(Photo, PhotoAdmin)
 admin.site.register(Sentence, SentenceAdmin)
+admin.site.register(Question, QuestionAdmin)

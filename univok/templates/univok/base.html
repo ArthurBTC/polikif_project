@@ -8,9 +8,10 @@
 	
 {% load staticfiles %}
 
-	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'univok/anim.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/anim.css' %}"> 
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'univok/css/hover-min.css' %}" />
 <!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
 <!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
@@ -32,9 +33,10 @@
 <body>
 	
 	<div id="topBar">
-		<a href="{% url 'collectif' %}">Collectif UNIVOK</a>
-		<img id="twitterIco" class = "socialIco" src = "{% static 'univok/twitter.png' %}" ></img>
-		<img id="facebookIco" class="socialIco" src = "{% static 'univok/facebook.png' %}" ></img>
+		<!--<a href="{% url 'collectif' %}">Collectif UNIVOK</a> -->
+        <span>UNIVOK</span>
+		<img id="twitterIco" class = "socialIco hvr-grow" src = "{% static 'univok/twitter.png' %}" ></img>
+		<img id="facebookIco" class="socialIco hvr-grow" src = "{% static 'univok/facebook.png' %}" ></img>
 	</div>
 
 	<div id="secondTopBar"></div>	

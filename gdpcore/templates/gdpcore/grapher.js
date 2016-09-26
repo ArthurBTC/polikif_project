@@ -55,8 +55,19 @@
 	var selectedCells = [];
 
 	//Créer une proposition
-	function addProp(id_prop, text, autorname) {
+	function addProp(id_prop, text, autorname, sentences, audio, authorPicture) {
 
+		if (typeof sentences === 'undefined') { optionalArg = 'default'; }
+		if (typeof audio === 'undefined') { optionalArg = 'default'; }
+		if (typeof authorPicture === 'undefined') { optionalArg = 'default'; }
+
+	
+        if (typeof sentences !== 'undefined'){
+            if (sentences.length==0){
+                sentences = "Pas de citation.."
+            }
+        }
+        
 		heightPrediction = 30 + text.length;
 		if (heightPrediction < 100) {
 			heightPrediction = 100;
@@ -121,6 +132,10 @@
 				id_prop : id_prop,
 				text : text,
 				autorname: autorname,
+				sentences: sentences,
+				audio: audio,
+				authorPicture: authorPicture,
+                showpartId: 'default',
 			}, joint.shapes.basic.Generic.prototype.defaults)
 		});
 
@@ -696,10 +711,16 @@
 					el = addProp(
 						{{showpart.proposition.id}},
 						'{{showpart.proposition.text|escapejs}}',
-						'{{showpart.proposition.autor.username|escapejs}}'
+						'{{showpart.proposition.autor.username|escapejs}}',
+						"{% for sentence in showpart.proposition.sentences %}{{sentence|escapejs}}<br />{% endfor %}",
+						"{{showpart.audio}}",
+						"{{showpart.proposition.autor.userprofile.picture}}"
+						
 					);
 					el.attr('./display', '');
 					el.translate( {{showpart.x}} , {{showpart.y}} );
+                    
+                    el.set('showpartId', {% if showpart.pk %}{{showpart.pk}}{% else %}''{% endif %});
 
 					el.on('change:position', function(event) {
 
@@ -777,10 +798,11 @@
 				'{{implication.autor.username|escapejs}}'
 				);
 		{% endfor %}
+			
 		updateCorrespondances();
 	};
 
-	var counter;
+	var counter = 1;
 	var audioplayer = document.querySelector('#audioplayer');
 
 	if(audioplayer){
@@ -794,18 +816,35 @@
 	var selectedElement='';
 	var selectedCounter=1;
 	var selectedAudioTime = 0;
-	var counter = 1;
 
 	var timeOut;
 	var moveTimeOut;
 	var videoTimeOut;
-
+    var clockInterval;
+    
+    var clockGoing = 0;
+    var messageShowTimeout;
+    var messageHideTimeout;
+    
 	var allCells = graph.getCells();
 
+    function updateClock() {
+                
+        minutes = Math.floor(clockGoing/60)
+        seconds = clockGoing - minutes*60
+        seconds = ('0' + seconds).slice(-2)
+        
+        $("#clockGoing").text(minutes+":"+seconds);   
+
+        clockGoing = clockGoing + 1;            
+    }
+    
 	function readshow() {
 
-		console.log('currentTime : '+audioplayer.currentTime);
-
+		//start the clock
+        clockGoing = 0;
+        clockInterval = setInterval(updateClock, 1000);
+        
 		//audioplayer.play();
 		currentX=0;
 		currentY=0;
@@ -843,7 +882,8 @@
 		clearTimeout(timeOut);
 		clearTimeout(moveTimeOut);
 		clearTimeout(videoTimeOut);
-
+        clearInterval(clockInterval);
+        
 	//	$("#ytshow").hide();
 		if (typeof player !== 'undefined'){
 			player.stopVideo();
@@ -948,6 +988,18 @@
 		}
 	}
 
+    function clockHandler(){
+        
+        var start = new Date;
+        
+        start = 0;
+        
+        setInterval(function() {
+            $('#timer').text(Math.round((new Date - start) / 1000, 0) + " Seconds"); 
+        }, 1000);
+        
+    }
+    
 	var selectTime = 1200;
 	var selectTimeNext = 2000;
 
@@ -965,7 +1017,18 @@
 	}
 
 	function initAnim(isItFirst){
+        
+        var id = window.setTimeout(function() {}, 0);
+
+        while (id--) {
+            window.clearTimeout(id); // will do nothing if no timeout with id is present
+        }
+        
+        
 		counter = 1;
+        clockGoing = 0;
+        updateClock();
+        
 		console.log('initAnim');
 		unsetDrag();
 		allCells = graph.getCells();
@@ -985,10 +1048,8 @@
 		$('#callToAction').removeClass('fullscreen');
 		$('#myholder').addClass('fullscreen');
 
-		console.log(isItFirst);
 
 		if (isItFirst != false){
-			console.log('azeazeazeaz')
 			$('#myholder').removeClass('animated bounceOutRight');
 			$('#myholder').addClass('animated bounceInLeft');
 		}
@@ -1001,7 +1062,7 @@
 		$( "body" ).one("click", "#playAnim", function(event) {
 			$("#playAnim, #soundPicture, #soundText").removeClass('animated bounceInLeft');
 			$("#playAnim, #soundPicture, #soundText").addClass('animated bounceOutRight');
-			setTimeout(readshow,2000);
+			to_aa = setTimeout(readshow,2000);
 		});
 
 		$( "body" ).one("click", "#closeCross", function(event) {
@@ -1029,13 +1090,13 @@
 
 		$( "body" ).one("click", "#ctaOk", function(event) {
 			selectHandlerAnim('cta','Ok');
-			sayThanks('A bientôt, et merci !','#2ecc71');
-			setTimeout(
+			sayThanks('A bientôt, et merci !','#2ecc71',40);
+			to_bb = setTimeout(
 				"$('#callToAction').removeClass('animated bounceInLeft');"
 				+"$('#callToAction').addClass('animated bounceOutRight');"
 				,4000);
-			setTimeout(initPage,5000)
-			setTimeout(
+			to_cc = setTimeout(initPage,5000)
+			to_dd = setTimeout(
 				"$('#callToAction').show();"
 				+"$('#starter').removeClass('animated bounceOutLeft');"
 				+"$('#starter').addClass('animated bounceInRight');"
@@ -1044,19 +1105,24 @@
 
 		$( "body" ).one("click", "#ctaNok", function(event) {
 			selectHandlerAnim('cta','Nok');
-			setTimeout(initCtaQuestion, selectTimeNext);
+			//to_ee = setTimeout(initCtaQuestion, selectTimeNext);
+            to_ee = setTimeout(initGraph, selectTimeNext);
+            to_ee = setTimeout(setQuestions, selectTimeNext+100);
 		});
 
 		$( "body" ).one("click", "#ctaAgain", function(event) {
 			selectHandlerAnim('cta','Again');
-			setTimeout(function() {
+			to_ff = setTimeout(function() {
 				initAnim(false);
-			}, selectTimeNext);
+			}, selectTimeNext);       
+            
 		});
 
 		$( "body" ).one("click", "#ctaGraph", function(event) {
 			selectHandlerAnim('cta','Graph');
-			setTimeout(initGraph, selectTimeNext);
+			to_gg = setTimeout(initGraph, selectTimeNext);
+            to_ii = setTimeout(setDetails, selectTimeNext+100);
+            
 		});
 
 	}
@@ -1080,18 +1146,20 @@
 
 		$( "body" ).one("click", "#ctaQueAccurate", function(event) {
 			selectHandlerAnim('ctaQue','Accurate');
-			setTimeout(initGraph, selectTimeNext);
-			setTimeout(initAccurate, selectTimeNext);
+			to_az = setTimeout(initGraph, selectTimeNext);
+			to_xy = setTimeout(setQuestions, selectTimeNext+100);
+
+
 		});
 
 		$( "body" ).one("click", "#ctaQueGeneral", function(event) {
 			selectHandlerAnim('ctaQue','General');
-			setTimeout(initGeneralForm, selectTimeNext);
+			to_eoi = setTimeout(initGeneralForm, selectTimeNext);
 		});
 
 		$( "body" ).one("click", "#ctaQueBack", function(event) {
 			selectHandlerAnim('ctaQue','Back');
-			setTimeout(initCta, selectTimeNext);
+			to_aza = setTimeout(initCta, selectTimeNext);
 		});
 
 	}
@@ -1101,30 +1169,15 @@
 		$('#ctaForm').removeClass('animated bounceOutRight');
 		$('#ctaForm').show();
 		$('#ctaForm').addClass('animated bounceInLeft');
-	}
+        
+		$( "body" ).one("click", "#submitQuestion", function(event) {
 
-	function initAccurate(){
+			$('#ctaForm').removeClass('animated bounceInLeft');
+			$('#ctaForm').addClass('animated bounceOutRight');
+			sayThanks('Votre demande a été prise en compte. Merci !','#3498db',40);
+			to_zpe = setTimeout(initCta, 5000);
 
-		selectedCells = [];
-		allCells.forEach(function(entry) {
-			paper.findViewByModel(entry).unhighlight();
-			entry.attr('./display','');
-		});
-		$("#ctaQueAccurateSelection,#ctaQueAccurateInput").val('');
-		
-		setPossibleSelection();
-		setTimeout("$('#ctaQueAccurateInstruction').show();$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",1000);
-
-		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
-
-			$(".ctaInput").removeClass('animated bounceInRight');
-			$(".ctaInput").addClass('animated bounceOutRight');
-			sayThanks('Votre question a été enregistrée, merci', '#2ecc71');
-			selectedCells = [];
-			initAccurate();
-//			unsetPossibleSelection();
-
-		});
+		});        
 	}
 	
 	function initAccurateForm(selectedCells){
@@ -1161,41 +1214,39 @@
 		$('#callToAction').removeClass('fullscreen');
 
 		$( "body" ).one("click", '#starter', function(event) {
+            
+            $("#starter").removeClass('hvr-buzz');
 			$("#starter").removeClass('animated bounceInRight');
 			$("#starter").addClass('animated bounceOutLeft');
-			setTimeout(function() {
+			to_oza = setTimeout(function() {
 				//initAnim(true);
-				initCta();
+				//initCta();
+                initGraph();
 			},1500);
 		});
 	}
 
-	function sayThanks(text, color){
+	function sayThanks(text, color, fontSize){
 		$('#ctaMerci').text(text);
 		$('#ctaMerci').css('color',color);
-
+        $('#ctaMerci').css('font-size', fontSize);
+        
 		$('#ctaMerci').removeClass('animated bounceOutRight');
 
-		setTimeout("$('#ctaMerci').show();$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
-		setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
+		to_zaiei = setTimeout("$('#ctaMerci').show();$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
+		to_zaje = setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
 //		setTimeout(initPage, 4000);
 	}
 
 	function initGraph(){
 		console.log('initGraph');
 
-		setDrag();
-		unsetPossibleSelection();
-		allCells = graph.getCells();
-		allCells.forEach(function(entry) {
-			paper.findViewByModel(entry).unhighlight();
-			entry.attr('./display','');
-		});
 
-		$(".anim").show();
+		$(".anim, .graphElems").show();
 		$('.cta, .cta2').hide();
 		$("#blackUnivok").show();
-		$("#stopAnim,#playAnim,#soundPicture,#soundText").hide();
+		
+        $("#stopAnim,#playAnim,#soundPicture,#soundText,#animClock").hide();
 
 		$('#myholder').removeClass('animated bounceInLeft');
 		$('#callToAction').removeClass('animated bounceOutRight');
@@ -1207,27 +1258,106 @@
 		$(window).resize(function(){
 			paper.setDimensions($('#myholder').width(), $('#myholder').height());
 		})
-		//setGridZoom(paper, 'myholder', 0);
+		
+        
+        setDrag();
+		unsetAll();
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			paper.findViewByModel(entry).unhighlight();
+			entry.attr('./display','');
+		});
+        
+        unsetDetails();
+        unsetQuestions();        
+       
 		$( "body" ).one("click", "#closeCross", function(event) {
 			initCta();
 		});
+	
+        $(':checkbox').change(function() {
+             
+            unsetAll();
+            if( $('#questionsCb > label > input').is(':checked') ) {            
+               console.log('jçreaz');
+               setQuestions();
+            } else {
+                unsetQuestions();
+            }
+           
+            if( $('#detailsCb > label > input').is(':checked') ) {
+                console.log('azeazezae');
+                setDetails();
+            } else {
+                unsetDetails();
+            }
+        }); 
+        
 
+    
 	}
 
-	function setPossibleSelection(){
+    function questionsHighlighter(model){
+        model.attr('rect/fill', 'rgba(46, 204, 113,1.0)');
+    }
+    
+    function questionsUnhightlighter(model){
+        model.attr('rect/fill', 'rgb(55,55,55)');       
+    }
+    
+
+ 
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i = 0; i <ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length,c.length);
+            }
+        }
+        return "";
+    } 
+    
+	function setQuestions(){
+        console.log('setQuestions...');
+
+        $("#ctaQueAccurateName").val( getCookie('name') );
+        $("#ctaQueAccuratePhone").val( getCookie('phone') );
+        $("#ctaQueAccurateEmail").val( getCookie('email') );
+        
+        console.log(getCookie('phone'));
+        
 		selectedCells=[];
+        
+        clearTimeout(messageShowTimeout);
+        clearTimeout(messageHideTimeout);
+        
+        messageShowTimeout = setTimeout("$('#ctaQueAccurateInstruction').show();"
+                   +"$('#ctaQueAccurateInstruction').removeClass('animated bounceOutDown');"
+                    +"$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",
+                       10);
+                       
+        messageHideTimeout = setTimeout("$('#ctaQueAccurateInstruction').removeClass('animated bounceInUp'); $('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');",
+                       4000);
+        
+        $('#questionsCb > label > input').prop('checked', true);
+        
 		paper.on('cell:pointerclick', function(cellView,evt, x, y) {
-			
-			console.log(selectedCells);
 			
 			if ($.inArray(cellView.model.id,selectedCells) == -1){
 				selectedCells.push(cellView.model.id);
-				cellView.highlight();			
+				//cellView.highlight();
+                questionsHighlighter(cellView.model);
 						
 			} else {
 				console.log('already in selectedCells');
 				selectedCells.splice( $.inArray(cellView.model.id, selectedCells), 1 );
-				cellView.unhighlight();
+				//cellView.unhighlight();
+                questionsUnhightlighter(cellView.model);
 			}
 
 			if (selectedCells.length == 0){
@@ -1239,19 +1369,158 @@
 				$(".ctaInput").addClass('animated bounceInRight');
 			}
 
-			$("#ctaQueAccurateSelection").val('');
+			$("#ctaQueAccurateSelection").html('');
 			selectedCells.forEach(function(entry) {
 				newAuthor = graph.getCell(entry).get('autorname');
 				newText = graph.getCell(entry).get('text');
-				$("#ctaQueAccurateSelection").val( $("#ctaQueAccurateSelection").val()+'\n'+newAuthor+' : '+newText  );
+				$("#ctaQueAccurateSelection").html( $("#ctaQueAccurateSelection").html()+'<br />'+newAuthor+' : '+newText  );
 			});
 		});
+        
+		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
+ 
+            var showpartsIds = [];
+			selectedCells.forEach(function(entry) {
+                showpartsIds.push(graph.getCell(entry).get('showpartId'));
+			});
+
+
+            $("#ctaQueAccurateSelection, #ctaQueAccurateInput").removeClass('animated bounceInRight');
+            $("#ctaQueAccurateSelection, #ctaQueAccurateInput").addClass('animated bounceOutRight');
+
+            $("#ctaQueAccurateClick").addClass('animated flip');
+                      
+            setTimeout(function () {    
+                $(".ctaInput2").show();
+                $(".ctaInput2").removeClass('animated bounceOutRight');
+                $(".ctaInput2").addClass('animated bounceInRight');                
+            }, 500)
+            
+            paper.off('cell:pointerclick');
+           
+            $( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
+                
+                
+                textVal = $("#ctaQueAccurateInput").val();
+                emailVal = $('#ctaQueAccurateEmail').val();
+                nameVal = $('#ctaQueAccurateName').val();
+                phoneVal =  $('#ctaQueAccuratePhone').val();
+                
+                $.ajax( {
+                    type: "POST",
+                    url: '/univok/ajax_newquestion/',
+                    data: { 
+                            text: textVal,
+                            'showpartIds[]': showpartsIds,
+                            email: emailVal,
+                            name: nameVal,
+                            phone: phoneVal,
+                            csrfmiddlewaretoken: '{{ csrf_token }}'
+                    },
+                    success: function( data ) {
+                        
+                        //$(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
+                        //$(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');
+                
+                        document.cookie = "email="+emailVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                        document.cookie = "name="+nameVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                        document.cookie = "phone="+phoneVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                         
+                        unsetQuestions();
+                        setQuestions();
+                
+                        sayThanks("Votre question a été enregistrée. Vous pouvez en envoyer d'autres si vous le souhaitez.", '#2ecc71',40);
+                 
+                    },
+                    error: function(data){
+                        console.log('error!')
+                    }
+                });
+            });
+            
+		});
+        
 	}
 
-	function unsetPossibleSelection(){
+    function unsetQuestions(){
+        selectedCells=[];
+        
+        $("#ctaQueAccurateClick").removeClass('animated flip');
+        
+        $(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
+        $(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');        
+        $("#ctaQueAccurateInput, .ctaInput2").val('');
+        $("#ctaQueAccurateSelection").html('');
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			//paper.findViewByModel(entry).unhighlight();
+            questionsUnhightlighter(entry);
+		});
+ 
+        clearTimeout(messageShowTimeout);
+        clearTimeout(messageHideTimeout);
+ 
+        $('#ctaQueAccurateInstruction').removeClass('animated bounceInUp'); 
+        $('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
+        
+        
+        
+        $('#questionsCb > label > input').prop('checked', false);
+    }
+    
+    function setDetails(){	
+        console.log("setDetails");
+        $("#sentencesContainer, #authorPictureContainer").show();
+        $('#detailsCb > label > input').prop('checked', true);
+        
+        $("#authorPictureContainer").hide();
+        
+
+        
+        paper.on('cell:pointerclick', function(cellView,evt, x, y) {
+			
+			//On entoure et desentour			
+			allCells = graph.getCells();
+			allCells.forEach(function(entry) {
+				paper.findViewByModel(entry).unhighlight();
+			});
+			cellView.highlight();
+			
+			//On ajoute les citations
+			text = cellView.model.get("sentences");			
+			$("#sentencesContainer").html(text);
+            
+            //On montre l'image
+            $("#authorPictureContainer").show()
+            $("#authorPictureContainer").attr('src', "{{MEDIA_URL}}/media/"+cellView.model.get("authorPicture"));
+
+			//On lit l'audio
+			audioplayer.setAttribute('src', "{{MEDIA_URL}}/media/"+cellView.model.get("audio"));
+			audioplayer.play();			
+			
+		});	        
+    }
+    
+    function unsetDetails(){
+        allCells = graph.getCells();
+        allCells.forEach(function(entry) {
+            paper.findViewByModel(entry).unhighlight();
+        }); 
+
+        $("#sentencesContainer").html('');
+        $("#authorPictureContainer").attr('src', "");
+        $("#sentencesContainer, #authorPictureContainer").hide();
+        
+        audioplayer.setAttribute('src', "");
+        audioplayer.pause();
+
+        $('#detailsCb > label > input').prop('checked', false);
+    }
+    
+	function unsetAll(){
 		paper.off('cell:pointerclick')
 	}
-
+    
 	function setReadAudio(){
 
 
@@ -1284,7 +1553,7 @@
 			type: "POST",
 			url: '/gdpcore/ajax_showsave/',
 			data: { 
-					showId: {{show.pk}},
+					showId: {% if show.pk %}{{show.pk}}{% else %}0{% endif %},
 					data: bigstring,
 					csrfmiddlewaretoken: '{{ csrf_token }}'
 			},
@@ -1296,22 +1565,15 @@
 				
 	}
 	
-	$( document ).ready(function() {
+    
+    
+/*	$( document ).ready(function() {
 		paper = addPaper('myholder');
 		firstLoadFromShowparts('myholder');
-		initPage();
+		initPage(); 
 
 		$( "body" ).on("click", "#stopAnim", function(event) {
 			stopshow();
 		});
-
-		$( "body" ).on("click", "#submitQuestion", function(event) {
-
-			$('#ctaForm').removeClass('animated bounceInLeft');
-			$('#ctaForm').addClass('animated bounceOutRight');
-			sayThanks('Votre demande a été prise en compte. Merci !','#3498db');
-			setTimeout(initCta, 5000);
-
-		});
-
 	});
+*/

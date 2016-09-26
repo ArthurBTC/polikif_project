@@ -1,48 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends 'univok/basesimple.html' %}
 
-	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	
+{% block content %}
 {% load staticfiles %}
 
-	<link rel="stylesheet" type="text/css" href="{% static 'univok/style.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}">
-	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
-	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	
-	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
-	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
-	<script src="{% static 'gdpcore/joint.js' %}"></script>
-	<script src="{% static 'gdpcore/googlecharts.js' %}"></script>	
-	<script src="{% static 'gdpcore/svg-pan-zoom.min.js' %}"></script>	
-	
-</head>
-<body>
+{% include "gdpcore/grapher.html" %}
 
-<div class="container">
-
-
-	<div class="row">
-		<div id="myholder"></div>
-	</div>
+<div id="builderContainer">
 	
 	<div class="row">
-
-		
-		<textarea rows="4" cols="50" id = "sentences" disabled="yes"></textarea>
-		<textarea rows="4" cols="50" id = "textinput"></textarea>	
+		<textarea class = "textAreas" rows="4" cols="50" id = "sentences" disabled="yes"></textarea>
+		<textarea class = "textAreas" rows="4" cols="50" id = "textinput"></textarea>	
 		<button id="addprop" type="button">ADD PROP</button>
 	</div>
 
-	
-	
-	
 	<div class="row">
 		<table class="table" id="mytable" style="width:100%">
 		  <tr>
@@ -67,9 +37,9 @@
 			{% endfor %}
 			
 			</th>
-			<th></th>
-			<th></th>
-			<th></th>
+			<th>CB</th>
+			<th>SentenceText</th>
+			<th>CreatedProp</th>
 		  </tr>
 		 
 		{% for sentence in sentences %}
@@ -99,14 +69,17 @@
 
 	{% include "gdpcore/grapher.js" %}
 
+   
 	$( document ).ready(function() {
 		paper = addPaper('myholder');
-		setGridZoom(paper, 'myholder');	
+        $(".textAreas").show();
+        $('#myholder').addClass("theatermode")
 	});
 	
 	//Addprop
 	$( "#addprop" ).on( "click", function() {
 		
+        
 		authorName = $('#mytable tr').filter(function () {
 			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
 		}).find('td').eq(2).text();
@@ -164,8 +137,6 @@
 		});		
 	}
 
-
-	
 	function updateCheckboxSentences(){
 	
 		//masquer les checkbox des autres auteurs
@@ -240,5 +211,4 @@
 	
 </script>
 
-</body>
-</html>
+{% endblock %}
