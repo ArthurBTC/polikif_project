@@ -1031,10 +1031,14 @@
         
 		console.log('initAnim');
 		unsetDrag();
+        
 		allCells = graph.getCells();
 		allCells.forEach(function(entry) {
 			paper.findViewByModel(entry).unhighlight();
 			entry.attr('./display','none');
+            questionsUnhightlighter(entry);
+            detailsUnhighlighter(entry);
+            paper.findViewByModel(entry).options.interactive = false;
 		});
 
 		$(".anim").show();
@@ -1059,17 +1063,24 @@
 		$("#playAnim, #soundPicture, #soundText").removeClass('animated bounceOutRight');
 		$("#playAnim, #soundPicture, #soundText").addClass('animated bounceInLeft');
 
-		$( "body" ).one("click", "#playAnim", function(event) {
+        var fkq = function(){
 			$("#playAnim, #soundPicture, #soundText").removeClass('animated bounceInLeft');
 			$("#playAnim, #soundPicture, #soundText").addClass('animated bounceOutRight');
-			to_aa = setTimeout(readshow,2000);
-		});
+			to_aa = setTimeout(readshow,2000);                     
+        };
+        
+        
+        $( "#playAnim" ).off();
+        $( "#playAnim" ).on("click", fkq);
 
-		$( "body" ).one("click", "#closeCross", function(event) {
+        var fpw = function(){
 			stopshow();
-			initCta();
-		});
+			initCta();                       
+        }
+        
 
+        $( "#closeCross" ).off();
+        $( "#closeCross" ).on("click", fpw);        
 	}
 
 	function initCta(){
@@ -1088,7 +1099,7 @@
 		$('.ctaText').addClass('animated bounceInRight');
 
 
-		$( "body" ).one("click", "#ctaOk", function(event) {
+        var fui = function(){
 			selectHandlerAnim('cta','Ok');
 			sayThanks('A bientôt, et merci !','#2ecc71',40);
 			to_bb = setTimeout(
@@ -1100,31 +1111,52 @@
 				"$('#callToAction').show();"
 				+"$('#starter').removeClass('animated bounceOutLeft');"
 				+"$('#starter').addClass('animated bounceInRight');"
-				,6000)
-		});
+				,6000)                      
+        };
+        
 
-		$( "body" ).one("click", "#ctaNok", function(event) {
-			selectHandlerAnim('cta','Nok');
-			//to_ee = setTimeout(initCtaQuestion, selectTimeNext);
-            to_ee = setTimeout(initGraph, selectTimeNext);
-            to_ee = setTimeout(setQuestions, selectTimeNext+100);
-		});
+       
+        $( "#ctaOk" ).off();
+        $( "#ctaOk" ).on("click", fui);        
+        
 
-		$( "body" ).one("click", "#ctaAgain", function(event) {
+        var fxo = function(){
+ 			selectHandlerAnim('cta','Nok');
+            to_ee = setTimeout(function(){
+                initGraph();
+                setQuestions();
+                $("#ctaQueAccurateBackground,#closeCross").addClass('openPan');
+            },selectTimeNext);                      
+        };
+        
+        
+        $( "#ctaNok" ).off();
+        $( "#ctaNok" ).on("click", fxo); 
+        
+        var frj= function(){
 			selectHandlerAnim('cta','Again');
 			to_ff = setTimeout(function() {
 				initAnim(false);
 			}, selectTimeNext);       
-            
-		});
+                                  
+        }
+        
+        
+        $( "#ctaAgain" ).off();
+        $( "#ctaAgain" ).on("click", frj);     
 
-		$( "body" ).one("click", "#ctaGraph", function(event) {
+        var fhj = function(){
 			selectHandlerAnim('cta','Graph');
-			to_gg = setTimeout(initGraph, selectTimeNext);
-            to_ii = setTimeout(setDetails, selectTimeNext+100);
-            
-		});
-
+			to_gg = setTimeout(function() {
+                initGraph();                
+                $("#detailsBackground").addClass('openPan');
+            },selectTimeNext);                      
+        };
+        
+        
+        $( "#ctaGraph" ).off();
+        $( "#ctaGraph" ).on("click", fhj);
+        
 	}
 
 	function initCtaQuestion(){
@@ -1143,28 +1175,34 @@
 		$('.ctaQueImg').addClass('animated bounceInLeft');
 		$('.ctaQueText').addClass('animated bounceInRight');
 
-
-		$( "body" ).one("click", "#ctaQueAccurate", function(event) {
+        var fgo = function(){
 			selectHandlerAnim('ctaQue','Accurate');
 			to_az = setTimeout(initGraph, selectTimeNext);
-			to_xy = setTimeout(setQuestions, selectTimeNext+100);
+			to_xy = setTimeout(setQuestions, selectTimeNext+100);            
+        };
+        
+        $( "#ctaQueAccurate" ).off();
+        $( "#ctaQueAccurate" ).on("click", fgo);        
+        
+        var ffo = function(){
+ 			selectHandlerAnim('ctaQue','General');
+			to_eoi = setTimeout(initGeneralForm, selectTimeNext);                     
+        };
+        
 
-
-		});
-
-		$( "body" ).one("click", "#ctaQueGeneral", function(event) {
-			selectHandlerAnim('ctaQue','General');
-			to_eoi = setTimeout(initGeneralForm, selectTimeNext);
-		});
-
-		$( "body" ).one("click", "#ctaQueBack", function(event) {
+        $( "#ctaQueGeneral" ).off();
+        $( "#ctaQueGeneral" ).on("click", ffo);        
+        var faw = function(){
 			selectHandlerAnim('ctaQue','Back');
-			to_aza = setTimeout(initCta, selectTimeNext);
-		});
+			to_aza = setTimeout(initCta, selectTimeNext);        
+        };
+        
 
+        $( "#ctaQueBack" ).off();
+        $( "#ctaQueBack" ).on("click", faw);
 	}
 
-	function initGeneralForm(){
+/*	function initGeneralForm(){
 
 		$('#ctaForm').removeClass('animated bounceOutRight');
 		$('#ctaForm').show();
@@ -1178,7 +1216,7 @@
 			to_zpe = setTimeout(initCta, 5000);
 
 		});        
-	}
+	} */
 	
 	function initAccurateForm(selectedCells){
 
@@ -1213,17 +1251,20 @@
 		$('#myholder').removeClass('fullscreen');
 		$('#callToAction').removeClass('fullscreen');
 
-		$( "body" ).one("click", '#starter', function(event) {
+        var fop = function(){
             
             $("#starter").removeClass('hvr-buzz');
 			$("#starter").removeClass('animated bounceInRight');
 			$("#starter").addClass('animated bounceOutLeft');
 			to_oza = setTimeout(function() {
-				//initAnim(true);
+				initAnim(true);
 				//initCta();
-                initGraph();
-			},1500);
-		});
+                //initGraph();
+			},1500);                     
+        };
+        
+        $( "#starter" ).off();
+        $( "#starter" ).on("click", fop);        
 	}
 
 	function sayThanks(text, color, fontSize){
@@ -1231,7 +1272,7 @@
 		$('#ctaMerci').css('color',color);
         $('#ctaMerci').css('font-size', fontSize);
         
-		$('#ctaMerci').removeClass('animated bounceOutRight');
+		$('#ctaMerci').removeClass('animated bounceOutRight bounceInLeft');
 
 		to_zaiei = setTimeout("$('#ctaMerci').show();$('#ctaMerci').addClass('animated bounceInLeft');", 1000);
 		to_zaje = setTimeout("$('#ctaMerci').addClass('animated bounceOutRight');", 4000);
@@ -1245,6 +1286,8 @@
 		$(".anim, .graphElems").show();
 		$('.cta, .cta2').hide();
 		$("#blackUnivok").show();
+        
+        $("#ctaQueAccurateBackground, #openQuestions,.ctaInput,.graphElems").show();
 		
         $("#stopAnim,#playAnim,#soundPicture,#soundText,#animClock").hide();
 
@@ -1254,7 +1297,11 @@
 		$('#callToAction').removeClass('fullscreen');
 		$('#myholder').addClass('fullscreen');
 		paper.setDimensions($('#myholder').width(), $('#myholder').height());
-
+        paper.setOrigin( -1*{{showparts.0.x}} + $('#myholder').width()/2 - 100 , -1*{{showparts.0.y}} + $('#myholder').height()/2 -50);
+        
+        $("#ctaQueAccurateBackground, #detailsBackground").show();
+        $("#ctaQueAccurateBackground").addClass('closePan');        
+        
 		$(window).resize(function(){
 			paper.setDimensions($('#myholder').width(), $('#myholder').height());
 		})
@@ -1264,17 +1311,23 @@
 		unsetAll();
 		allCells = graph.getCells();
 		allCells.forEach(function(entry) {
-			paper.findViewByModel(entry).unhighlight();
+            questionsUnhightlighter(entry);
+            detailsUnhighlighter(entry);
 			entry.attr('./display','');
+            if(entry.get('type') == 'basic.twoTextRect') {
+                paper.findViewByModel(entry).options.interactive = true;
+            }
 		});
         
         unsetDetails();
-        unsetQuestions();        
-       
-		$( "body" ).one("click", "#closeCross", function(event) {
-			initCta();
-		});
+        unsetQuestions();  
+        setDetails();
+
+        $( "#closeCross" ).off();
+        $( "#closeCross" ).on("click", initCta);          
+
 	
+    
         $(':checkbox').change(function() {
              
             unsetAll();
@@ -1293,20 +1346,54 @@
             }
         }); 
         
+        var fob = function(){
+            $("#ctaQueAccurateBackground, #closeCross").toggleClass('openPan');  
+            if ($( "#ctaQueAccurateBackground" ).hasClass( "openPan" )){
+                setQuestions();
+            } else {
+                unsetQuestions();
+            }             
+        };
+        
+ /*     $( "body" ).off("click", "#openQuestions", fob);
+        $( "body" ).on("click", "#openQuestions", fob);*/
+         $( "#openQuestions" ).off();
+         $( "#openQuestions" ).on("click", fob);
 
-    
+        var fow = function(){
+            $("#detailsBackground").toggleClass('openPan');          
+        };
+        
+         $( "#openDetails" ).off();
+         $( "#openDetails" ).on("click", fow);       
+   
 	}
 
     function questionsHighlighter(model){
-        model.attr('rect/fill', 'rgba(46, 204, 113,1.0)');
+        if( model.get('type') == 'basic.twoTextRect'){
+            model.attr('rect/fill', 'rgba(46, 204, 113,1.0)');
+        }
     }
     
     function questionsUnhightlighter(model){
-        model.attr('rect/fill', 'rgb(55,55,55)');       
+        if( model.get('type') == 'basic.twoTextRect'){
+            model.attr('rect/fill', 'rgb(55,55,55)');      
+        }
     }
     
-
- 
+    function detailsHighlighter(model){
+        if( model.get('type') == 'basic.twoTextRect'){
+            model.attr('rect/stroke-width', 5);
+            model.attr('rect/stroke', 'rgba(52, 152, 219,1.0)');
+        }
+    }
+    
+    function detailsUnhighlighter(model){
+        if( model.get('type') == 'basic.twoTextRect'){
+            model.attr('rect/stroke-width', 0);  
+        }
+    }
+          
     function getCookie(cname) {
         var name = cname + "=";
         var ca = document.cookie.split(';');
@@ -1324,28 +1411,28 @@
     
 	function setQuestions(){
         console.log('setQuestions...');
+        
+        $(".ctaInput").removeClass("animated bounceOutRight");
+        $(".ctaInput").show();
+        $(".ctaInput2").hide();
+        
+        $("#ctaQueAccurateSelection").html(
+            "Cliquez sur la/les proposition(s) concernée(s) par votre question"
+            +"<img id='simpleClick' src='{% static 'gdpcore/simpleClick.png' %}'>"
+            );
+        
+    
 
+        
         $("#ctaQueAccurateName").val( getCookie('name') );
         $("#ctaQueAccuratePhone").val( getCookie('phone') );
         $("#ctaQueAccurateEmail").val( getCookie('email') );
         
-        console.log(getCookie('phone'));
-        
 		selectedCells=[];
-        
-        clearTimeout(messageShowTimeout);
-        clearTimeout(messageHideTimeout);
-        
-        messageShowTimeout = setTimeout("$('#ctaQueAccurateInstruction').show();"
-                   +"$('#ctaQueAccurateInstruction').removeClass('animated bounceOutDown');"
-                    +"$('#ctaQueAccurateInstruction').addClass('animated bounceInUp');",
-                       10);
-                       
-        messageHideTimeout = setTimeout("$('#ctaQueAccurateInstruction').removeClass('animated bounceInUp'); $('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');",
-                       4000);
         
         $('#questionsCb > label > input').prop('checked', true);
         
+        paper.off('cell:pointerclick');
 		paper.on('cell:pointerclick', function(cellView,evt, x, y) {
 			
 			if ($.inArray(cellView.model.id,selectedCells) == -1){
@@ -1360,95 +1447,141 @@
                 questionsUnhightlighter(cellView.model);
 			}
 
-			if (selectedCells.length == 0){
-				$(".ctaInput").removeClass('animated bounceInRight');
-				$(".ctaInput").addClass('animated bounceOutRight');
-			} else {
-				$(".ctaInput").show();
-				$(".ctaInput").removeClass('animated bounceOutRight');
-				$(".ctaInput").addClass('animated bounceInRight');
-			}
 
 			$("#ctaQueAccurateSelection").html('');
-			selectedCells.forEach(function(entry) {
-				newAuthor = graph.getCell(entry).get('autorname');
-				newText = graph.getCell(entry).get('text');
-				$("#ctaQueAccurateSelection").html( $("#ctaQueAccurateSelection").html()+'<br />'+newAuthor+' : '+newText  );
-			});
-		});
-        
-		$( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
- 
-            var showpartsIds = [];
-			selectedCells.forEach(function(entry) {
-                showpartsIds.push(graph.getCell(entry).get('showpartId'));
-			});
-
-
-            $("#ctaQueAccurateSelection, #ctaQueAccurateInput").removeClass('animated bounceInRight');
-            $("#ctaQueAccurateSelection, #ctaQueAccurateInput").addClass('animated bounceOutRight');
-
-            $("#ctaQueAccurateClick").addClass('animated flip');
-                      
-            setTimeout(function () {    
-                $(".ctaInput2").show();
-                $(".ctaInput2").removeClass('animated bounceOutRight');
-                $(".ctaInput2").addClass('animated bounceInRight');                
-            }, 500)
             
-            paper.off('cell:pointerclick');
-           
-            $( "body" ).one("click", "#ctaQueAccurateClick", function(event) {
-                
-                
-                textVal = $("#ctaQueAccurateInput").val();
-                emailVal = $('#ctaQueAccurateEmail').val();
-                nameVal = $('#ctaQueAccurateName').val();
-                phoneVal =  $('#ctaQueAccuratePhone').val();
-                
-                $.ajax( {
-                    type: "POST",
-                    url: '/univok/ajax_newquestion/',
-                    data: { 
-                            text: textVal,
-                            'showpartIds[]': showpartsIds,
-                            email: emailVal,
-                            name: nameVal,
-                            phone: phoneVal,
-                            csrfmiddlewaretoken: '{{ csrf_token }}'
-                    },
-                    success: function( data ) {
-                        
-                        //$(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
-                        //$(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');
-                
-                        document.cookie = "email="+emailVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-                        document.cookie = "name="+nameVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-                        document.cookie = "phone="+phoneVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-                         
-                        unsetQuestions();
-                        setQuestions();
-                
-                        sayThanks("Votre question a été enregistrée. Vous pouvez en envoyer d'autres si vous le souhaitez.", '#2ecc71',40);
-                 
-                    },
-                    error: function(data){
-                        console.log('error!')
-                    }
+            if(selectedCells.length == 0) {
+                $("#ctaQueAccurateSelection").html(
+                    "Cliquez sur la/les proposition(s) concernée(s) par votre question"
+                    +"<img id='simpleClick' src='{% static 'gdpcore/simpleClick.png' %}'>"
+                );
+            } else {
+                selectedCells.forEach(function(entry) {
+                    newAuthor = graph.getCell(entry).get('autorname');
+                    newText = graph.getCell(entry).get('text');
+                    $("#ctaQueAccurateSelection").html( $("#ctaQueAccurateSelection").html()+'<br />'+newAuthor+' : '+newText  );
                 });
-            });
-            
+            }
 		});
-        
+ 
+        var foa = function(){
+            
+            if (selectedCells.length != 0) {
+            
+                var showpartsIds = [];
+                selectedCells.forEach(function(entry) {
+                    showpartsIds.push(graph.getCell(entry).get('showpartId'));
+                });
+
+                $("#ctaQueAccurateSelection, #ctaQueAccurateInput").removeClass('animated bounceInRight shake');
+                $("#ctaQueAccurateSelection, #ctaQueAccurateInput").addClass('animated bounceOutRight');
+
+                $("#ctaQueAccurateClick").removeClass('animated flip');
+                $("#ctaQueAccurateClick").addClass('animated flip');
+                          
+                setTimeout(function () { 
+                    $("#ctaQueAccurateSelection, #ctaQueAccurateInput").hide();
+                    $(".ctaInput2").show();
+                    $(".ctaInput2").removeClass('animated bounceOutRight');
+                    $(".ctaInput2").addClass('animated bounceInRight');                
+                }, 500)
+                
+                paper.off('cell:pointerclick');
+               
+                var fmm = function(){
+                    textVal = $("#ctaQueAccurateInput").val();
+                    emailVal = $('#ctaQueAccurateEmail').val();
+                    nameVal = $('#ctaQueAccurateName').val();
+                    phoneVal =  $('#ctaQueAccuratePhone').val();
+                    
+                    $.ajax( {
+                        type: "POST",
+                        url: '/univok/ajax_newquestion/',
+                        data: { 
+                                text: textVal,
+                                'showpartIds[]': showpartsIds,
+                                email: emailVal,
+                                name: nameVal,
+                                phone: phoneVal,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                        },
+                        beforeSend: function() {
+                            $("#ctaQueAccurateClick").removeClass('animated flip');
+                            $("#ctaQueAccurateClick").addClass('animated rotateIn');
+                        },
+                        success: function( data ) {
+                            $("#ctaQueAccurateClick").removeClass('animated rotateIn');
+                            
+                            //$(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
+                            //$(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');
+                    
+                            document.cookie = "email="+emailVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                            document.cookie = "name="+nameVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                            document.cookie = "phone="+phoneVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                          
+                                
+                            $("#blackUnivok").addClass('animated bounceOutRight');
+                            setTimeout(function () {    
+                                $("#blackUnivok").attr("src", "{% static 'gdpcore/merci.png' %}");
+                            }, 500)
+                            setTimeout(function () { 
+                                $("#blackUnivok").removeClass('animated bounceOutRight');
+                                $("#blackUnivok").addClass('animated bounceInRight');
+                            }, 1000)
+                            setTimeout(function () { 
+                                $("#blackUnivok").removeClass('animated bounceInRight');
+                                $("#blackUnivok").addClass('animated bounceOutRight');                               
+                            }, 5000)
+                            setTimeout(function () { 
+                                 $("#blackUnivok").attr("src", "{% static 'univok/univokText.png' %}");                              
+                            }, 5500)
+                            setTimeout(function () { 
+                                $("#blackUnivok").removeClass('animated bounceOutRight');
+                                $("#blackUnivok").addClass('animated bounceInRight');
+                            }, 6000) 
+
+
+                            setTimeout(function () { 
+                                unsetQuestions();
+                                setQuestions();                              
+                            }, 2000);
+                                     
+                        },
+                        error: function(data){
+                            console.log('error!')
+                        }
+                    });                   
+                    
+                }
+               
+                $( "#ctaQueAccurateClick" ).off();
+                $( "#ctaQueAccurateClick" ).on("click", fmm);   
+                            
+            } else {
+                console.log('&')
+                $('#ctaQueAccurateSelection').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                    $(this).removeClass('animated shake');
+                });
+               
+
+                $( "#ctaQueAccurateClick" ).off();
+                $( "#ctaQueAccurateClick" ).on("click", foa);                 
+            }
+        }
+		
+        $( "#ctaQueAccurateClick" ).off();
+        $( "#ctaQueAccurateClick" ).on("click", foa);
+
 	}
 
     function unsetQuestions(){
+        
+        console.log('unsetQuestions..');
         selectedCells=[];
         
-        $("#ctaQueAccurateClick").removeClass('animated flip');
-        
+        $("#ctaQueAccurateClick").removeClass('animated flip');      
         $(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
-        $(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');        
+//        $(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');        
         $("#ctaQueAccurateInput, .ctaInput2").val('');
         $("#ctaQueAccurateSelection").html('');
 		allCells = graph.getCells();
@@ -1462,37 +1595,50 @@
  
         $('#ctaQueAccurateInstruction').removeClass('animated bounceInUp'); 
         $('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
-        
-        
-        
+
         $('#questionsCb > label > input').prop('checked', false);
+        
+        paper.off('cell:pointerclick');
     }
     
     function setDetails(){	
         console.log("setDetails");
-        $("#sentencesContainer, #authorPictureContainer").show();
+        $("#detailsSentences, #detailsPicture").show();
         $('#detailsCb > label > input').prop('checked', true);
         
-        $("#authorPictureContainer").hide();
+        $("#detailsPicture").show();
+        $("#detailsSentences").html("Double-cliquez sur une proposition pour avoir des détails...");
+        $("#detailsPicture").attr('src', "{% static 'gdpcore/doubleClick.png' %}");
         
+        paper.on('blank:pointerdblclick', function(cellView,evt, x, y) {
 
+			allCells = graph.getCells();
+			allCells.forEach(function(entry) {
+				//paper.findViewByModel(entry).unhighlight();
+                detailsUnhighlighter(entry);
+			});  
+            $("#detailsSentences").html("Double-cliquez sur une proposition pour avoir des détails...");
+            $("#detailsPicture").attr('src', "{% static 'gdpcore/doubleClick.png' %}");
+        });
         
-        paper.on('cell:pointerclick', function(cellView,evt, x, y) {
+        paper.off('cell:pointerdblclick');
+        paper.on('cell:pointerdblclick', function(cellView,evt, x, y) {
 			
 			//On entoure et desentour			
 			allCells = graph.getCells();
 			allCells.forEach(function(entry) {
-				paper.findViewByModel(entry).unhighlight();
+				//paper.findViewByModel(entry).unhighlight();
+                detailsUnhighlighter(entry);
 			});
-			cellView.highlight();
+			detailsHighlighter(cellView.model);
 			
 			//On ajoute les citations
 			text = cellView.model.get("sentences");			
-			$("#sentencesContainer").html(text);
+			$("#detailsSentences").html(text);
             
             //On montre l'image
-            $("#authorPictureContainer").show()
-            $("#authorPictureContainer").attr('src', "{{MEDIA_URL}}/media/"+cellView.model.get("authorPicture"));
+            $("#detailsPicture").show()
+            $("#detailsPicture").attr('src', "{{MEDIA_URL}}/media/"+cellView.model.get("authorPicture"));
 
 			//On lit l'audio
 			audioplayer.setAttribute('src', "{{MEDIA_URL}}/media/"+cellView.model.get("audio"));
@@ -1504,12 +1650,13 @@
     function unsetDetails(){
         allCells = graph.getCells();
         allCells.forEach(function(entry) {
-            paper.findViewByModel(entry).unhighlight();
+            //paper.findViewByModel(entry).unhighlight();
+            detailsUnhighlighter(entry);
         }); 
 
-        $("#sentencesContainer").html('');
-        $("#authorPictureContainer").attr('src', "");
-        $("#sentencesContainer, #authorPictureContainer").hide();
+        $("#detailsSentences").html('');
+        $("#detailsPicture").attr('src', "");
+        $("#detailsSentences, #detailsPicture").hide();
         
         audioplayer.setAttribute('src', "");
         audioplayer.pause();

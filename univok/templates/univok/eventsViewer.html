@@ -6,7 +6,7 @@
 <div class="container">
 	<div class="row topRow">
 		<div class="col-md-3">
-			<img id = "logo" src = "{% static 'univok/ECS.png' %}" class = "hvr-grow" onclick="window.location='/univok/index';"></img>
+			<img id = "logo" src = "{% static 'univok/ECS.png' %}" class = "hvr-grow" onclick="window.location='/';"></img>
 		</div>
 		<div class="col-md-9 titleContainer">
 			<span class = "title">Evénements</span>
@@ -19,7 +19,7 @@
 	
 	{% for event in events %}
 		{% if event.status = '0' %}
-		<div class="row event hvr-hollow" onclick="window.location='/univok/evenement/{{event.id}}';">
+		<div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
 			<div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
 			<div class = "eventName">{{event.name}}</div>
 			<div class = "eventDescription">{{event.description}}</div>
@@ -33,7 +33,7 @@
 	
 	{% for event in events %}
 		{% if event.status = '1' %}
-		<div class="row event hvr-hollow" onclick="window.location='/univok/evenement/{{event.id}}';">
+		<div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
 			<div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
 			<div class = "eventName">{{event.name}}</div>
 			<div class = "eventDescription">{{event.description}}</div>

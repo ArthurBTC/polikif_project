@@ -23,7 +23,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 	url(r'^gdpcore/', include('gdpcore.urls')),
 	url(r'^polikif/', include('polikif.urls')),
-	url(r'^univok/', include('univok.urls')),
+#	url(r'^univok/', include('univok.urls')),
+    url(r'', include('univok.urls')),
 #	url(r'^', views.index, name='acceuil'),
 ]
 

@@ -3,10 +3,10 @@
 {% block content %}
 {% load staticfiles %}
 
-<div class="container">
+<div class="container-fluid">
 	<div class="row topRow">
 		<div class="col-md-3">
-			<img id = "logo" class="hvr-grow" src = "{% static 'univok/ECS.png' %}" onclick="window.location='/univok/index/';"></img>
+			<img id = "logo" class="hvr-grow" src = "{% static 'univok/ECS.png' %}" onclick="window.location='/';"></img>
 		</div>
 		<div class="col-md-9 titleContainer">
 			<span class = "title">{{event.name}}</span>
@@ -15,13 +15,32 @@
 	
 	<div id="navbar-example">
 		<ul class="nav nav-pills" role="tablist">
+            {% if event.displaydescription %}
+			  <li role="presentation"><a href="#descriptionSubstitle">Description</a></li>
+            {% endif %}               
+            {% if event.displayphoto %}
 			  <li role="presentation"><a href="#photosSubstitle">Photos</a></li>
+            {% endif %} 
+            {% if event.displayfacilitation %}
 			  <li role="presentation"><a href="#facilitationSubtitle">Facilitation</a></li>
+            {% endif %}  
+            {% if event.displayanimation %}
 			  <li role="presentation"><a href="#syntheseSubtitle">Synthèse</a></li>
+            {% endif %}
+            {% if event.displayintervenant %}
 			  <li role="presentation"><a href="#intervenantSubtitle">Intervenants</a></li>
+            {% endif %}
 		</ul>
-	  </div>	
-	
+	  </div>
+    
+    {% if event.displayphoto %}
+    <div class="row subtitleContainer" id="descriptionSubstitle">
+		<div class = 'subtitle'>Description</div>
+	</div>
+	<div class="row simpletext">{{event.description}}</div>	
+    {% endif %}
+    
+	{% if event.displayphoto %}
 	<div class="row photosRow" id="photosSubstitle">
 		<div class="col-md-12">
 			<div class="row subtitleContainer">
@@ -69,7 +88,9 @@
 	</div>
 		</div>
 	</div>
-	
+	{% endif %}
+    
+    {% if event.displayfacilitation %}
 	<div class="row subtitleContainer" id="facilitationSubtitle">
 		<div class = 'subtitle'>Facilition graphique</div>
 	</div>
@@ -77,19 +98,24 @@
 	<div class="row" >
 		<img id="facilitation" src = "{% static 'univok/facilitationJulie.jpg' %}" ></img>
 	</div>	
-	
+	{% endif %}
+    
+    {% if event.displayanimation %}
 	<div class="row subtitleContainer" id="syntheseSubtitle">
-		<div class = 'subtitle'>Synthèse</div>
+		<div class = 'subtitle'>{% if event.status == '1' %}Synthèse{% else %}Avant-propos{% endif %}</div>
 	</div>
 	<div class="row">
-		<img id="starter" class="animPlay hvr-buzz" src = "{% static 'univok/clickmeUnivok.png' %}" ></img>
+		<img id="starter" class="animPlay hvr-buzz" src = "{% static 'univok/clickMe.png' %}" ></img>
 	</div>
-	
+    {% endif %}
+    
+	{% if event.displayintervenant %}
 	<div class="row subtitleContainer" id="intervenantSubtitle">
 		<div class = 'subtitle'>Intervenants</div>
 	</div>	
 	
-	{% for speaker in event.speakers.all %}
+   
+        {% for speaker in event.speakers.all %}
 		<div class="row">
 			<div class="col-md-3">
 				<img class = "speakerPicture" src = "/media/{{speaker.picture}}">
@@ -99,12 +125,15 @@
 				<div class = "speakerDescription">{{ speaker.description }}</div>
 			</div>
 		</div>
-	{% endfor %}
-
+        {% endfor %}
+    {% endif %}
 </div>
 
-{% include "gdpcore/showparts.html" %}
-{% include "gdpcore/grapher.html" %}
+{% if event.displayanimation %}
+    {% include "gdpcore/showparts.html" %}
+    {% include "gdpcore/grapher.html" %}
+{% endif %}
+
 
 <script>
 
@@ -112,6 +141,7 @@
 		interval: false
 	});
 
+{% if event.displayanimation %}
 	{% include "gdpcore/grapher.js" %}
     
     $( document ).ready(function() {
@@ -119,6 +149,7 @@
 		firstLoadFromShowparts('myholder');
 		initPage();
     });
+{% endif %}
 
 </script>
 

@@ -1,3 +1,7 @@
+.container-fluid{
+    width:90%;!important
+}
+
 html *{
 	color: #34495e;
 	font-family: 'Open Sans', "Fira Sans", Times, serif;
@@ -17,7 +21,7 @@ body {
 	position:fixed;
 	height:50px;
 /*	background-color:rgb(255,58,39);*/
-	background-color:rgba(52, 152, 219,0.5);
+	background-color:rgba(52, 152, 219,1);
 	top:0px;
 	z-index:2;
 	width:100%;
@@ -31,7 +35,7 @@ body {
 	position:absolute;
 	height:160px;
 /*	background-color:rgb(223,239,212); */
-    background-color: rgba(46, 204, 113,0.5);
+    background-color: rgba(46, 204, 113,1);
 	top:100px;
 	z-index:1;
 	width:100%;	
@@ -54,7 +58,7 @@ body {
 	
 }
 
-.container{	
+.container-fluid{	
 	background-color:white;
 	margin:0px 30px 0px 30px;
 	min-height:100%;
@@ -183,4 +187,8 @@ body {
 	margin-top:10px;
 	width:200px;
 	height:200px;
+}
+
+.carousel-inner > .item > img {
+    margin: 0 auto;
 }

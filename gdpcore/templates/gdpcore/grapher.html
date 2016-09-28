@@ -4,7 +4,7 @@
    <source src="{{MEDIA_URL}}/media/{{show.audio}}" type="audio/mpeg">
 </audio>
 
-<img id="blackUnivok" class = "cta anim" src="{% static 'univok/blackUnivok.png' %}" alt="Play">
+<img id="blackUnivok" class = "cta anim" src="{% static 'univok/univokText.png' %}" alt="Play">
 
 <div id="myholder" class = "anim"></div>
 <img id="playAnim" class = "anim hvr-grow" src="{% static 'gdpcore/play.png' %}" alt="Play">
@@ -38,17 +38,30 @@
 <div id="ctaQueAccurateInstruction" class="cta2">Selectionnez le(s) point(s) concernés, entrez votre question, puis appuyez sur la cible</div>
 <div id="ctaQueAccurateContainer"></div>
 
-<img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/ctaQueAccurate.png' %}">
-<textarea id="ctaQueAccurateInput" class="cta2 ctaInput" rows="3" placeholder="Posez votre question ici"></textarea>
-<div id="ctaQueAccurateSelection" class="cta2 ctaInput"></div>
+<div id="ctaQueAccurateBackground" class="cta2">
+    <img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/whiteTarget.png' %}">
+    <textarea id="ctaQueAccurateInput" class="cta2 ctaInput" rows="3" placeholder="Posez votre question ici"></textarea>
+    <div id="ctaQueAccurateSelection" class="cta2 ctaInput"></div>
 
-<div id="ctaQueAccurateHowto" class="cta2 ctaInput2">Comment pouvons-nous vous contacter ?</div>
-<input id="ctaQueAccurateName" class="cta2 ctaInput2" type="text" placeholder="Nom et prénom"></input>
-<input id="ctaQueAccurateEmail" class="cta2 ctaInput2" type="email" placeholder="Email"></input>
-<input id="ctaQueAccuratePhone" class="cta2 ctaInput2" type="tel" placeholder="Téléphone"></input>
+    <div id="ctaQueAccurateHowto" class="cta2 ctaInput2">Comment pouvons-nous vous contacter ?</div>
+    <input id="ctaQueAccurateName" class="cta2 ctaInput2" type="text" placeholder="Nom et prénom"></input>
+    <input id="ctaQueAccurateEmail" class="cta2 ctaInput2" type="email" placeholder="Email"></input>
+    <input id="ctaQueAccuratePhone" class="cta2 ctaInput2" type="tel" placeholder="Téléphone"></input>   
+  
+    <img id="openQuestions" src="{% static 'gdpcore/openPanHorizontal.png' %}">
+</div>
 
 
-<div id="ctaForm" class="cta2" class="form-horizontal">
+<div id="detailsBackground" class="cta2">
+    <div id="detailsSentences" class="graphElems"></div>
+    <img id="detailsPicture" class="graphElems"></img>
+    <img id="openDetails" src="{% static 'gdpcore/openPanVertical.png' %}">
+</div>
+
+
+
+
+<!-- <div id="ctaForm" class="cta2" class="form-horizontal">
   <div class="form-group">
     <label for="inputEmail3" class="col-sm-2 control-label labelForm">Question</label>
     <div class="col-sm-10">
@@ -66,10 +79,10 @@
       <button id="submitQuestion" class="btn btn-default">Envoyer votre question</button>
     </div>
   </div>
-</div>
+</div> 
 
-<div id="sentencesContainer" class="graphElems"></div>
-<img id="authorPictureContainer" class="graphElems"></img>
+
+
 <div id="questionsCb" class="checkbox graphElems">
     <label class="graphElems">
       <input type="checkbox" class="graphElems"> Questions
@@ -80,4 +93,4 @@
     <label class="graphElems">
       <input type="checkbox" class="graphElems"> Details
     </label>
-</div>
+</div> -->

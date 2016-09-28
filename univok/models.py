@@ -38,6 +38,13 @@ class Event(models.Model):
     )
 
     status = models.CharField(max_length=30, choices=STATUS_CHOICE, default='0')
+    
+    displayphoto = models.BooleanField(default = False)
+    displaydescription = models.BooleanField(default = False)
+    displayfacilitation = models.BooleanField(default = False)
+    displayintervenant = models.BooleanField(default = False)
+    displayanimation = models.BooleanField(default = False)
+    
 
     def __str__(self):
         return str(self.id)
