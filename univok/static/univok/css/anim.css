@@ -98,20 +98,22 @@
 
 #soundPicture{
     position: fixed;
-    top: calc(50% + 200px);
-    left: calc(50% - 250px);
-	width:100px;
-	height:100px;
+    top: calc(50% + 350px);
+    left: calc(50% - 25px);
+	width:50px;
+	height:50px;
 	z-index: 5300;	
 }
 
 #soundText{
     position: fixed;
     top: calc(50% + 210px);
-    left: calc(50% - 110px);
+    left: calc(50% - 250px);
+    width:500px;
 	z-index: 5300;
 	color:#2ecc71;
-	font-size:30px
+	font-size:30px;
+    text-align:center;
 }
 
 
@@ -170,7 +172,7 @@
     left: calc(30% - 50px);	
 }
 
-#ctaOk, #ctaQueAccurate{
+#ctaGraph, #ctaQueAccurate{
     top: calc(50% - 275px);		
 }
 
@@ -182,7 +184,7 @@
     top: calc(50% + 25px);		
 }
 
-#ctaGraph{
+#ctaOk{
     top: calc(50% + 175px);		
 }
 
@@ -195,14 +197,14 @@
 	font-size: 40px;	
 }
 
-#ctaOkText, #ctaQueAccurateText{
+#ctaGraphText, #ctaQueAccurateText{
     top: calc(50% - 240px);	
-    color: #2ecc71;
+    color: rgba(52, 152, 219,1.0);
 }
 
 #ctaNokText ,#ctaQueGeneralText{
 	top: calc(50% - 100px);
-	color:rgba(52, 152, 219,1.0);
+	color: rgba(46, 204, 113,1.0);
 }
 
 #ctaAgainText, #ctaQueBackText{
@@ -210,9 +212,9 @@
 	color: rgb(240, 196, 25);
 }
 
-#ctaGraphText{
+#ctaOkText{
 	top: calc(50% + 200px);
-	color: rgb(255,58,39);	
+	color: #7E3F98;	
 }
 
 #ctaMerci{
@@ -355,7 +357,7 @@
 #ctaQueAccurateHowto{
     bottom: 340px;
     width:380px; 
-    font-size: 20px;
+    font-size: 18px;
     color: white;
     text-align: right;
 }
@@ -370,7 +372,17 @@
 }
 #ctaQueAccuratePhone{
     bottom: 140px;
-    width:380px;
+    width: 380px;
+}
+
+#ctaQueAccurateAjaxMessage{
+ 	position: absolute;
+    display: none;
+	z-index: 5801;	
+	left: 10px;
+    bottom: 140px;
+    widht: 380px;
+    font-size: 20px;
 }
 
 #detailsSentences{

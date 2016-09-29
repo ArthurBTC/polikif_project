@@ -9,7 +9,7 @@
 <div id="myholder" class = "anim"></div>
 <img id="playAnim" class = "anim hvr-grow" src="{% static 'gdpcore/play.png' %}" alt="Play">
 <img id="soundPicture" class = "anim" src="{% static 'gdpcore/soundPicture.png' %}" alt="Play">
-<div id="soundText" class = "anim">Il y a du son <br /> L'animation dure {{show.minutes}} minute(s) et {{show.seconds}} seconde(s)</div>
+<div id="soundText" class = "anim">L'animation dure {{show.minutes}} minute(s) et {{show.seconds}} seconde(s)<br />Il y a du son</div>
 
 <img id="stopAnim" class = "anim" src="{% static 'gdpcore/stop.png' %}" alt="Pause">
 <img id="closeCross" class = "anim" src="{% static 'gdpcore/closecross.png' %}" alt="Cancel">
@@ -39,14 +39,16 @@
 <div id="ctaQueAccurateContainer"></div>
 
 <div id="ctaQueAccurateBackground" class="cta2">
-    <img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/whiteTarget.png' %}">
+    <img id="ctaQueAccurateClick" class="cta2 ctaInput" src="{% static 'gdpcore/ctaNokWhite.png' %}">
     <textarea id="ctaQueAccurateInput" class="cta2 ctaInput" rows="3" placeholder="Posez votre question ici"></textarea>
     <div id="ctaQueAccurateSelection" class="cta2 ctaInput"></div>
 
     <div id="ctaQueAccurateHowto" class="cta2 ctaInput2">Comment pouvons-nous vous contacter ?</div>
     <input id="ctaQueAccurateName" class="cta2 ctaInput2" type="text" placeholder="Nom et prénom"></input>
     <input id="ctaQueAccurateEmail" class="cta2 ctaInput2" type="email" placeholder="Email"></input>
-    <input id="ctaQueAccuratePhone" class="cta2 ctaInput2" type="tel" placeholder="Téléphone"></input>   
+    <input id="ctaQueAccuratePhone" class="cta2 ctaInput2" type="tel" placeholder="Téléphone (optionnel)"></input>   
+  
+    <div id="ctaQueAccurateAjaxMessage" class = 'cta2'></div>
   
     <img id="openQuestions" src="{% static 'gdpcore/openPanHorizontal.png' %}">
 </div>

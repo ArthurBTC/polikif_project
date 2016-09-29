@@ -1046,6 +1046,8 @@
 		$("#blackUnivok").show();
 		$("#stopAnim").hide();
 
+        $("#closeCross").removeClass('openPan');
+        
 		$('#myholder').removeClass('animated bounceInLeft');
 		$('#callToAction').removeClass('animated bounceOutRight');
 
@@ -1059,7 +1061,10 @@
 		}
 
 		paper.setDimensions($('#myholder').width(), $('#myholder').height());
-
+		$(window).resize(function(){
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		})
+        
 		$("#playAnim, #soundPicture, #soundText").removeClass('animated bounceOutRight');
 		$("#playAnim, #soundPicture, #soundText").addClass('animated bounceInLeft');
 
@@ -1254,12 +1259,12 @@
 		$('#myholder').removeClass('fullscreen');
 		$('#callToAction').removeClass('fullscreen');
        
-        $("#starter").addClass('hvr-buzz');
+        $("#starter").addClass('hvr-skew-forward');
         
        
        var fop = function(){
             
-            $("#starter").removeClass('hvr-buzz');
+            $("#starter").removeClass('hvr-skew-forward');
 			$("#starter").removeClass('animated bounceInRight');
 			$("#starter").addClass('animated bounceOutLeft');
 			to_oza = setTimeout(function() {
@@ -1306,7 +1311,8 @@
         paper.setOrigin( -1*{{showparts.0.x}} + $('#myholder').width()/2 - 100 , -1*{{showparts.0.y}} + $('#myholder').height()/2 -50);
         
         $("#ctaQueAccurateBackground, #detailsBackground").show();
-        $("#ctaQueAccurateBackground").addClass('closePan');        
+        $("#ctaQueAccurateBackground").removeClass('closePan');   
+        $("#detailsBackground").removeClass('closePan');        
         
 		$(window).resize(function(){
 			paper.setDimensions($('#myholder').width(), $('#myholder').height());
@@ -1421,6 +1427,7 @@
         $(".ctaInput").removeClass("animated bounceOutRight");
         $(".ctaInput").show();
         $(".ctaInput2").hide();
+        $("#ctaQueAccurateAjaxMessage").hide();
         
         $("#ctaQueAccurateSelection").html(
             "Cliquez sur la/les proposition(s) concernée(s) par votre question"
@@ -1474,94 +1481,153 @@
             
             if (selectedCells.length != 0) {
             
-                var showpartsIds = [];
-                selectedCells.forEach(function(entry) {
-                    showpartsIds.push(graph.getCell(entry).get('showpartId'));
-                });
-
-                $("#ctaQueAccurateSelection, #ctaQueAccurateInput").removeClass('animated bounceInRight shake');
-                $("#ctaQueAccurateSelection, #ctaQueAccurateInput").addClass('animated bounceOutRight');
-
-                $("#ctaQueAccurateClick").removeClass('animated flip');
-                $("#ctaQueAccurateClick").addClass('animated flip');
-                          
-                setTimeout(function () { 
-                    $("#ctaQueAccurateSelection, #ctaQueAccurateInput").hide();
-                    $(".ctaInput2").show();
-                    $(".ctaInput2").removeClass('animated bounceOutRight');
-                    $(".ctaInput2").addClass('animated bounceInRight');                
-                }, 500)
-                
-                paper.off('cell:pointerclick');
-               
-                var fmm = function(){
-                    textVal = $("#ctaQueAccurateInput").val();
-                    emailVal = $('#ctaQueAccurateEmail').val();
-                    nameVal = $('#ctaQueAccurateName').val();
-                    phoneVal =  $('#ctaQueAccuratePhone').val();
+                if ($("#ctaQueAccurateInput").val().length == 0){
                     
-                    $.ajax( {
-                        type: "POST",
-                        url: '/univok/ajax_newquestion/',
-                        data: { 
-                                text: textVal,
-                                'showpartIds[]': showpartsIds,
-                                email: emailVal,
-                                name: nameVal,
-                                phone: phoneVal,
-                                csrfmiddlewaretoken: '{{ csrf_token }}'
-                        },
-                        beforeSend: function() {
-                            $("#ctaQueAccurateClick").removeClass('animated flip');
-                            $("#ctaQueAccurateClick").addClass('animated rotateIn');
-                        },
-                        success: function( data ) {
-                            $("#ctaQueAccurateClick").removeClass('animated rotateIn');
+                    $('#ctaQueAccurateInput').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                        $(this).removeClass('animated shake');
+                    });
+                   
+
+                    $( "#ctaQueAccurateClick" ).off();
+                    $( "#ctaQueAccurateClick" ).on("click", foa);                     
+                    
+                } else {            
+                    var showpartsIds = [];
+                    selectedCells.forEach(function(entry) {
+                        showpartsIds.push(graph.getCell(entry).get('showpartId'));
+                    });
+
+                    $("#ctaQueAccurateSelection, #ctaQueAccurateInput").removeClass('animated bounceInRight shake');
+                    $("#ctaQueAccurateSelection, #ctaQueAccurateInput").addClass('animated bounceOutRight');
+
+                    $("#ctaQueAccurateClick").removeClass('animated flip');
+                    $("#ctaQueAccurateClick").addClass('animated flip');
+                              
+                    setTimeout(function () { 
+                        $("#ctaQueAccurateSelection, #ctaQueAccurateInput").hide();
+                        $(".ctaInput2").show();
+                        $(".ctaInput2").removeClass('animated bounceOutRight');
+                        $(".ctaInput2").addClass('animated bounceInRight');                
+                    }, 500)
+                    
+                    paper.off('cell:pointerclick');
+                   
+                    var fmm = function(){
+                        
+                        $('.ctaInput2').removeClass('animated bounceInRight');
+                        
+                        if ( $("#ctaQueAccurateName").val().length == 0 ) {
+                        
+                            console.log('àe');
+                            $('#ctaQueAccurateName').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                                $(this).removeClass('animated shake');
+                            });
+                   
+                            $( "#ctaQueAccurateClick" ).off();
+                            $( "#ctaQueAccurateClick" ).one("click", fmm);
+                        
+                        } else if ( $("#ctaQueAccurateEmail").val().length == 0 ) {
                             
-                            //$(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
-                            //$(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');
-                    
-                            document.cookie = "email="+emailVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-                            document.cookie = "name="+nameVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-                            document.cookie = "phone="+phoneVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-                                          
-                                
-                            $("#blackUnivok").addClass('animated bounceOutRight');
-                            setTimeout(function () {    
-                                $("#blackUnivok").attr("src", "{% static 'gdpcore/merci.png' %}");
-                            }, 500)
-                            setTimeout(function () { 
-                                $("#blackUnivok").removeClass('animated bounceOutRight');
-                                $("#blackUnivok").addClass('animated bounceInRight');
-                            }, 1000)
-                            setTimeout(function () { 
-                                $("#blackUnivok").removeClass('animated bounceInRight');
-                                $("#blackUnivok").addClass('animated bounceOutRight');                               
-                            }, 5000)
-                            setTimeout(function () { 
-                                 $("#blackUnivok").attr("src", "{% static 'univok/univokText.png' %}");                              
-                            }, 5500)
-                            setTimeout(function () { 
-                                $("#blackUnivok").removeClass('animated bounceOutRight');
-                                $("#blackUnivok").addClass('animated bounceInRight');
-                            }, 6000) 
+                             $('#ctaQueAccurateEmail').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                                $(this).removeClass('animated shake');
+                            });
+                   
+                            $( "#ctaQueAccurateClick" ).off();
+                            $( "#ctaQueAccurateClick" ).one("click", fmm);                           
+                            
+                        } else {
+                     
+                            textVal = $("#ctaQueAccurateInput").val();
+                            emailVal = $('#ctaQueAccurateEmail').val();
+                            nameVal = $('#ctaQueAccurateName').val();
+                            phoneVal =  $('#ctaQueAccuratePhone').val();
+                        
+                            $.ajax( {
+                                type: "POST",
+                                url: '/ajax_newquestion/',
+                                data: { 
+                                        text: textVal,
+                                        'showpartIds[]': showpartsIds,
+                                        email: emailVal,
+                                        name: nameVal,
+                                        phone: phoneVal,
+                                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                                },
+                                beforeSend: function() {
+                                    $("#ctaQueAccurateClick").removeClass('animated flip');
+                                    $("#ctaQueAccurateClick").removeClass('animated rotateIn');
+                                    $("#ctaQueAccurateClick").addClass('animated rotateIn');
+                                    
+                                    $(".ctaInput2").removeClass('animated bounceInRight');
+                                    $(".ctaInput2").addClass('animated bounceOutRight');
+                                    
+                                },
+                                success: function( data ) {
+                                    $("#ctaQueAccurateClick").removeClass('animated rotateIn');
+         
+                                     $("#ctaQueAccurateInput, .ctaInput2").hide();
+         
+                                    $("#ctaQueAccurateAjaxMessage").css('color','white');
+                                    $("#ctaQueAccurateAjaxMessage").show();
+                                    $("#ctaQueAccurateAjaxMessage").removeClass('animated','bounceOutRight');
+                                    $("#ctaQueAccurateAjaxMessage").addClass('animated','bounceInRight');
+                                    $("#ctaQueAccurateAjaxMessage").text("Votre question a bien été enregistrée. Nous revenons vers vous très prochainement !")
+         
+                                    //$(".ctaInput, .ctaInput2").removeClass('animated bounceInRight');
+                                    //$(".ctaInput, .ctaInput2").addClass('animated bounceOutRight');
+                            
+                                    document.cookie = "email="+emailVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                    document.cookie = "name="+nameVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                    document.cookie = "phone="+phoneVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                                  
+                                        
+                                    $("#blackUnivok").addClass('animated bounceOutRight');
+                                    setTimeout(function () {    
+                                        $("#blackUnivok").attr("src", "{% static 'gdpcore/merci.png' %}");
+                                    }, 500)
+                                    setTimeout(function () { 
+                                        $("#blackUnivok").removeClass('animated bounceOutRight');
+                                        $("#blackUnivok").addClass('animated bounceInRight');
+                                    }, 1000)
+                                    setTimeout(function () { 
+                                        $("#blackUnivok").removeClass('animated bounceInRight');
+                                        $("#blackUnivok").addClass('animated bounceOutRight');                               
+                                    }, 5000)
+                                    setTimeout(function () { 
+                                         $("#blackUnivok").attr("src", "{% static 'univok/univokText.png' %}");                              
+                                    }, 5500)
+                                    setTimeout(function () { 
+                                        $("#blackUnivok").removeClass('animated bounceOutRight');
+                                        $("#blackUnivok").addClass('animated bounceInRight');
+                                    }, 6000) 
 
 
-                            setTimeout(function () { 
-                                unsetQuestions();
-                                setQuestions();                              
-                            }, 2000);
-                                     
-                        },
-                        error: function(data){
-                            console.log('error!')
-                        }
-                    });                   
-                    
+                                    setTimeout(function () { 
+                                        unsetQuestions();
+                                        setQuestions();                              
+                                    }, 6000);
+                                             
+                                },
+                                error: function(data){
+                                    $("#ctaQueAccurateAjaxMessage").css('color','red');
+                                    $("#ctaQueAccurateAjaxMessage").show();
+                                    $("#ctaQueAccurateAjaxMessage").removeClass('animated','bounceOutRight');
+                                    $("#ctaQueAccurateAjaxMessage").addClass('animated','bounceInRight');
+                                    $("#ctaQueAccurateAjaxMessage").text("Une erreur a eu lieu. Merci de vérifier votre connexion internet et de ré-essayer. Si le problème persiste, copier/coller votre question et envoyer un mail à bonjour@univok.fr")
+                                    
+                                    $("#ctaQueAccurateInput").removeClass('animated bounceOutRight');
+                                    $("#ctaQueAccurateInput").show();
+                                    
+                                    $( "#ctaQueAccurateClick" ).off();
+                                    $( "#ctaQueAccurateClick" ).one("click", fmm); 
+                                }
+                            });                   
+                        }    
+                    }
+                   
+                    $( "#ctaQueAccurateClick" ).off();
+                    $( "#ctaQueAccurateClick" ).one("click", fmm);
                 }
-               
-                $( "#ctaQueAccurateClick" ).off();
-                $( "#ctaQueAccurateClick" ).on("click", fmm);   
                             
             } else {
                 console.log('&')
@@ -1569,7 +1635,6 @@
                     $(this).removeClass('animated shake');
                 });
                
-
                 $( "#ctaQueAccurateClick" ).off();
                 $( "#ctaQueAccurateClick" ).on("click", foa);                 
             }

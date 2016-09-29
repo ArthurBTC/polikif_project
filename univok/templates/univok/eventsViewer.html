@@ -14,30 +14,38 @@
 	</div>
 	
 	<div class="row">
-		<div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timer_logo.png' %}"></img>A venir</div>
+        <div class="col-md-12">
+            <div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timer_logo.png' %}"></img>A venir</div>
+        </div>
 	</div>
 	
 	{% for event in events %}
 		{% if event.status = '0' %}
-		<div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
-			<div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
-			<div class = "eventName">{{event.name}}</div>
-			<div class = "eventDescription">{{event.description}}</div>
-		</div>
+    <div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
+        <div class="col-md-12">
+            <div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
+            <div class = "eventName">{{event.name}}</div>
+            <div class = "eventDescription">{{event.description}}</div>
+        </div>      
+    </div>
 		{% endif %}
 	{% endfor %}
 	
 	<div class="row">
-		<div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timerfull_logo.png' %}"></img>Passé</div>
-	</div>
+        <div class="col-md-12">
+            <div class = 'subtitle'><img class = "picto" src = "{% static 'gdpcore/timerfull_logo.png' %}"></img>Passé</div>
+        </div>
+    </div>
 	
 	{% for event in events %}
 		{% if event.status = '1' %}
-		<div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
-			<div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
-			<div class = "eventName">{{event.name}}</div>
-			<div class = "eventDescription">{{event.description}}</div>
-		</div>
+    <div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
+        <div class="col-md-12">
+            <div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
+            <div class = "eventName">{{event.name}}</div>
+            <div class = "eventDescription">{{event.description}}</div>
+        </div>
+    </div>
 		{% endif %}
 	{% endfor %}	
 	

@@ -53,24 +53,24 @@ def eventViewer(request, id_event):
     show.minutes = minutes
  #   show.showlength.minutes = minutes
 
-    if event.status == '1':
-        assert isinstance(event, object)
-        photos = Photo.objects.filter(event=event)
-        return render(request, 'univok/pastEventViewer.html', {'event': event,
-                                                               'photos': photos,
-                                                               'show': show,
-                                                               'showparts': showparts,
-                                                               'link_types': link_types,
-                                                               'links': links})
 
-    if event.status == '0':
-        photos = Photo.objects.filter(event=event)
-        return render(request, 'univok/futurEventViewer.html', {'event': event,
-                                                                'photos': photos,
-                                                                'show': show,
-                                                                'showparts': showparts,
-                                                                'link_types': link_types,
-                                                                'links': links})
+    assert isinstance(event, object)
+    photos = Photo.objects.filter(event=event)
+    return render(request, 'univok/pastEventViewer.html', {'event': event,
+                                                           'photos': photos,
+                                                           'show': show,
+                                                           'showparts': showparts,
+                                                           'link_types': link_types,
+                                                           'links': links})
+
+    # if event.status == '0':
+        # photos = Photo.objects.filter(event=event)
+        # return render(request, 'univok/futurEventViewer.html', {'event': event,
+                                                                # 'photos': photos,
+                                                                # 'show': show,
+                                                                # 'showparts': showparts,
+                                                                # 'link_types': link_types,
+                                                                # 'links': links})
 
 
 def ideasViewer(request, id_event):

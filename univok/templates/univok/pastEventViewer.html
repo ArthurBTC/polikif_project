@@ -33,100 +33,123 @@
 		</ul>
 	  </div>
     
-    {% if event.displayphoto %}
-    <div class="row subtitleContainer" id="descriptionSubstitle">
-		<div class = 'subtitle'>Description</div>
+    {% if event.displaydescription %}
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
+            <div class = 'subtitle'>Description</div>
+        </div>
 	</div>
-	<div class="row simpletext">{{event.description}}</div>	
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+            <div class = "simpletext">{{event.description}}</div>
+        </div>
+    </div>	
     {% endif %}
     
 	{% if event.displayphoto %}
-	<div class="row photosRow" id="photosSubstitle">
-		<div class="col-md-12">
-			<div class="row subtitleContainer">
-		<div  class = 'subtitle'>Photos</div>
-	</div>
-
+    <div class="row subtitleContainer" id="photoSubtitle">
+        <div class="col-md-12">
+            <div  class = 'subtitle'>Photos</div>
+        </div>   
+    </div>    
+    
+	<div class="row" id="photoContent">
+		<div class="col-md-10 col-md-offset-1">
 			<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
 <!-- Indicators -->
-	  <ol class="carousel-indicators">
-		<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-		<li data-target="#carousel-example-generic" data-slide-to="1"></li>
-		<li data-target="#carousel-example-generic" data-slide-to="2"></li>
-	  </ol>
+              <ol class="carousel-indicators">
+                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+              </ol>
 
 	  <!-- Wrapper for slides -->
-	  <div class="carousel-inner" role="listbox">
-		<div class="item active">
-		  <img class = "carouselPicture" src="{% static 'univok/pic1.jpg' %}" alt="...">
-		  <div class="carousel-caption">
-			...
-		  </div>
-		</div>
-		<div class="item">
-		  <img class = "carouselPicture" src="{% static 'univok/pic2.jpg' %}" alt="...">
-		  <div class="carousel-caption">
-		  </div>
-		</div>
-		<div class="item">
-		  <img class = "carouselPicture" src="{% static 'univok/pic3.jpg' %}" alt="...">
-		  <div class="carousel-caption">
-			...
-		  </div>
-		</div>
-	  </div>
+              <div class="carousel-inner" role="listbox">
+                <div class="item active">
+                  <img class = "carouselPicture" src="{% static 'univok/pic1.jpg' %}" alt="...">
+                  <div class="carousel-caption">
+                    ...
+                  </div>
+                </div>
+                <div class="item">
+                  <img class = "carouselPicture" src="{% static 'univok/pic2.jpg' %}" alt="...">
+                  <div class="carousel-caption">
+                  </div>
+                </div>
+                <div class="item">
+                  <img class = "carouselPicture" src="{% static 'univok/pic3.jpg' %}" alt="...">
+                  <div class="carousel-caption">
+                    ...
+                  </div>
+                </div>
+              </div>
 
 	  <!-- Controls -->
-	  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-		<span class="sr-only">Previous</span>
-	  </a>
-	  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-		<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-		<span class="sr-only">Next</span>
-	  </a>
-	</div>
-		</div>
+              <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+        </div>
 	</div>
 	{% endif %}
     
     {% if event.displayfacilitation %}
 	<div class="row subtitleContainer" id="facilitationSubtitle">
-		<div class = 'subtitle'>Facilition graphique</div>
+        <div class="col-md-12">
+            <div class = 'subtitle'>Facilition graphique</div>
+        </div>
 	</div>
 	
-	<div class="row" >
-		<img id="facilitation" src = "{% static 'univok/facilitationJulie.jpg' %}" ></img>
+	<div class="row" id="facilitationContent">
+        <div class="col-md-10 col-md-offset-1">
+            <img id="facilitation" src = "{% static 'univok/facilitationJulie.jpg' %}" ></img>
+        </div>
 	</div>	
 	{% endif %}
     
     {% if event.displayanimation %}
 	<div class="row subtitleContainer" id="syntheseSubtitle">
-		<div class = 'subtitle'>{% if event.status == '1' %}Synthèse{% else %}Avant-propos{% endif %}</div>
+        <div class="col-md-12">
+            <div class = 'subtitle'>{% if event.status == '1' %}Synthèse{% else %}Avant-propos{% endif %}</div>
+        </div>
 	</div>
-	<div class="row">
-		<img id="starter" class="animPlay hvr-buzz" src = "{% static 'univok/clickMe.png' %}" ></img>
+    
+	<div class="row" id="syntheseContent">
+        <div class="col-md-10 col-md-offset-1">
+            <img id="starter" class="animPlay" src = "{% static 'univok/clickMe.png' %}" ></img>
+        </div>
 	</div>
     {% endif %}
     
 	{% if event.displayintervenant %}
 	<div class="row subtitleContainer" id="intervenantSubtitle">
-		<div class = 'subtitle'>Intervenants</div>
+        <div class="col-md-12">
+            <div class = 'subtitle'>Intervenants</div>
+        </div>
 	</div>	
 	
-   
-        {% for speaker in event.speakers.all %}
-		<div class="row">
-			<div class="col-md-3">
-				<img class = "speakerPicture" src = "/media/{{speaker.picture}}">
-			</div>
-			<div class="col-md-9">
-				<div class = "speakerName">{{ speaker.name }}</div>
-				<div class = "speakerDescription">{{ speaker.description }}</div>
-			</div>
-		</div>
-        {% endfor %}
+    <div class="row" id="intervenantContent"> 
+        <div class="col-md-10 col-md-offset-1">
+            {% for speaker in event.speakers.all %}
+            <div class="row">
+                <div class="col-md-3">
+                    <img class = "speakerPicture" src = "/media/{{speaker.picture}}">
+                </div>
+                <div class="col-md-9">
+                    <div class = "speakerName">{{ speaker.name }}</div>
+                    <div class = "speakerDescription">{{ speaker.description }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
+    
 </div>
 
 {% if event.displayanimation %}
