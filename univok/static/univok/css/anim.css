@@ -202,7 +202,7 @@
 
 #ctaNokText ,#ctaQueGeneralText{
 	top: calc(50% - 100px);
-	color:#3498db;	
+	color:rgba(52, 152, 219,1.0);
 }
 
 #ctaAgainText, #ctaQueBackText{

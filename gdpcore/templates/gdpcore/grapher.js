@@ -1111,7 +1111,10 @@
 				"$('#callToAction').show();"
 				+"$('#starter').removeClass('animated bounceOutLeft');"
 				+"$('#starter').addClass('animated bounceInRight');"
-				,6000)                      
+				,6000)
+            setTimeout(function(){
+                $("#starter").removeClass('animated bounceInRight');
+            }, 7000)
         };
         
 
@@ -1250,8 +1253,11 @@
 		$('.anim, .cta, .cta2, .ctaQue, #blackUnivok').hide();
 		$('#myholder').removeClass('fullscreen');
 		$('#callToAction').removeClass('fullscreen');
-
-        var fop = function(){
+       
+        $("#starter").addClass('hvr-buzz');
+        
+       
+       var fop = function(){
             
             $("#starter").removeClass('hvr-buzz');
 			$("#starter").removeClass('animated bounceInRight');
