@@ -1,0 +1,139 @@
+{% extends 'univok/base.html' %}
+
+{% block content %}
+{% load staticfiles %}
+
+<div class = "container-fluid">
+	<div class="row topRow">
+		<div class="col-md-3">
+			<img id = "logo" class="hvr-grow" src = "{% static 'univok/ECS.png' %}" onclick="window.location='/';"></img>
+		</div>
+		<div class="col-md-9 titleContainer">
+			<span class = "title">{{event.name}}</span>
+		</div>
+	</div>
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
+            <div class = 'subtitle'>Statistiques</div>
+        </div>
+	</div>
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+             
+            <div id="chart_div"></div>
+        </div>
+    </div>
+
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
+            <div class = 'subtitle'>Images</div>
+        </div>
+	</div>
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+            {%for photo in photos%}
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-picture" aria-hidden="true"></span> <a href="/media/{{photo.picture}}">{{photo.picture}}</a>
+            </button>
+            {%endfor%}
+        </div>
+    </div>	
+
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
+            <div class = 'subtitle'>Audio</div>
+        </div>
+	</div>
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+            {%for record in records%}               
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-record" aria-hidden="true"></span> <a href="/media/{{record.record}}">{{record.record}}</a>
+            </button>
+            {%endfor%}             
+        </div>
+    </div>		
+    
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
+            <div class = 'subtitle'>Questions</div>
+        </div>
+	</div>
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+            
+            <table class="table">
+                <tr>
+                    <th>Auteur</th>
+                    <th>Text</th>
+                    <th>A propos</th>
+                    <th>Email</th>
+                    <th>Téléphone</th>
+                    <th>Statut</th>
+                </tr>
+            {%for question in questions%}
+                <tr>
+                    <td>{{question.firstname}}</td>
+                    <td>{{question.text}}</td>
+                    <td>
+                        {% for showpart in question.showpart.all %}
+                        <div>
+                           <a href="/simpleGraphViewer/{{showpart.show.id}}"> {{ showpart.proposition.text }} {{showpart.proposition.autor}}</a>
+                        </div>
+                        {% endfor %}                                                  
+                    </td>
+                    <td>{{question.email}}</td>                        
+                    <td>{{question.phone}}</td>
+                    <td contenteditable></td>
+                </tr>
+            {%endfor%}                
+            
+            
+            </table>
+            
+        
+
+        </div>
+    </div>	    
+    
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+google.charts.load('current', {packages: ['corechart', 'bar']});
+google.charts.setOnLoadCallback(drawMaterial);
+
+function drawMaterial() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Nom');
+      data.addColumn('number', 'Quantité de parole');
+
+        {%for county in final_count %}         
+            {% for key, value in county.items %}
+                data.addRows([
+                    ['{{key}}', {{value}}]
+                ]);
+            {%endfor%}
+        {%endfor%}
+      var options = {
+        title: 'Motivation and Energy Level Throughout the Day',
+        hAxis: {
+          title: 'Time of Day',
+          format: 'h:mm a',
+          viewWindow: {
+            min: [7, 30, 0],
+            max: [17, 30, 0]
+          }
+        },
+        vAxis: {
+          title: 'Rating (scale of 1-10)'
+        }
+      };
+
+      var material = new google.charts.Bar(document.getElementById('chart_div'));
+      material.draw(data, options);
+    }
+    </script>
+
+{% endblock %}

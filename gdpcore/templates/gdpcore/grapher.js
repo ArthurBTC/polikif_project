@@ -1529,7 +1529,7 @@
 		$('#myholder').removeClass('fullscreen');
 		$('#callToAction').removeClass('fullscreen');
        
-        $("#starter").addClass('hvr-skew-forward');
+        //$("#starter").addClass('hvr-skew-forward');
         
        
        var fop = function(){

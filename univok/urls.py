@@ -10,4 +10,9 @@ urlpatterns = [
 	url(r'^collectif', views.collectif, name='collectif'),
     url(r'^ajax_newquestion', views.ajax_newquestion, name='ajax_newquestion'),
     url(r'^finalBuilder', views.finalBuilder, name='finalBuilder'),
+    url(r'^deepview/(?P<id_event>[0-9]+)', views.deepview, name='deepview'),
+    url(r'^simpleGraphViewer/(?P<id_show>[0-9]+)', views.simpleGraphViewer, name='simpleGraphViewer'),
+    
+    url(r'^propsAuthorGenerator', views.propsAuthorGenerator, name='propsAuthorGenerator'),
+    
 ]

@@ -12,6 +12,9 @@ from django.conf import settings
 import os
 import json
 
+from collections import Counter
+import re
+
 # Create your views here.
 def index(request):
     events = Event.objects.all()
@@ -184,7 +187,7 @@ def sentencesConverter(request, id_event):
 
 
 def collectif(request):
-    return render(request, 'univok/collectif.html');
+    return render(request, 'univok/collectif.html')
 
 def ajax_newquestion(request):
     
@@ -295,6 +298,102 @@ def finalBuilder(request):
                     order = order+1
                 
      
+    # for prop in props:
+        # sentences = prop.sentence_set.all().order_by('order')
+        # if len(sentences)>0:
+            # author, created = User.objects.get_or_create(
+                # username=sentences[0].speaker.name,
+                # password=sentences[0].speaker.name
+            # )
+            
+            # prop.autor = author
+            # prop.save()        
+     
+         
+     
+                
+    return HttpResponse('OKAYYYYYYYYYYYY')
+    
+    
+
+def deepview(request, id_event):
+    
+    event = Event.objects.get(pk = id_event)
+    
+    photos = Photo.objects.filter(event = event)
+    records = Record.objects.filter(event = event)
+    questions = Question.objects.all()
+    sentences = Sentence.objects.filter(event = event)
+    
+    
+    count={}
+    count['total'] = 0
+    
+    longString = ''
+    
+    for sentence in sentences:
+        longString = longString +' '+ sentence.text
+    
+        if sentence.speaker.name in count:
+            count[sentence.speaker.name] = count[sentence.speaker.name] + len(sentence.text)
+        else:
+            count[sentence.speaker.name] = len(sentence.text)
+        count['total'] = count['total'] + len(sentence.text)
+    
+    d = sorted(count, key=count.get)
+    
+    final_count = []
+    for author in d:
+        final_count.append({author: count[author]})
+
+    
+    wordList = re.sub("[^\w]", " ",  longString).split()
+    wordCount = Counter(wordList)    
+
+    return render(request, 'univok/deepview.html', {'event': event, 
+                                    'photos':photos, 
+                                    'records':records,
+                                    'questions':questions,
+                                    'final_count': final_count, 
+                                    'wordCount': wordCount});
+
+
+def simpleGraphViewer(request, id_show):
+    show = Show.objects.get(pk = id_show)
+    showparts = ShowPart.objects.filter(show = show)
+    
+    props = []
+    links = []
+
+    
+    for showpart in showparts:
+        showpart.proposition.timediff = showpart.proposition.videoEnd - showpart.proposition.videoBeginning
+        props.append(showpart.proposition)
+
+        showpart.proposition.sentences = Sentence.objects.filter(proposition = showpart.proposition)
+#        showpart.proposition.authorPicture = Speaker.objects.filter()
+
+    for prop in props:
+        rightLinks = Link.objects.filter(right_prop=prop)
+        leftLinks = Link.objects.filter(left_prop=prop)
+
+        for rightLink in rightLinks:
+            if rightLink.left_prop in props:
+                links.append(rightLink)
+
+        for leftLink in leftLinks:
+            if leftLink.right_prop in props:
+                links.append(leftLink)
+
+    links = list(set(links))
+       
+    return render(request, 'univok/simpleGraphViewer.html', {'show': show,
+                                                           'showparts': showparts,
+                                                           'props': props,
+                                                           'links': links})    
+ 
+def propsAuthorGenerator(request):
+    props = Proposition.objects.all()
     for prop in props:
         sentences = prop.sentence_set.all().order_by('order')
         if len(sentences)>0:
@@ -304,13 +403,6 @@ def finalBuilder(request):
             )
             
             prop.autor = author
-            prop.save()        
-     
-                
-    return HttpResponse(sentencesTable['myrows'][0])
-    
-    
-
-
-
-        
+            prop.save() 
+            
+    return HttpResponse('OKAAAAAAAAY')

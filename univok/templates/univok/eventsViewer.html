@@ -21,7 +21,7 @@
 	
 	{% for event in events %}
 		{% if event.status = '0' %}
-    <div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
+    <div class="row event hvr-grow" onclick="window.location='/evenement/{{event.id}}';">
         <div class="col-md-12">
             <div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
             <div class = "eventName">{{event.name}}</div>
@@ -39,7 +39,7 @@
 	
 	{% for event in events %}
 		{% if event.status = '1' %}
-    <div class="row event hvr-hollow" onclick="window.location='/evenement/{{event.id}}';">
+    <div class="row event hvr-grow" onclick="window.location='/evenement/{{event.id}}';">
         <div class="col-md-12">
             <div class = "eventDatePlace">{{event.date|date:"d/m/Y"}}, au {{event.place}}</div>
             <div class = "eventName">{{event.name}}</div>
