@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 	'gdpcore.apps.GdpcoreConfig',
 	'polikif.apps.PolikifConfig',
 	'univok.apps.UnivokConfig',
+	'cdn.apps.CdnConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

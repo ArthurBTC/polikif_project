@@ -29,7 +29,7 @@ class Proposition(models.Model):
  #   speaker = models.ForeignKey(univokModels.Speaker, blank=True, null=True)
     text = models.CharField(max_length = 3000)
     nature = models.CharField(max_length = 30, choices = NATURE_PROP_CHOICE, default = 'Diagnostic')
-    cycle = models.ForeignKey(Cycle)
+    cycle = models.ForeignKey(Cycle, blank=True, null=True)
     
     tags = models.CharField(max_length = 3000, default = '')
     simil = models.FloatField(default=0)
@@ -69,7 +69,9 @@ class Link(models.Model):
         ('Syl','Syl'),
         ('E','Exemple'),
         ('D','Donc'),
-        ('C','Concurrence')
+        ('C','Concurrence'),
+        ('P','Précision'),
+        ('Cep','Cependant')
     )
     
     STATUS_CHOICE = (
@@ -81,9 +83,9 @@ class Link(models.Model):
     creation_date = models.DateTimeField()
     modification_date = models.DateTimeField()
     nature = models.CharField(max_length = 30, choices = NATURE_LINK_CHOICE, default = 'Donc')
-    type = models.ForeignKey(LinkType)
+    type = models.IntegerField(default = 0)
     status = models.CharField(max_length = 30, choices = STATUS_CHOICE, default = 'A')
-    cycle = models.ForeignKey(Cycle)
+    cycle = models.ForeignKey(Cycle, blank=True, null=True)
     trafic = models.IntegerField(default=0)
     
     left_prop = models.ForeignKey(Proposition, related_name='%(class)s_left_prop')

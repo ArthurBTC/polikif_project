@@ -25,6 +25,7 @@ urlpatterns = [
 	url(r'^polikif/', include('polikif.urls')),
 #	url(r'^univok/', include('univok.urls')),
     url(r'', include('univok.urls')),
+	url(r'^cdn/', include('cdn.urls')),
 #	url(r'^', views.index, name='acceuil'),
 ]
 

@@ -4,32 +4,227 @@
 	var colors = {'CCR':'#E71D36','D':'#2EC4B6','E':'#2EC4B6', 'I':'#2EC4B6', 'HL': '#BF55EC', 'SEL': '#FDE3A7'}
 	var typesData = {};
 
-	{% for link_type in link_types %}
-		typesData['{{link_type.id}}'] = {
-							'type' : '{{link_type.type|escapejs}}',
-							'logic' : '{{link_type.logic|escapejs}}',
-							'inverse' : '{{link_type.inverse|escapejs}}',
+		typesData['1'] = {
+							'type' : 'donc',
+							'logic' : '... donc ...',
+							'inverse' : 'car',
 							'source': {
-							{% if link_type.arrows > 1 %}
-								fill: '{{link_type.strokeColor|escapejs}}',
-								stroke: 'none',
-								d: 'M 10 0 L 0 5 L 10 10 z'
-							{% endif %}
+							
 							} ,
 							'target': {
-							{% if link_type.arrows > 0 %}
-								fill: '{{link_type.strokeColor|escapejs}}',
+							
+								fill: '#2ecc71',
 								stroke: 'none',
 								d: 'M 10 0 L 0 5 L 10 10 z'
-							{% endif %}
+							
 							},
 							'connection': {
-								stroke: '{{link_type.strokeColor|escapejs}}',
-								'stroke-width': {{link_type.strokeWidth}}
+								stroke: '#2ecc71',
+								'stroke-width': 4
 							}
 						} ;
-	{% endfor %}
-
+	
+		typesData['2'] = {
+							'type' : 'car',
+							'logic' : '... car ...',
+							'inverse' : 'donc',
+							'source': {
+							
+							} ,
+							'target': {
+							
+								fill: '#2EC4B6',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#2EC4B6',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['3'] = {
+							'type' : 'concurrence',
+							'logic' : '... est incompatible avec ...',
+							'inverse' : 'concurrence',
+							'source': {
+							
+								fill: '#EF4030',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							} ,
+							'target': {
+							
+								fill: '#EF4030',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#EF4030',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['4'] = {
+							'type' : 'exemple',
+							'logic' : '... est illustré par ...',
+							'inverse' : 'théorie',
+							'source': {
+							
+							} ,
+							'target': {
+							
+								fill: '#2EC4B6',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#2EC4B6',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['5'] = {
+							'type' : 'théorie',
+							'logic' : '... illustre que ...',
+							'inverse' : 'exemple',
+							'source': {
+							
+							} ,
+							'target': {
+							
+								fill: '#2EC4B6',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#2EC4B6',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['6'] = {
+							'type' : 'contre\u002Dexemple',
+							'logic' : '... est invalidé par le fait que ..',
+							'inverse' : 'contre\u002Dthéorie',
+							'source': {
+							
+							} ,
+							'target': {
+							
+								fill: '#96281B',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#96281B',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['7'] = {
+							'type' : 'contre\u002Dthéorie',
+							'logic' : '... est un élément qui rend impossible que ...',
+							'inverse' : 'contre\u002Dexemple',
+							'source': {
+							
+							} ,
+							'target': {
+							
+								fill: '#96281B',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#96281B',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['8'] = {
+							'type' : 'complément',
+							'logic' : '... traite du même sujet, et n\u0027est pas incompatible avec ...',
+							'inverse' : 'complément',
+							'source': {
+							
+								fill: '#4ECDC4',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							} ,
+							'target': {
+							
+								fill: '#4ECDC4',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'
+							
+							},
+							'connection': {
+								stroke: '#4ECDC4',
+								'stroke-width': 4
+							}
+						} ;
+	
+		typesData['9'] = {
+							'type' : 'syllogisme',
+							'logic' : 'syllogisme',
+							'inverse' : 'syllogisme',
+							'source': {
+							
+							} ,
+							'target': {
+							
+							},
+							'connection': {
+								stroke: '#2EC4B6',
+								'stroke-width': 4
+							}
+						} ;    
+  
+		typesData['10'] = {
+							'type' : 'cependant',
+							'logic' : 'cependant',
+							'inverse' : 'cependant',
+							'source': {
+							
+							} ,
+							'target': {
+								fill: 'rgba(243, 156, 18,1.0)',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'							
+							},
+							'connection': {
+								stroke: 'rgba(243, 156, 18,1.0)',
+								'stroke-width': 4
+							}
+						} ;  
+                        
+		typesData['11'] = {
+							'type' : 'précision',
+							'logic' : 'précision',
+							'inverse' : 'précision',
+							'source': {
+							
+							} ,
+							'target': {
+								fill: 'rgba(155, 89, 182,1.0)',
+								stroke: 'none',
+								d: 'M 10 0 L 0 5 L 10 10 z'							
+							},
+							'connection': {
+								stroke: 'rgba(155, 89, 182,1.0)',
+								'stroke-width': 4
+							}
+						} ;                          
+                        
+                        
 	//On va stocker tous les ronds la-dedans, pour gérer leurs positions
 	var circles = [];
 	var syls = [];
@@ -325,6 +520,58 @@
 		return li
 	}
 
+    //Creation de liens pour sentenceBuilder
+	function addLinkBuilder(id_link, id_left_prop, id_right_prop, type_id, autorname){
+
+		updateCorrespondances();
+
+		var li = new joint.dia.Link({
+			source: { id: propIdCorrespondance[id_left_prop] },
+			target: { id: propIdCorrespondance[id_right_prop] },
+			attrs: {},
+			id_link: id_link,
+			type_id : type_id,
+			link_autorname: autorname,
+			labels: [{
+				position: 0.5,
+				attrs: {
+					text: {
+						text: typesData[type_id]['type'],
+						fill: '#f6f6f6',
+						'font-family': 'sans-serif'
+					},
+					rect: {
+						stroke: '#7c68fc',
+						'stroke-width': 20,
+						rx: 5,
+						ry: 5
+					}
+				}
+			}]
+
+		});
+
+		li.attr({
+			'.connection': typesData[type_id]['connection'],
+			'.marker-source': typesData[type_id]['source'],
+			'.marker-target': typesData[type_id]['target']
+		});
+
+		li.label(0, { attrs: { rect: { stroke: typesData[type_id]['connection']['stroke'] } } } );
+
+		li.attr('./display', '');
+
+		graph.addCell(li) ;
+
+		console.log('link added to graph - id_link: '+id_link+' id: '+li.id)
+
+		if (typesData[type_id]['type'] != 'syllogisme') {
+//			addCircToLink(li);
+		}
+
+		return li
+	}    
+    
 	//Pour ajouter un rond à un lien  (pour pouvoir pointer dessus)
 	function addCircToLink(link){
 		source_position = link.getSourceElement().get('position');
@@ -535,6 +782,29 @@
 		return paper;
 	};
 
+	function addPaperBuilder(holder){
+
+		holder = $('#'+holder);
+		paper = new joint.dia.Paper({
+			el: holder,
+			width: 1000,
+			height: 500,
+			model: graph,
+			gridSize: 1,
+			interactive: function(cellView) {
+				if (cellView.model instanceof joint.dia.Link) {
+					// Disable the default vertex add functionality on pointerdown.
+					return { vertexAdd: true };
+				}
+			return true;
+			}
+		});
+		paper.setOrigin(originX, originY);
+
+		return paper;
+	};
+    
+    
 	//Doesn't work with the player... better use setDrag()
 	function setGridZoom(paper, holder, gridOrNot) {
 		holder = $('#'+holder);

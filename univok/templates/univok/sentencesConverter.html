@@ -1,213 +1,493 @@
-{% extends 'univok/basesimple.html' %}
+{% extends 'univok/base.html' %}
 
 {% block content %}
 {% load staticfiles %}
 
 {% include "gdpcore/grapher.html" %}
 
+<div id="builderControl">
+    <img id="builderRefresher" src="{% static 'gdpcore/ctaAgain.png' %}" class="hvr-shrink">
+    <img id="builderSaver" src="{% static 'gdpcore/save.png' %}" class="hvr-shrink">
+    <img id="builderLinker" src="{% static 'gdpcore/ctaNok.png' %}" class="hvr-shrink">
+    <select id="builderLinkType">
+        <option value="1">donc</option>
+        <option value="3">ccr</option>
+        <option value="4">ex</option>
+        <option value="10">cependant</option>
+        <option value="11">précision</option>
+    </select>
+    <select id="builderLinkLeft"></select>
+    <select id="builderLinkRight"></select>
+
+<!--    <img id="builderAddSentenceRow" src="{% static 'gdpcore/timerfull_logo.png' %}" class="hvr-shrink"><img> -->
+    <div id="builderSentencesShow"></div>
+ 
+    <img id="builderAddPropRow" src="{% static 'gdpcore/timerfull_logo.png' %}" class="hvr-shrink"><img>
+</div>  
+
 <div id="builderContainer">
 	
-	<div class="row">
-		<textarea class = "textAreas" rows="4" cols="50" id = "sentences" disabled="yes"></textarea>
-		<textarea class = "textAreas" rows="4" cols="50" id = "textinput"></textarea>	
-		<button id="addprop" type="button">ADD PROP</button>
-	</div>
+    {% if converter.0.html %}
+        {{converter.0.html|safe}}
+    {% else %}
+    
+    <table class="table" id="sentencesTable" style="width:50%">
+      <tr>
+        <th>	
+            <div>Types:</div>
+            <div>
+                <input type="checkbox" class="cbStatus" id="cb0" checked>0								
+                <input type="checkbox" class="cbStatus" id="cb1" checked>1								
+                <input type="checkbox" class="cbStatus" id="cb2" checked>2
+            </div>	
+        </th>
+        <th>
+            <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Auteur
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                    {% for name in names %}
+                    <li>
+                        <input id="cbname{{name}}" type="checkbox" class="cbAuthors" checked>{{name}}
+                    </li>
+                    {% endfor %}
+              </ul>
+            </div>	      		
+        </th>
+        <th>Citation exacte</th>
+        <th>Reformulation</th>
+        <th>propId</th>
+        <th>+</th>  
+      </tr>
+     
+    {% for sentence in sentences %}
+        <tr>
+            <td class='status' contenteditable>0</td>
+            <td class="author" contenteditable>{{sentence.0}}</td>
+            <td class="sentenceIni" contenteditable>{{sentence.1}}</td>
+            <td class="sentenceNew" contenteditable></td>
+            <td class="sentenceProp" contenteditable></td>
+            <td><img class="sentencePlus" src = "{% static 'gdpcore/ctaOk.png' %}" style="width:20px;height:20px;"><img class="sentenceMinus" src = "{% static 'gdpcore/ctaNok.png' %}" style="width:20px;height:20px;"></td>
+        <tr>
+    {% endfor %}
+    </table>
+    
+    <table class="table" id="propsTable" style="width:49%">
+      <tr>
+        <th>id</th>
+        <th>author</th>
+        <th>text</th>
+        <th>x</th>
+        <th>y</th>
+      </tr>
+      
+    {% for i in "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" %}
+      <tr>
+        <td class="propId">{{ forloop.counter0 }}</td>
+        <td class="propAuthor" contenteditable>{{ forloop.counter0 }}</td>
+        <td class="propText" contenteditable></td>
+        <td class="propX" contenteditable>0</td>
+        <td class="propY" contenteditable>0</td>                   
+      </tr>
+    {% endfor %} 
+    </table>
+   
+    
 
-	<div class="row">
-		<table class="table" id="mytable" style="width:100%">
-		  <tr>
-			<th>					
-				<div class="row">
-					<input type="checkbox" class="cbStatus" id="cb0" checked>0
-				</div>
-				<div class="row">
-					<input type="checkbox" class="cbStatus" id="cb1" checked>1
-				</div>
-				<div class="row">
-					<input type="checkbox" class="cbStatus" id="cb2" checked>2
-				</div>		
-			</th>
-			<th></th> 
-			<th>
-			
-			{% for name in names %}
-				<div class="row">
-					<input type="checkbox" class="cbAuthors" checked>{{name}}
-				</div>
-			{% endfor %}
-			
-			</th>
-			<th>CB</th>
-			<th>SentenceText</th>
-			<th>CreatedProp</th>
-		  </tr>
-		 
-		{% for sentence in sentences %}
-			<tr>
-				<td>
-					<select class="selectStatus">
-						<option value=0>0</option>
-						<option value=1>1</option>
-						<option value=2>2</option>
-					</select>
-				</td>
-				<td>{{forloop.counter}}</td>
-				<td>{{sentence.0}}</td>
-				<td><input type="checkbox" class="cbSentences"></td>
-				<td>{{sentence.1}}</td>
-				<td></td>
-			<tr>
-		{% endfor %}
-		</table>
-	</div>
+    <table id ="linksTable" class="table" style="width:49%">
+        <tr>
+            <th>leftId</th>
+            <th>rightId</th>
+            <th>type</th>
+        </tr>
+        <tr>
+<!--            <td class="leftId" contenteditable>1</td>
+            <td class="rightId" contenteditable>2</td>
+            <td class="linkType" contenteditable>1</td>  -->
+        </tr>
+    </table>      
+    {% endif %}
 </div>
 
+<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>
 <script>
-	
-	var indic = 0;
-	var checkedSentences;
 
 	{% include "gdpcore/grapher.js" %}
+	
+	var indic = 0;
+	var props = [];
+    var pairOption = 0;
 
    
 	$( document ).ready(function() {
+    
 		paper = addPaper('myholder');
-        $(".textAreas").show();
-        $('#myholder').addClass("theatermode")
-	});
-	
-	//Addprop
-	$( "#addprop" ).on( "click", function() {
-		
+        paper.setDimensions($('#myholder').width(), $('#myholder').height());
+        $(window).resize(function(){
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		})
         
-		authorName = $('#mytable tr').filter(function () {
-			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
-		}).find('td').eq(2).text();
-		
-		addProp(indic, indic+' '+$("#textinput").val(), authorName);
-		
-		checkedSentences = $('#mytable tr').filter(function () {
-			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
-		});
-
-		$.each(checkedSentences, function() {
-			$(this).find('td').eq(5).text(indic);
-			$(this).find('td').eq(0).find(".selectStatus").val('1');
-			$(this).find('td').eq(3).find(".cbSentences").prop('checked', false);
-			updateColors();
-			updateSentencesArea();
-			updateCheckboxSentences();
-			
-			$("#textinput").val('');
-		});		
-		
-		indic++;
-		
-		
-	});
-
-
+        setGridZoom(paper, 'myholder', 0);
+        $('#myholder').addClass("theatermode")
 	
-	function updateColors(){
-	
-		$('#mytable tr').filter(function () {
-			return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "0"
-		}).children().css('color', '#2980b9');	
-		
-		$('#mytable tr').filter(function () {
-			return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "1"
-		}).children().css('color', '#2ecc71');
-		
-		$('#mytable tr').filter(function () {
-			return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "2"
-		}).children().css('color', '#e67e22');	
-		
-		return 1;
-	};
-	
-	function updateSentencesArea(){
-		checkedSentences = $('#mytable tr').filter(function () {
-			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
-		});
-		
-		$('#sentences').val('');
-		
-		$.each(checkedSentences, function() {
-			$('#sentences').val( $('#sentences').val()+ $(this).find('td').eq(4).text()+'\n'  );
-		});		
-	}
+        
+        updateGraphFromHtml();   
+        updateLinkForm();
+        updateColors();
+    
+        function updateGraphFromHtml(){
+        
+            props = $('#propsTable tr');
+            
+            $.each(props, function(key, value) {
+            
+                propText = $(value).find(".propText").eq(0).text();
+                propId = $(value).find(".propId").eq(0).text();
+                propAuthor = $(value).find(".propAuthor").eq(0).text();               
+                propX = $(value).find(".propX").eq(0).text(); 
+                propY = $(value).find(".propY").eq(0).text(); 
+                
+                
+                if(propText.length > 0){
+                    el = addProp(propId, propText, propAuthor); 
+                    el.position(parseInt(propX), parseInt(propY));  
 
-	function updateCheckboxSentences(){
-	
-		//masquer les checkbox des autres auteurs
-		checkedSentences = $('#mytable tr').filter(function () {
-			return $(this).find('td').eq(3).find(".cbSentences").is(':checked')
-		});
+                    el.on('change:position', function(event) {
 
-		if(checkedSentences.length > 0) {
-			sentencesPopop = $('#mytable tr').filter(function () {
-				return $(this).find('td').eq(2).text() != $(checkedSentences).find('td').eq(2).text();
-			});		
-			
-			$.each(sentencesPopop, function() {
-				$(this).find('td').eq(3).find(".cbSentences").hide();
+                        $(value).find(".propX").eq(0).text(event.get('position')['x']);
+                        $(value).find(".propY").eq(0).text(event.get('position')['y']);            	
+                    });                
+                }
+            });
+            
+            
+            //Ajout des links
+            linkRows = $("#linksTable tr");
+            
+			$.each(linkRows, function(key, value) { 
+                                
+                leftId = $(value).find(".leftId").eq(0).text();
+                rightId = $(value).find(".rightId").eq(0).text();
+                linkType = $(value).find(".linkType").eq(0).text();
+                
+                var idLink = 0;
+                
+                
+                
+                if(leftId.length > 0){    
+
+                    addLink(idLink, leftId, rightId, linkType , "univok" )
+                }
+                                
+            });
+        };	       
+        
+        function updateLinkForm(){
+            //$("#builderLinkType").html();
+            $("#builderLinkLeft").html('');
+            $("#builderLinkRight").html('');
+            props = $('#propsTable tr');
+            $.each(props, function(key, value) {
+                propText = $(value).find(".propText").eq(0).text();
+                if (propText.length > 0) {
+                    $("#builderLinkLeft, #builderLinkRight").append("<option class='optionProp' value="+$(value).find('.propId').eq(0).text()+">"+$(value).find('.propText').eq(0).text()+"</option>");           
+                }
+            });
+        }
+        
+		$("#builderRefresher").on("click", function() {
+            refreshAll();
+        });
+        
+        
+        function refreshAll(){
+            $('span').contents().unwrap();
+             $("br").remove();
+            pairOption = 0;
+            updateLinkForm();
+            updateColors();
+            updateVisibility();
+            
+            //On MAJ la table des liens en fonctions des liens sur le graphe           
+            $("#linksTable").html(
+                '<tr>'
+                    +'<th>Left</th>'
+                    +'<th>Right</th>'
+                    +'<th>Type</th>'
+                +'</tr>'
+            );
+            
+            links = graph.getLinks();
+            $.each(links, function(key, value) {         
+                
+                if(!((!value.prop('source/id') || !value.prop('target/id')))) {
+                
+                    $('#linksTable tr:last').after(
+                        '<tr>'
+                            +"<td class = 'leftId' contenteditable>"+value.getSourceElement().get('id_prop')+'</th>'
+                            +"<td class = 'rightId' contenteditable>"+value.getTargetElement().get('id_prop')+'</th>'
+                            +"<td class = 'linkType' contenteditable>"+value.get('type_id')+'</th>'
+                        +'</tr>'
+                    );
+                }
+            });
+    
+            graph.clear();
+            
+            updateGraphFromHtml();	             
+        };
+		
+	
+		$("#builderSaver").on("click", function() {
+		
+			htmlTable = $("#builderContainer").html();
+			$.ajax( {
+				type: "POST",
+				url: '/sentences/{{event.pk}}',
+				data: { 
+						html: htmlTable,
+						event: {{event.pk}},
+						csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+				success: function( data ) {		
+					
+					console.log(data);
+				}
 			});
-		} else {			
-			allSentences = $('#mytable tr')
-			$.each(allSentences, function() {
-				$(this).find('td').eq(3).find(".cbSentences").show();
-			});			
-		}
-		
-	}
+			
+		});
 	
-	updateColors();
-	updateSentencesArea();
-	
-	$('.selectStatus').on('change', function () {
-		updateColors();	
-	});
-	
-	$('.cbSentences').on('change', function () {
-		updateSentencesArea();
-		updateCheckboxSentences();
-	});	
+        $("#builderLinker").on("click", function() {
+            
+            linkType = $("#builderLinkType option:selected").val();
+            leftId = $("#builderLinkLeft").val();
+            rightId = $("#builderLinkRight").val();
+            
+            if(leftId.length>0 && rightId.length>0 && linkType>0) {
+                addLink(10000, leftId, rightId, linkType, "univok");
+            }
+            
+ 
+            
+            
 
-	//Checkboxes : update visibility...
-	$('.cbStatus,.selectStatus').on('change', function () {
+        });
+  
+        $("#builderAddSentenceRow").on("click", function() {
+            $('#sentencesTable tr:last').after(
+                '<tr>'
+                    +"<td class='status' contenteditable>0</td>"
+                    +"<td class='author' contenteditable></td>"
+                    +"<td class='sentenceIni' contenteditable></td>"
+                    +"<td class='sentenceNew' contenteditable></td>"
+                    +"<td class='sentenceProp' contenteditable></td>"
+                +"</tr>"
+            );               
+        });
+        
+        $("#builderAddPropRow").on("click", function() {
+            $('#propsTable tr:last').after(
+                '<tr>'
+                    +"<td class='propId' contenteditable>"+(parseInt( $('#propsTable tr:last').find('.propId').eq(0).text() )+1)+"</td>"
+                    +"<td class='propAuthor' contenteditable>"+(parseInt( $('#propsTable tr:last').find('.propId').eq(0).text() )+1)+"</td>"
+                    +"<td class='propText' contenteditable></td>"
+                    +"<td class='propX' contenteditable>0</td>"
+                    +"<td class='propY' contenteditable>0</td>"
+                +'</tr>'            
+            );               
+        });        
+  
+        $("body").on("click", ".sentencePlus" ,function() {
+            
+            $(event.target).parent().parent().after(
+                '<tr>'
+                    +"<td class='status' contenteditable>0</td>"
+                    +"<td class='author' contenteditable>"+$(event.target).parent().parent().find('.author').eq(0).text()+"</td>"
+                    +"<td class='sentenceIni' contenteditable></td>"
+                    +"<td class='sentenceNew' contenteditable></td>"
+                    +"<td class='sentenceProp' contenteditable></td>"
+                    +"<td><img class='sentencePlus' src = '{% static 'gdpcore/ctaOk.png' %}' style='width:20px;height:20px;'><img class='sentenceMinus' src = '{% static 'gdpcore/ctaNok.png' %}' style='width:20px;height:20px;'></td>"
+                +"</tr>"
+            );              
+        });
+        
+        $("body").on("click", ".sentenceMinus" ,function() {
+            if( $(event.target).parent().parent().find('.sentenceIni').eq(0).text().length == 0 ){
+                $(event.target).parent().parent().remove();  
+            }
+        });        
+  
+        function updateColors(){
+            
+            console.log('updateColors');
+        
+            $('#sentencesTable tr').filter(function () {
+                return $.trim($(this).find(".status").eq(0).text()) == 0
+            }).children().css('color', '#2980b9');	
+            
+            $('#sentencesTable tr').filter(function () {
+                return $.trim($(this).find(".status").eq(0).text()) == 1
+            }).children().css('color', '#2ecc71');
+            
+            $('#sentencesTable tr').filter(function () {
+                return $.trim($(this).find(".status").eq(0).text()) == 2
+            }).children().css('color', '#e67e22');	
+            
+            return 1;
+        };
 	
-		if($("#cb0").is(':checked')){	
-			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "0"
-			}).show();
-		}else{
-			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "0"
-			}).hide();
-		};
-		
-		if($("#cb1").is(':checked')){	
-			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "1"
-			}).show();
-		}else{
-			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "1"
-			}).hide();
-		};		
-	
-		if($("#cb2").is(':checked')){	
-			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "2"
-			}).show();
-		}else{
-			var $rowsNo = $('#mytable tr').filter(function () {
-				return $.trim($(this).find('td').eq(0).find(".selectStatus").val()) == "2"
-			}).hide();
-		};
+        $('.status').on('change', function () {
+            updateColors();	
+        });     
 
-	});
+        //Checkboxes : update visibility...
+        $('.cbStatus,.status, .cbAuthors').on('change', function () {
+            updateVisibility();
+        });
+        
+        function updateVisibility() {
+        
+            $('#sentencesTable tr').show();
+        
+            if( !$("#cb0").is(':checked') ){	
+                var $rowsNo = $('#sentencesTable tr').filter(function () {
+                    return $.trim($(this).find(".status").eq(0).text()) == 0
+                }).hide();
+            }
+            
+            if( !$("#cb1").is(':checked') ){	
+                var $rowsNo = $('#sentencesTable tr').filter(function () {
+                    return $.trim($(this).find(".status").eq(0).text()) == 1
+                }).hide();
+            }	
+        
+            if( !$("#cb2").is(':checked') ){	
+                var $rowsNo = $('#sentencesTable tr').filter(function () {
+                    return $.trim($(this).find(".status").eq(0).text()) == 2
+                }).hide();
+            }
+            
+            {% for name in names %}
+//            if( !$("#cbname{{name}}").is(':checked') ){	
+//                var $rowsNo = $('#sentencesTable tr').filter(function () {
+//                    return $.trim($(this).find(".author").eq(0).text()) == "{{name}}"
+//                }).hide();
+//            }                                    
+            {% endfor %}
+           
+            $('#sentencesTable tr').eq(0).show();
+            
+        };
+   
+        $(document).keypress(function(e){
+            if (e.which == 42){
+                refreshAll();
+                finalisator();
+            }
+        });
 
+        paper.on('cell:pointerdown', function(cellView,evt, x, y) {
+            
+            id_prop = cellView.model.get('id_prop');
+            if (pairOption == 0) {
+                $('#builderLinkLeft option[value='+ id_prop +']').prop('selected', true);
+                pairOption = 1;
+			} else {
+                $('#builderLinkRight option[value='+ id_prop +']').prop('selected', true);
+                pairOption = 0;
+            }
+            
+            $('#sentencesTable tr').hide();
+           
+            $rowsNo = $('#sentencesTable tr').filter(function () {
+             //   return $(this).find(".sentenceProp").eq(0).text() == id_prop
+                    if( $(this).find(".sentenceProp").eq(0).text().split(',').indexOf(id_prop) > -1 ) {
+                        return true;
+                    } else {
+                    return false
+                    }
+            }).show();
+            
+		});	
+
+        paper.on('blank:pointerdown', function(){
+            updateVisibility();
+        });
+        
+        
+        function finalisator() {
+            //D'abord les props
+            var myRows = [];
+            var $headers = ['status','author','sentenceIni','sentenceNew','sentenceProp','sentencePlus'];
+            var $rows = $("#sentencesTable tr").not(":eq(0)").each(function(index) {
+              $cells = $(this).find("td");
+              myRows[index] = {};
+              $cells.each(function(cellIndex) {
+                myRows[index][$headers[cellIndex]] = $(this).html();
+              });    
+            });
+
+            
+            var sentencesObj = {};
+            sentencesObj.myrows = myRows;
+            jsonSentencesObj = JSON.stringify(sentencesObj);
+            
+            
+            //Ensuite les links
+            myRows = [];
+            $headers = ['leftId','rightId','linkType'];
+            $rows = $("#linksTable tr").not(":eq(0)").each(function(index) {
+              $cells = $(this).find("td");
+              myRows[index] = {};
+              $cells.each(function(cellIndex) {
+                myRows[index][$headers[cellIndex]] = $(this).html();
+              });    
+            });
+
+           
+            var linksObj = {};
+            linksObj.myrows = myRows;
+            jsonLinksObj = JSON.stringify(linksObj);              
+            
+                
+            
+            //Ensuite les sentences
+            myRows = [];
+            $headers = ['propId','propAuthor','propText','propX','propY'];
+            $rows = $("#propsTable tr").not(":eq(0)").each(function(index) {
+              $cells = $(this).find("td");
+              myRows[index] = {};
+              $cells.each(function(cellIndex) {
+                myRows[index][$headers[cellIndex]] = $(this).html();
+              });    
+            });
+
+           
+            var propsObj = {};
+            propsObj.myrows = myRows;
+            jsonPropsObj = JSON.stringify(propsObj);    
+            
+            
+			$.ajax( {
+				type: "POST",
+				url: '/finalBuilder/',
+				data: { 
+						sentencesTable: jsonSentencesObj,
+                        propsTable: jsonPropsObj,
+                        linksTable: jsonLinksObj,
+						event: {{event.pk}},
+						csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+				success: function( data ) {							
+                    console.log('retour!!!');
+                    console.log(data);
+				}
+			});            
+            
+        };
+   });
 	
 </script>
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+{% load staticfiles %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/anim.css' %}"> 
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'univok/css/hover-min.css' %}" />
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
+	
+	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
+<!--	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	-->
+	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+	
+</head>
+<body>
+	<div class="container">
+		<table class='table'>
+			<col width="130">
+			{% for event in events %}
+			<col width="40">
+			{% endfor %}
+		  <tr>
+			<th>Name</th>
+			{% for event in events %}
+			<th>{{event.id}}</th>
+			{% endfor %}
+		  </tr>
+			{% for member in members %}
+				{% if member.presenceCount > 0 %}
+		  <tr>
+			<td>{{member.name}} ({{member.presenceCount}})</td>
+			{% for event in events %}
+			<td id="{{member.id}}-{{event.id}}" class="cellPresence"></td>
+			{% endfor %}
+		  </tr>
+				{% endif %}
+			{% endfor %}
+
+		</table>
+	</div>
+
+
+
+	<script>
+		{% for presence in presences %}
+			$("#{{presence.member.id}}-{{presence.event.id}}").html("OK");
+		{% endfor %}
+	</script>
+</body>

@@ -18,7 +18,7 @@ class Speaker(models.Model):
     picture = models.ImageField(upload_to='speakers')
 
     def __str__(self):
-        return str(self.id)
+        return str(self.name)
 
 
 class Event(models.Model):
@@ -69,11 +69,12 @@ class Photo(models.Model):
 
 class Sentence(models.Model):
     # record = models.ForeignKey(Record)
-    proposition = models.ForeignKey(gdpcoreModels.Proposition)
+    proposition = models.ManyToManyField(gdpcoreModels.Proposition)
     event = models.ForeignKey(Event)
     speaker = models.ForeignKey(Speaker)
     order = models.IntegerField(default=0)
     text = models.CharField(max_length=1000)
+    status = models.IntegerField(default = 0)
 
     def __str__(self):
         return str(self.text)
@@ -89,3 +90,10 @@ class Question(models.Model):
 
     def __str__(self):
         return str(self.text)
+        
+class Converter(models.Model):
+    html = models.CharField(max_length= 100000)
+    event = models.ForeignKey(Event, blank=True, null=True)
+    
+    def __str__(self):
+        return str(self.id)
