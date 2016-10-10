@@ -222,5 +222,9 @@ class ShowPart(models.Model):
     duration = models.FloatField(default = 3)
     audio = models.FileField(upload_to='audioex', blank=True, null=True)
     
+    theme = models.CharField(max_length=1000, default = "default")
+    themeOrder = models.IntegerField(default = 0)
+    themePrefix = models.CharField(max_length=100, default = '')
+    
     def __str__(self):
         return str(self.id)     

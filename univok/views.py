@@ -406,3 +406,52 @@ def propsAuthorGenerator(request):
             prop.save() 
             
     return HttpResponse('OKAAAAAAAAY')
+    
+    
+def reviewAsList(request, id_event):
+    event = Event.objects.get(id=id_event)
+    show = event.show
+    photos = Photo.objects.filter(event=event)
+    showparts = ShowPart.objects.filter(show=show).order_by('themeOrder')
+
+    props = []
+    links = []
+    showlength = 0
+    sentences = Sentence.objects.filter(event = event)
+    
+    for showpart in showparts:
+        showpart.proposition.timediff = showpart.proposition.videoEnd - showpart.proposition.videoBeginning
+        props.append(showpart.proposition)
+        showlength = showlength + showpart.duration
+
+        showpart.proposition.sentences = Sentence.objects.filter(proposition = showpart.proposition)
+#        showpart.proposition.authorPicture = Speaker.objects.filter()
+
+    for prop in props:
+        rightLinks = Link.objects.filter(right_prop=prop)
+        leftLinks = Link.objects.filter(left_prop=prop)
+
+        for rightLink in rightLinks:
+            if rightLink.left_prop in props:
+                links.append(rightLink)
+
+        for leftLink in leftLinks:
+            if leftLink.right_prop in props:
+                links.append(leftLink)
+
+    links = list(set(links))
+    
+    minutes = int(float(showlength) // 60)
+    seconds = int(showlength - minutes*60)
+    show.seconds = seconds
+    show.minutes = minutes
+ #   show.showlength.minutes = minutes
+    themes = ShowPart.objects.order_by('theme').values('theme').distinct()
+    
+    return render(request, 'univok/reviewAsList.html', {'event': event,
+                                                           'photos': photos,
+                                                           'show': show,
+                                                           'showparts': showparts,
+                                                           'links': links,
+                                                           'sentences':sentences,
+                                                           'themes': themes})    

@@ -1,0 +1,50 @@
+:root {
+  --ral-height: 70%;
+  --ral-width: 70%;
+}
+ 
+ #myholder.listmode{
+	display:block;
+	background-color: #1A1A1A;
+    z-index: 5000; 
+    width: calc(100% - var(--ral-width)); 
+    height: calc(100% - var(--ral-height)); 
+    position: fixed; 
+    bottom: 0px; 
+    left: 0px; 
+ } 
+
+#listContainer{
+	display:block;
+	background-color: white;
+    z-index: 5000; 
+    width: var(--ral-width); 
+    height: var(--ral-height); 
+    position: fixed; 
+    top: 0px; 
+    right: 0px;  
+    overflow-y: auto;
+}
+
+#detailsContainer{
+	display:block;
+	background-color: grey;
+    z-index: 5000; 
+    width: var(--ral-width); 
+    height: calc(100% - var(--ral-height)); 
+    position: fixed; 
+    bottom: 0px; 
+    right: 0px;         
+}
+
+#filtersContainer{
+	display:block;
+	background-color: grey;
+    z-index: 5000; 
+    width: calc(100% - var(--ral-width)); 
+    height: var(--ral-height); 
+    position: fixed; 
+    top: 0px; 
+    left: 0px;         
+}
+

@@ -13,6 +13,8 @@ urlpatterns = [
     url(r'^deepview/(?P<id_event>[0-9]+)', views.deepview, name='deepview'),
     url(r'^simpleGraphViewer/(?P<id_show>[0-9]+)', views.simpleGraphViewer, name='simpleGraphViewer'),
     
+    url(r'^reviewAsList/(?P<id_event>[0-9]+)', views.reviewAsList, name='reviewAsList'),
+    
     url(r'^propsAuthorGenerator', views.propsAuthorGenerator, name='propsAuthorGenerator'),
     
 ]

@@ -19,8 +19,14 @@
     <select id="builderLinkLeft"></select>
     <select id="builderLinkRight"></select>
 
-<!--    <img id="builderAddSentenceRow" src="{% static 'gdpcore/timerfull_logo.png' %}" class="hvr-shrink"><img> -->
-    <div id="builderSentencesShow"></div>
+    <div id="builderThemeSelector">
+        
+        <img id = "builderThemeAdd" src = "{% static 'gdpcore/ctaNok.png' %}">
+        <input id = "builderThemeInput" type='text'></input>
+        <select id="builderThemeSelect">
+            <option value="none">none</option>        
+        </select>
+    </div>
  
     <img id="builderAddPropRow" src="{% static 'gdpcore/timerfull_logo.png' %}" class="hvr-shrink"><img>
 </div>  
@@ -409,13 +415,23 @@
                     return false
                     }
             }).show();
-            
+        
+            updatePropTheme(cellView);
+        
 		});	
 
         paper.on('blank:pointerdown', function(){
             updateVisibility();
         });
         
+        
+        $("body").on("click", "#builderThemeAdd" ,function() {       
+            $("#builderThemeSelect").append("<option value="+$("#builderThemeInput").val()+">"+$("#builderThemeInput").val()+"</option>")         
+        });
+        
+        function updatePropTheme(cellView){
+            cellView.model.        
+        }
         
         function finalisator() {
             //D'abord les props

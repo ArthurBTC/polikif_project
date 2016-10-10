@@ -1,0 +1,73 @@
+{% extends 'univok/base.html' %}
+
+{% block content %}
+{% load staticfiles %}
+
+
+<div id="myholder" class = "anim listmode"></div> 
+
+<div id = "detailsContainer">{{themes}}</div>
+<div id = "listContainer">
+
+    <table class="table">
+        <tr>
+            <th>ID SP</th>
+            <th>Order</th>
+            <th>Prefix</th>
+            <th>Phrase</th>
+            <th>Auteur</th>
+        </tr>
+    {%for theme in themes%}    
+        <tr>
+            <th>{{theme.theme}}</th>
+        </tr>
+        {%for showpart in showparts%}
+            {% if showpart.theme == theme.theme %}
+            <tr>
+                <td>{{showpart.id}}</td>
+                <td>{{showpart.themeOrder}}</td>
+                <td>{{showpart.themePrefix}}</td>
+                <td>{{showpart.proposition.text}}</td>                        
+                <td>{{showpart.proposition.autor.username}}</td>
+            </tr>
+            {% endif %}
+        {%endfor%}                
+    {%endfor%}         
+            
+    </table>
+</div>
+
+<div id = "filtersContainer"></div>
+
+
+    {% include "gdpcore/showparts.html" %}
+<!--    {% include "gdpcore/grapher.html" %} -->
+
+    
+<script>
+
+
+
+	{% include "gdpcore/grapher.js" %}
+    
+    $( document ).ready(function() {
+		paper = addPaper('myholder');
+		firstLoadFromShowparts('myholder');
+//		initGraph();
+
+        
+        setGridZoom(paper, 'myholder', 0);
+    });
+
+
+</script>
+
+</body>
+</html>
+
+{% endblock %}
+
+
+
+
+
