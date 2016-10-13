@@ -14,7 +14,7 @@
     left: 0px; 
  } 
  
-  #myholder.expanded{
+ #myholder.expanded{
 	display:block;
 	background-color: #1A1A1A;
     z-index: 5000; 
@@ -48,7 +48,7 @@
 	background-color: white;
     z-index: 5000; 
     width: var(--ral-width); 
-    height: 100%; 
+    height: calc(100% - 40px) ; 
     position: fixed; 
     top: 0px; 
     right: 0px;  
@@ -117,10 +117,10 @@
 	display:block;
 	background-color: grey;
     z-index: 5001;  
-    height: 50px;
-    width:50%;
+    height: 50%;
+    width:30%;
     position: fixed; 
-    top: 0px; 
+    top: 20%; 
     left: 0px;     
 }
 
@@ -143,14 +143,14 @@
 
 #listThemeSelect{
     position:absolute;
-    left:300px;
-    top:10px;    
+    left: 10px;
+    top:100px;    
 }
 
 #listSaver{
     position:absolute;
-    right:0px;
-    top:10px;
+    left: 10px;
+    bottom:10px;
     width:30px;
     height:30px;
     
@@ -182,7 +182,6 @@
     cursor: hand;   
 }
 
-
 #whiteSwitch{
     position:fixed;
     left:calc(30% - 50px);
@@ -191,7 +190,6 @@
     height:50px;
     z-index:7000;
 }
-
 
 #ctaQueAccurateSelection{
 	position:absolute;

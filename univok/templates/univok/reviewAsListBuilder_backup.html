@@ -1,0 +1,137 @@
+{% extends 'univok/base.html' %}
+
+{% block content %}
+{% load staticfiles %}
+
+
+<div id="myholder" class = "anim halfscreenmode"></div> 
+
+<div id = "listEditableContainer">
+
+    <table id="listPropsTable" class="table">
+        <tr>
+            <th>ID SP</th>
+            <th>ID Prop</th>
+            <th>Order</th>
+            <th>Prefix</th>
+            <th>Phrase</th>
+            <th>Auteur</th>
+        </tr>
+    {%for theme in themes%}    
+        <tr>
+            <th>{{theme.theme}}</th>
+        </tr>
+        {%for showpart in showparts%}
+            {% if showpart.theme == theme.theme %}
+            <tr>
+                <td class="showpartId">{{showpart.id}}</td>
+                <td class="propId">{{showpart.proposition.id}}</td>
+                <td class="themeOrder" contenteditable>{{showpart.themeOrder}}</td>
+                <td class="themePrefix" contenteditable>{{showpart.themePrefix}}</td>
+                <td class="propText">{{showpart.proposition.text}}</td>                        
+                <td class="propAuthor">{{showpart.proposition.autor.username}}</td>
+                <td class="theme" contenteditable>{{showpart.theme}}</td>
+            </tr>
+            {% endif %}
+        {%endfor%}                
+    {%endfor%}         
+            
+    </table>
+</div>
+
+<div id="listThemeSelector">
+    <img id = "listThemeAdd" src = "{% static 'gdpcore/ctaNok.png' %}">
+    <input id = "listThemeInput" type='text'></input>
+    <select id="listThemeSelect">
+        <option value="none">none</option> 
+        {% for theme in themes %}
+        <option value="{{theme.theme}}">{{theme.theme}}</option>
+        {% endfor %}
+    </select>
+    <img id = "listSaver" src = "{% static 'gdpcore/save.png' %}"</img>
+</div>
+
+    {% include "gdpcore/showparts.html" %}
+<!--    {% include "gdpcore/grapher.html" %} -->
+
+    
+<script>
+
+	{% include "gdpcore/grapher.js" %}
+
+    $( document ).ready(function() {
+		paper = addPaper('myholder');
+		firstLoadFromShowparts('myholder');
+
+        paper.setDimensions($('#myholder').width(), $('#myholder').height());    
+		$(window).resize(function(){
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		})        
+        setGridZoom(paper, 'myholder', 0);
+        
+        themeHighlighter();
+        
+        $("body").on("click", "#listThemeAdd" ,function() {       
+            $("#listThemeSelect").append(
+                "<option value="+$("#listThemeInput").val()+">"+$("#listThemeInput").val()+"</option>"
+            )         
+        });   
+
+        paper.on('cell:pointerdown', function(cellView,evt, x, y) {
+            
+            if ($("#listThemeSelect option:selected").val() != 'none') {
+                $('#listPropsTable tr').filter(function () {
+                    return $(this).find(".propId").eq(0).text() == cellView.model.get('id_prop')
+                }).find(".theme").eq(0).text( $("#listThemeSelect option:selected").text() );
+                    
+                themeHighlighter();    
+            }  
+        });
+        
+        $("body").on("click", "#listSaver" ,function() { 
+ 
+
+            var myRows = [];
+            var $headers = ['showpartId','propId','themeOrder','themePrefix','propText','propAuthor','theme'];
+            var $rows = $("#listPropsTable tr").not(":eq(0)").each(function(index) {
+              $cells = $(this).find("td");
+              myRows[index] = {};
+              $cells.each(function(cellIndex) {
+                myRows[index][$headers[cellIndex]] = $(this).html();
+              });    
+            });            
+            var propsObj = {};
+            propsObj.myrows = myRows;
+            jsonPropsObj = JSON.stringify(propsObj);   
+
+            
+            $("#listSaver").hide();
+            
+			$.ajax( {
+				type: "POST",
+				url: '/reviewAsListBuilder/{{event.pk}}',
+				data: { 
+                        propsTable: jsonPropsObj,
+						csrfmiddlewaretoken: '{{ csrf_token }}'
+				},
+				success: function( data ) {							
+                    console.log(data);
+                    $("#listSaver").show();
+				}
+			});  
+     
+        });
+        
+        
+    });
+
+
+</script>
+
+
+{% endblock %}
+
+
+
+
+

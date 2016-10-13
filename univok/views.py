@@ -15,7 +15,9 @@ import json
 from django.contrib.auth.decorators import login_required
 from collections import Counter
 import re
-
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def index(request):
     events = Event.objects.all()
@@ -203,6 +205,24 @@ def ajax_newquestion(request):
     showparts = request.POST.getlist('showpartIds[]')
     for showpart in showparts:
         question.showpart.add(ShowPart.objects.get(pk=showpart))
+ 
+ 
+    fromaddr = "polikif@gmail.com"
+    toaddr = "gouriten.arthur@gmail.com"
+    msg = MIMEMultipart()
+    msg['From'] = fromaddr
+    msg['To'] = toaddr
+    msg['Subject'] = "Nouvelle question de "+ request.POST['name']
+     
+    body = "Nouvelle question de "+ request.POST['name']+". Plus d'infos: ecossolies.univok.fr/deepview/"+request.POST['event']
+    msg.attach(MIMEText(body, 'plain'))
+     
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+    server.login(fromaddr, "tabouret")
+    text = msg.as_string()
+    server.sendmail(fromaddr, toaddr, text)
+    server.quit() 
     
     return HttpResponse(question.pk)
 

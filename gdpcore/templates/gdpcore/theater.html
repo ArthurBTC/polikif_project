@@ -129,7 +129,9 @@ $( document ).ready(function() {
 	
 	paper.on('cell:pointerclick', function(cellView,evt, x, y) {
 		
-		console.log(selectedCells);
+        //$("#showpartid").val(3);
+        
+/*		console.log(selectedCells);
 		
 		if ($.inArray(cellView.model.id,selectedCells) == -1){
 			selectedCells.push(cellView.model.id);
@@ -156,6 +158,9 @@ $( document ).ready(function() {
 			newText = graph.getCell(entry).get('text');
 			$("#ctaQueAccurateSelection").val( $("#ctaQueAccurateSelection").val()+'\n'+newAuthor+' : '+newText  );
 		});
+        
+        */
+        
 	});	
 
 	/*	paper.on('blank:pointerdblclick', function(evt, x, y) { 

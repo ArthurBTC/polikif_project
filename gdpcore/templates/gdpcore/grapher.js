@@ -270,7 +270,7 @@
 
 		var wraptext = joint.util.breakText(text, {
 			width: 145,
-			height: heightPrediction,
+			height: 3000,
 			attrs: {
 				'text-anchor': 'middle'
 			}
@@ -1070,6 +1070,7 @@
 		{% endfor %}
 			
 		updateCorrespondances();
+        sizeAllRect();
 	};
 
 	var counter = 1;
@@ -1194,9 +1195,12 @@
 			$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
 
 			//Changer le focus
-			midX = $(window).width() / 2 - 100;
-			midY = $(window).height() / 2 - 50;
+			//midX = $(window).width() / 2 - 100;
+			//midY = $(window).height() / 2 - 50;
 
+            midX = $("#myholder").width() / 2 - 100;
+            midY = $("#myholder").height() / 2 - 100;
+            
 			currentX = currentX;
 			nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX;
 			stepX = (nextX - currentX) / 100;
@@ -1903,7 +1907,7 @@
                                         email: emailVal,
                                         name: nameVal,
                                         phone: phoneVal,
-                                        event: {{event.id}},
+                                        event: {% if event.id %}{{event.id}}{%else%}0{%endif%},
                                         csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
                                 beforeSend: function() {
@@ -2172,7 +2176,7 @@
                                         email: emailVal,
                                         name: nameVal,
                                         phone: phoneVal,
-                                        event: {{event.id}},
+                                        event: {% if event.id %}{{event.id}}{%else%}0{%endif%},
                                         csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
                                 beforeSend: function() {
@@ -2313,7 +2317,8 @@
         $('#ctaQueAccurateInstruction').removeClass('animated bounceInUp'); 
         $('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
  
-        paper.off('cell:pointerclick');
+        paper.off('cell:pointerdblclick');
+        $("#listFinalTable").off();
     }
     
     function setDetails(){	
@@ -2463,7 +2468,27 @@
         });
       
     }     
-    
+ 
+    function sizeAllRect(){
+        
+        console.log('sizeAllRect');
+        
+		allCells = graph.getElements();
+		allCells.forEach(function(entry) {
+            
+            word1 = $('g').filter( function(){        
+                return $(this).attr('model-id') == entry.id
+            }).eq(0).find('.word1').eq(0);            
+       
+            console.log(word1);
+       
+            heightValue = word1.get(0).getBBox().height;       
+            console.log(heightValue);            
+            entry.attr('rect/height', heightValue + 50);            
+            entry.attr('.word2/transform','translate(165,'+(heightValue+30)+')');   
+        });
+    }
+ 
 /*	$( document ).ready(function() {
 		paper = addPaper('myholder');
 		firstLoadFromShowparts('myholder');

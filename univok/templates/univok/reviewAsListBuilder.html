@@ -4,73 +4,246 @@
 {% load staticfiles %}
 
 
-<div id="myholder" class = "anim halfscreenmode"></div> 
+<div id="myholder" class = "anim shrinked"></div> 
 
-<div id = "listEditableContainer">
+<div id = "listMainContainer">
+    <div id = "listContainer" class="expanded">
 
-    <table id="listPropsTable" class="table">
-        <tr>
-            <th>ID SP</th>
-            <th>ID Prop</th>
-            <th>Order</th>
-            <th>Prefix</th>
-            <th>Phrase</th>
-            <th>Auteur</th>
-        </tr>
-    {%for theme in themes%}    
-        <tr>
-            <th>{{theme.theme}}</th>
-        </tr>
-        {%for showpart in showparts%}
-            {% if showpart.theme == theme.theme %}
+        <table id="listFinalTable" border="0">
             <tr>
-                <td class="showpartId">{{showpart.id}}</td>
-                <td class="propId">{{showpart.proposition.id}}</td>
-                <td class="themeOrder" contenteditable>{{showpart.themeOrder}}</td>
-                <td class="themePrefix" contenteditable>{{showpart.themePrefix}}</td>
-                <td class="propText">{{showpart.proposition.text}}</td>                        
-                <td class="propAuthor">{{showpart.proposition.autor.username}}</td>
-                <td class="theme" contenteditable>{{showpart.theme}}</td>
+                <th>ID SP</th>
+                <th>ID prop</th>
+                <th>Order</th>               
+                <th>Prefix</th>
+                <th>Phrase</th>
+                <th>Auteur</th>
+                <th>Theme</th>
             </tr>
-            {% endif %}
-        {%endfor%}                
-    {%endfor%}         
-            
-    </table>
+            <tr>
+               <th id="eventName" colspan="3">{{event.name}}</th>
+            </tr>
+        {%for theme in themes%}    
+            <tr>
+                <th class="themeTitle" colspan="3">{{theme.theme}}</th>
+            </tr>
+            {%for showpart in showparts%}
+                {% if showpart.theme == theme.theme %}
+                <tr>
+                    <td class = "showpartId" hidden>{{showpart.id}}</td>
+                    <td class = "propId" hidden>{{showpart.proposition.id}}</td>
+                    <td class = "themeOrder">{{forloop.counter}}</td>                    
+                    <td class = "themePrefix" contenteditable>{{showpart.themePrefix}}</td>
+                    <td class = "propText hvr-fade">{{showpart.proposition.text}}</td>                        
+                    <td class = "propAuthor">{{showpart.proposition.autor.username}}</td>                    
+                    <td class = "theme">{{showpart.theme}}</td>
+                </tr>
+                {% endif %}
+            {%endfor%}                
+        {%endfor%}         
+                
+        </table>
+    </div>
+    <div id = "filtersContainer">
+
+    <div class='listTitle'>Themes : </div>
+    {% for theme in themes %}
+    <div>
+        <label class="checkbox-inline"><input class="visibilityCB themeCB" type="checkbox" value="{{theme.theme}}" checked><span id="themeLabel{{forloop.counter}}">{{theme.theme}}</span></label>
+    </div>
+    {% endfor %}
+
 </div>
 
-<div id="listThemeSelector">
-    <img id = "listThemeAdd" src = "{% static 'gdpcore/ctaNok.png' %}">
-    <input id = "listThemeInput" type='text'></input>
-    <select id="listThemeSelect">
-        <option value="none">none</option> 
-        {% for theme in themes %}
-        <option value="{{theme.theme}}">{{theme.theme}}</option>
-        {% endfor %}
-    </select>
-    <img id = "listSaver" src = "{% static 'gdpcore/save.png' %}"</img>
-</div>
+    <div id="listThemeSelector">
+        <img id = "listThemeAdd" src = "{% static 'gdpcore/ctaNok.png' %}">
+        <input id = "listThemeInput" type='text'></input>
+        <select id="listThemeSelect">
+            <option value="none">none</option> 
+            {% for theme in themes %}
+            <option value="{{theme.theme}}">{{theme.theme}}</option>
+            {% endfor %}
+        </select>
+        <img id = "listSaver" src = "{% static 'gdpcore/save.png' %}"</img>
+    </div>
 
+    <img id="whiteSwitch" class='hvr-grow' src = "{% static 'univok/whiteSwitch.png' %}"></img>
     {% include "gdpcore/showparts.html" %}
 <!--    {% include "gdpcore/grapher.html" %} -->
-
+</div>
     
 <script>
+    {% include "gdpcore/grapher.js" %}
+    
+    function updateVisibilityFromCB(){
 
-	{% include "gdpcore/grapher.js" %}
+        $('#listFinalTable tr').show();
+        
+        allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			entry.attr('./display','');
+		});
+        
+        $('.themeCB').each(function(key, value){          
+            if ( !$(value).is(':checked') ){         
+                goodRows = $('#listFinalTable tr').filter(function (key2, value2) {
+                    return $(value2).find(".theme").eq(0).text() == $(value).val()
+                })
+                
+                goodRows.hide();
+                goodRows.each(function(){                
+                    idProp = $(this).find('.propId').eq(0).text();
+                    cell = graph.getCell(propIdCorrespondance[idProp])
+                    cell.attr('./display','none');
+                    aroundCellVisu(cell);                   
+                });
+                    
+                
+                $('#listFinalTable tr').filter(function (key2, value2) {
+                    return $(value2).find(".themeTitle").eq(0).text() == $(value).val()
+                }).hide();   
+                   
+            }                 
+        });
+        
+        $('.nameCB').each(function(key, value){          
+            if ( !$(value).is(':checked') ){         
+                goodRows = $('#listFinalTable tr').filter(function (key2, value2) {
+                    return $(value2).find(".propAuthor").eq(0).text() == $(value).val()
+                })
+                
+                goodRows.hide();  
+                goodRows.each(function(){                
+                    idProp = $(this).find('.propId').eq(0).text();
+                    cell = graph.getCell(propIdCorrespondance[idProp])
+                    cell.attr('./display','none');
+                    aroundCellVisu(cell);                   
+                });
+                    
+            }                 
+        }); 
 
+
+        
+        
+ //       goodRows = $('#listFinalTable tr').filter(function () {
+ //           return $(this).find(".theme").eq(0).text() == '{{theme.theme}}'
+ //       });        
+    }
+ 
+    function updateColorsFromThemes(){
+        updateCorrespondances();
+        
+        var themes = {};
+        themes[0] = {'color': 'rgb(255,153,153)'}
+        themes[1] = {'color': 'rgb(255,204,153)'}
+        themes[2] = {'color': 'rgb(255,255,153)'}
+        themes[3] = {'color': 'rgb(153,255,153)'}
+        themes[4] = {'color': 'rgb(153,255,255)'}  
+        themes[5] = {'color': 'rgb(153,153,255)'}    
+        themes[6] = {'color': 'rgb(204,153,255)'}
+        themes[7] = {'color': 'rgb(255,153,255)'}
+        themes[8] = {'color': 'rgb(76,0,153)'}
+        themes[9] = {'color': 'rgb(153,0,153)'}  
+        themes[10] = {'color': 'rgb(153,0,76)'}          
+        var i = 1; 
+    
+        {%for theme in themes%}  
+            //On selectionne les bonnes lignes..
+            goodRows = $('#listFinalTable tr').filter(function () {
+                return $(this).find(".theme").eq(0).text() == '{{theme.theme|escapejs}}'
+            });
+                 
+            //et pour chaque ligne, on va changer le highlight de la cell
+            goodRows.each(function(key2, val2){
+            
+                //L'id du model sur paper...
+                id = propIdCorrespondance[ $(val2).find('.propId').eq(0).text()  ];
+                   
+                //Et on change la cell..
+                cell = graph.getCell(id);
+                cell.attr('rect/stroke-width', 2);
+                cell.attr('rect/stroke', themes[i]['color']);
+            }); 
+
+            //On change la couleur des CB aussi:
+               
+            $('#themeLabel'+i).css('color', themes[i]['color']);
+      
+            i=i+1;          
+        {%endfor%}    
+    
+    }
+
+    
     $( document ).ready(function() {
 		paper = addPaper('myholder');
-		firstLoadFromShowparts('myholder');
-
         paper.setDimensions($('#myholder').width(), $('#myholder').height());    
+		
+        $("#myholder").resize(function(){
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		})       
 		$(window).resize(function(){
 			paper.setDimensions($('#myholder').width(), $('#myholder').height());
 		})        
-        setGridZoom(paper, 'myholder', 0);
+        paper.setOrigin(0,0);
         
-        themeHighlighter();
+        setDrag();
+		firstLoadFromShowparts('myholder');
+		initGraphList(); 
+//      setGridZoom(paper, 'myholder', 0);
         
+        updateColorsFromThemes()
+        
+        $("body").on("click", "#listFinalTable" ,function(event) {
+            
+            idProp = $(event.target).parent().find('.propId').eq(0).text();
+            console.log(propIdCorrespondance[idProp]);
+            
+            cell = graph.getCell( propIdCorrespondance[idProp] );
+            
+            console.log(cell.position());
+            paper.setOrigin( 
+                -cell.position()['x'] + $('#myholder').width()/2 - 100, 
+                -cell.position()['y'] + $('#myholder').height()/2 - 50
+            );
+            
+            text = cell.get("sentences");			
+			$("#detailsContent").html(text);
+            
+        });
+        
+        $("body").on("change", ".visibilityCB" ,function() {
+            updateVisibilityFromCB()
+        });
+               
+        $("body").on("click", "#whiteSwitch" ,function() {
+           $("#myholder").toggleClass('shrinked');
+           $("#myholder").toggleClass('expanded');
+           $("#listContainer").toggleClass('shrinked');
+           $("#listContainer").toggleClass('expanded');
+           paper.setDimensions($('#myholder').width(), $('#myholder').height()); 
+           
+           
+        });  
+
+        $('body').on("click", ".themeOrder" ,function(event){
+            console.log( $(event.target).parent().prev()[0] );
+            console.log( $(event.target).parent()[0] );
+            
+            prevRow = $(event.target).parent().prev();
+            clickedRow = $(event.target).parent();
+            
+            prevRowOrder = prevRow.find('.themeOrder').eq(0).text()
+            clickedRowRower = clickedRow.find('.themeOrder').eq(0).text()
+           
+            clickedRow.find('.themeOrder').eq(0).text( prevRowOrder )
+            prevRow.find('.themeOrder').eq(0).text( clickedRowRower )
+            
+            clickedRow.after(prevRow);
+            
+            
+        });        
+    
         $("body").on("click", "#listThemeAdd" ,function() {       
             $("#listThemeSelect").append(
                 "<option value="+$("#listThemeInput").val()+">"+$("#listThemeInput").val()+"</option>"
@@ -80,11 +253,15 @@
         paper.on('cell:pointerdown', function(cellView,evt, x, y) {
             
             if ($("#listThemeSelect option:selected").val() != 'none') {
-                $('#listPropsTable tr').filter(function () {
+                
+                console.log('azeaze');
+            
+                $('#listFinalTable tr').filter(function () {
                     return $(this).find(".propId").eq(0).text() == cellView.model.get('id_prop')
                 }).find(".theme").eq(0).text( $("#listThemeSelect option:selected").text() );
                     
-                themeHighlighter();    
+                //themeHighlighter(); 
+                updateColorsFromThemes()                
             }  
         });
         
@@ -93,7 +270,7 @@
 
             var myRows = [];
             var $headers = ['showpartId','propId','themeOrder','themePrefix','propText','propAuthor','theme'];
-            var $rows = $("#listPropsTable tr").not(":eq(0)").each(function(index) {
+            var $rows = $("#listFinalTable tr").not(":eq(0)").each(function(index) {
               $cells = $(this).find("td");
               myRows[index] = {};
               $cells.each(function(cellIndex) {
@@ -121,15 +298,14 @@
 			});  
      
         });
-        
-        
+            
+    
     });
+    
 
 
 </script>
 
-</body>
-</html>
 
 {% endblock %}
 
