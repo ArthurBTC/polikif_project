@@ -12,16 +12,27 @@ from django.conf import settings
 import os
 import json
 
+from django.contrib.auth.decorators import login_required
 from collections import Counter
 import re
 
-# Create your views here.
+
 def index(request):
     events = Event.objects.all()
     return render(request, 'univok/eventsViewer.html', {'events': events});
     
 
 def eventViewer(request, id_event):
+    event = Event.objects.get(id=id_event)
+    photos = Photo.objects.filter(event=event)
+
+    return render(request, 'univok/pastEventViewer.html', {
+                    'event': event,
+                    'photos': photos
+                    })
+
+
+def animViewer(request, id_event):
     event = Event.objects.get(id=id_event)
     show = event.show
     photos = Photo.objects.filter(event=event)
@@ -60,27 +71,15 @@ def eventViewer(request, id_event):
     show.seconds = seconds
     show.minutes = minutes
  #   show.showlength.minutes = minutes
-
-
-    assert isinstance(event, object)
     
-    return render(request, 'univok/pastEventViewer.html', {'event': event,
+    return render(request, 'univok/animViewer.html', {'event': event,
                                                            'photos': photos,
                                                            'show': show,
                                                            'showparts': showparts,
                                                            'link_types': link_types,
-                                                           'links': links})
-
-    # if event.status == '0':
-        # photos = Photo.objects.filter(event=event)
-        # return render(request, 'univok/futurEventViewer.html', {'event': event,
-                                                                # 'photos': photos,
-                                                                # 'show': show,
-                                                                # 'showparts': showparts,
-                                                                # 'link_types': link_types,
-                                                                # 'links': links})
-
-
+                                                           'links': links})    
+                                                                
+@login_required
 def ideasViewer(request, id_event):
     event = Event.objects.get(id=id_event)
     records = Record.objects.filter(event=event)
@@ -141,7 +140,7 @@ def ideasViewer(request, id_event):
         'implications': implications,
         'comments_graph': comments_graph})
 
-
+@login_required
 def sentencesConverter(request, id_event):
     # csvfile = request.FILES['csv']
     # op = open(/static/gdpcore/csvtobedealtwith/aaa.csv,'rb')
@@ -184,8 +183,7 @@ def sentencesConverter(request, id_event):
 # else:
 # return render(request,'univok/csvUploader.html',{'aaa': 0 });
 
-
-
+@login_required
 def collectif(request):
     return render(request, 'univok/collectif.html')
 
@@ -197,6 +195,8 @@ def ajax_newquestion(request):
         lastname = request.POST['name'],
         email = request.POST['email'],
         phone = request.POST['phone'],
+        time = datetime.now(),
+        event = Event.objects.get(pk = request.POST['event'])
     )    
     question.save()
     
@@ -205,7 +205,8 @@ def ajax_newquestion(request):
         question.showpart.add(ShowPart.objects.get(pk=showpart))
     
     return HttpResponse(question.pk)
-    
+
+@login_required    
 def finalBuilder(request):
 
     sentencesTable = json.loads(request.POST['sentencesTable'])
@@ -314,15 +315,14 @@ def finalBuilder(request):
                 
     return HttpResponse('OKAYYYYYYYYYYYY')
     
-    
-
+  
 def deepview(request, id_event):
     
     event = Event.objects.get(pk = id_event)
     
     photos = Photo.objects.filter(event = event)
     records = Record.objects.filter(event = event)
-    questions = Question.objects.all()
+    questions = Question.objects.all().order_by('-time')
     sentences = Sentence.objects.filter(event = event)
     
     
@@ -357,7 +357,7 @@ def deepview(request, id_event):
                                     'final_count': final_count, 
                                     'wordCount': wordCount});
 
-
+@login_required
 def simpleGraphViewer(request, id_show):
     show = Show.objects.get(pk = id_show)
     showparts = ShowPart.objects.filter(show = show)
@@ -391,7 +391,8 @@ def simpleGraphViewer(request, id_show):
                                                            'showparts': showparts,
                                                            'props': props,
                                                            'links': links})    
- 
+
+@login_required                                                           
 def propsAuthorGenerator(request):
     props = Proposition.objects.all()
     for prop in props:
@@ -406,9 +407,73 @@ def propsAuthorGenerator(request):
             prop.save() 
             
     return HttpResponse('OKAAAAAAAAY')
-    
-    
+        
 def reviewAsList(request, id_event):
+    event = Event.objects.get(id=id_event)
+    show = event.show
+    photos = Photo.objects.filter(event=event)
+    showparts = ShowPart.objects.filter(show=show).order_by('themeOrder')
+
+    props = []
+    links = []
+    showlength = 0
+    sentences = Sentence.objects.filter(event = event)
+    
+    for showpart in showparts:
+        showpart.proposition.timediff = showpart.proposition.videoEnd - showpart.proposition.videoBeginning
+        props.append(showpart.proposition)
+        showlength = showlength + showpart.duration
+
+        showpart.proposition.sentences = Sentence.objects.filter(proposition = showpart.proposition)
+#        showpart.proposition.authorPicture = Speaker.objects.filter()
+
+    for prop in props:
+        rightLinks = Link.objects.filter(right_prop=prop)
+        leftLinks = Link.objects.filter(left_prop=prop)
+
+        for rightLink in rightLinks:
+            if rightLink.left_prop in props:
+                links.append(rightLink)
+
+        for leftLink in leftLinks:
+            if leftLink.right_prop in props:
+                links.append(leftLink)
+
+    links = list(set(links))
+    
+    minutes = int(float(showlength) // 60)
+    seconds = int(showlength - minutes*60)
+    show.seconds = seconds
+    show.minutes = minutes
+ #   show.showlength.minutes = minutes
+ 
+    themes = ShowPart.objects.filter(show=show).order_by('theme').values('theme').distinct()
+    names = ShowPart.objects.filter(show=show).order_by('proposition__autor__username').values('proposition__autor__username').distinct()
+    
+    return render(request, 'univok/reviewAsList.html', {'event': event,
+                                                           'photos': photos,
+                                                           'show': show,
+                                                           'showparts': showparts,
+                                                           'links': links,
+                                                           'sentences':sentences,
+                                                           'themes': themes,
+                                                           'names':names})   
+
+@login_required                                                           
+def reviewAsListBuilder(request, id_event):
+    
+    if request.method == 'POST':
+        propsTable = json.loads(request.POST['propsTable'])
+        for propRow in propsTable['myrows']:
+            if (len(propRow) > 0):
+                showpart = ShowPart.objects.get(pk= propRow['showpartId'])
+                showpart.theme = propRow['theme']
+                showpart.themeOrder = propRow['themeOrder']
+                showpart.themePrefix = propRow['themePrefix']            
+                showpart.save()       
+        
+        return HttpResponse('OK');
+    
     event = Event.objects.get(id=id_event)
     show = event.show
     photos = Photo.objects.filter(event=event)
@@ -448,10 +513,10 @@ def reviewAsList(request, id_event):
  #   show.showlength.minutes = minutes
     themes = ShowPart.objects.order_by('theme').values('theme').distinct()
     
-    return render(request, 'univok/reviewAsList.html', {'event': event,
+    return render(request, 'univok/reviewAsListBuilder.html', {'event': event,
                                                            'photos': photos,
                                                            'show': show,
                                                            'showparts': showparts,
                                                            'links': links,
                                                            'sentences':sentences,
-                                                           'themes': themes})    
+                                                           'themes': themes})                                                            

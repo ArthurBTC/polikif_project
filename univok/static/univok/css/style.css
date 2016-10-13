@@ -4,7 +4,7 @@
 
 html *{
 	color: #34495e;
-	font-family: 'Open Sans', "Fira Sans", Times, serif;
+	font-family: Open Sans, Fira Sans, Times, serif !important;
 }
 
 html,body{
@@ -66,10 +66,12 @@ body {
 
 .topRow *{
 	z-index:1;
+
 }
 
 .topRow{
-	margin:100px 0px 20px 0px;
+	margin:80px 0px 20px 0px;
+    background-color:rgba(46, 204, 113,1);
 }
 
 #logo {
@@ -82,13 +84,13 @@ body {
 }
 
 .titleContainer{
-  height: 150px;
+  min-height: 150px;
   line-height: 150px;
   text-align: center;
 }
 
 .title{
-	font-size: 50px;
+	font-size: 40px;
 	display: inline-block;
 	vertical-align: middle;
 	line-height: normal;
@@ -142,7 +144,7 @@ body {
 
 .picto{
 	width: 30px;
-	heigth: 30px;
+	height: 30px;
     display:inline-block;
 	margin-right:20px;
 	
@@ -163,6 +165,37 @@ body {
     cursor: pointer; 
     cursor: hand;
 }
+
+.starters{
+    width:100px;
+    height:100px;
+    cursor: pointer; 
+    cursor: hand;
+}
+
+#syntheseContent span{
+    margin-left:20px;
+    font-size: 20px;
+}
+
+#videoSpan{
+    color:rgb(52, 152, 219);
+    line-height: 100px;
+}
+
+#docSpan{   
+    color:rgb(46, 204, 113);
+    line-height: 100px;
+}
+
+#textAdvice{
+    margin-top:15px;
+}
+
+.startersDiv{
+    margin: 30px 0px 30px 100px;
+}
+
 
 #facilitation{
 	width: 100%;
@@ -188,4 +221,17 @@ body {
 
 .carousel-inner > .item > img {
     margin: 0 auto;
+}
+
+#inscriptionImg{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;  
+}
+
+#inscriptionImg img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;      
+    
 }

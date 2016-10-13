@@ -19,6 +19,8 @@
 <!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
 	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
 	
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
+    
 	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
 <!--	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	-->
 	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
@@ -27,6 +29,8 @@
 	<script src="{% static 'gdpcore/joint.js' %}"></script>
     <script src="{% static 'gdpcore/js/svg-pan-zoom.min.js' %}"></script>
 
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -48,7 +52,7 @@
 		<img id="facebookIco" class="socialIco hvr-grow" src = "{% static 'univok/facebook.png' %}" ></img> -->
 	</div>
 
-	<div id="secondTopBar"></div>	
+<!--	<div id="secondTopBar"></div>	-->
 	
 	{% block content %}
 	{% endblock %}	

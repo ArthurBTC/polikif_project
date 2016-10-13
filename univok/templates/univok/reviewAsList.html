@@ -4,66 +4,270 @@
 {% load staticfiles %}
 
 
-<div id="myholder" class = "anim listmode"></div> 
+<div id="myholder" class = "anim shrinked"></div> 
 
-<div id = "detailsContainer">{{themes}}</div>
-<div id = "listContainer">
-
-    <table class="table">
-        <tr>
-            <th>ID SP</th>
-            <th>Order</th>
-            <th>Prefix</th>
-            <th>Phrase</th>
-            <th>Auteur</th>
-        </tr>
-    {%for theme in themes%}    
-        <tr>
-            <th>{{theme.theme}}</th>
-        </tr>
-        {%for showpart in showparts%}
-            {% if showpart.theme == theme.theme %}
-            <tr>
-                <td>{{showpart.id}}</td>
-                <td>{{showpart.themeOrder}}</td>
-                <td>{{showpart.themePrefix}}</td>
-                <td>{{showpart.proposition.text}}</td>                        
-                <td>{{showpart.proposition.autor.username}}</td>
-            </tr>
-            {% endif %}
-        {%endfor%}                
-    {%endfor%}         
-            
-    </table>
+<div id = "listMainContainer">
+    <div id = "detailsContainer">
+    <div class='listTitle'>Citations exactes : </div>
+    <div id='detailsContent'></div>
 </div>
+    
+    <div id = "listContainer" class="expanded">
 
-<div id = "filtersContainer"></div>
+        <table id="listFinalTable" border="0">
+            <tr style="display:none;">
+                <th hidden>ID SP</th>
+                <th hidden>ID prop</th>
+                <th hidden>Order</th>
+                <th hidden>Theme</th>
+            <!--    <th>Prefix</th> -->
+                <th>Phrase</th>
+                <th>Auteur</th>
+            </tr>
+            <tr>
+               <th id="eventName" colspan="3">{{event.name}}</th>
+            </tr>
+        {%for theme in themes%}    
+            <tr>
+                <th class="themeTitle" colspan="3">{{theme.theme}}</th>
+            </tr>
+            {%for showpart in showparts%}
+                {% if showpart.theme == theme.theme %}
+                <tr>
+                    <td class = "showpartId" hidden>{{showpart.id}}</td>
+                    <td class = "propId" hidden>{{showpart.proposition.id}}</td>
+                    <td class = "themeOrder" hidden>{{showpart.themeOrder}}</td>
+                    <td class = "theme" hidden>{{showpart.theme}}</td>
+                <!--    <td class = "themePrefix">{{showpart.themePrefix}}</td> -->
+                    <td class = "propText hvr-fade">{{showpart.themePrefix}} {{showpart.proposition.text}}</td>                        
+                    <td class = "propAuthor">{{showpart.proposition.autor.username}}</td>
+                </tr>
+                {% endif %}
+            {%endfor%}                
+        {%endfor%}         
+                
+        </table>
+    </div>
+    <div id = "filtersContainer">
 
+    <div class='listTitle'>Themes : </div>
+    {% for theme in themes %}
+    <div>
+        <label class="checkbox-inline"><input class="visibilityCB themeCB" type="checkbox" value="{{theme.theme}}" checked><span id="themeLabel{{forloop.counter}}">{{theme.theme}}</span></label>
+    </div>
+    {% endfor %}
+<!--
+    
+    <div class='listTitle'> Auteurs : </div>
+    {% for name in names %}
+    <div>
+        <label class="checkbox-inline"><input class="visibilityCB nameCB" type="checkbox" value="{{name.proposition__autor__username}}" checked>{{name.proposition__autor__username}}</label>
+    </div>    
+    {% endfor %}  -->
+</div>
+    <div id = "questionContainer" class="down">
 
+        <div id ="questionOpener" class="listTitle">J'ai des questions</div>
+               
+        <img id="ctaQueAccurateClick" class="" src="{% static 'gdpcore/ctaNokWhite.png' %}">
+        <div id="ctaQueAccurateAjaxMessage" class = ''></div>  
+          
+        <textarea id="ctaQueAccurateInput" class="questionFirstStep" rows="3" placeholder="Posez votre question ici"></textarea>
+        <div id="ctaQueAccurateSelection" class="questionFirstStep"></div>
+         
+        <div id="ctaQueAccurateHowto" class="questionSecondStep">Comment pouvons-nous vous contacter ?</div>
+        <input id="ctaQueAccurateName" class="questionSecondStep" type="text" placeholder="Nom et prénom"></input>
+        <input id="ctaQueAccurateEmail" class="questionSecondStep" type="email" placeholder="Email"></input>
+        <input id="ctaQueAccuratePhone" class="questionSecondStep" type="tel" placeholder="Téléphone (optionnel)"></input>   
+     
+        
+        
+    </div>
+</div>
+    <img id="whiteSwitch" class='hvr-grow' src = "{% static 'univok/whiteSwitch.png' %}"></img>
     {% include "gdpcore/showparts.html" %}
 <!--    {% include "gdpcore/grapher.html" %} -->
-
+</div>
     
 <script>
+    {% include "gdpcore/grapher.js" %}
+    
+    function updateVisibilityFromCB(){
 
+        $('#listFinalTable tr').show();
+        
+        allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+			entry.attr('./display','');
+		});
+        
+        $('.themeCB').each(function(key, value){          
+            if ( !$(value).is(':checked') ){         
+                goodRows = $('#listFinalTable tr').filter(function (key2, value2) {
+                    return $(value2).find(".theme").eq(0).text() == $(value).val()
+                })
+                
+                goodRows.hide();
+                goodRows.each(function(){                
+                    idProp = $(this).find('.propId').eq(0).text();
+                    cell = graph.getCell(propIdCorrespondance[idProp])
+                    cell.attr('./display','none');
+                    aroundCellVisu(cell);                   
+                });
+                    
+                
+                $('#listFinalTable tr').filter(function (key2, value2) {
+                    return $(value2).find(".themeTitle").eq(0).text() == $(value).val()
+                }).hide();   
+                   
+            }                 
+        });
+        
+        $('.nameCB').each(function(key, value){          
+            if ( !$(value).is(':checked') ){         
+                goodRows = $('#listFinalTable tr').filter(function (key2, value2) {
+                    return $(value2).find(".propAuthor").eq(0).text() == $(value).val()
+                })
+                
+                goodRows.hide();  
+                goodRows.each(function(){                
+                    idProp = $(this).find('.propId').eq(0).text();
+                    cell = graph.getCell(propIdCorrespondance[idProp])
+                    cell.attr('./display','none');
+                    aroundCellVisu(cell);                   
+                });
+                    
+            }                 
+        }); 
 
+        
+        
+        
+ //       goodRows = $('#listFinalTable tr').filter(function () {
+ //           return $(this).find(".theme").eq(0).text() == '{{theme.theme}}'
+ //       });        
+    }
+ 
+    function updateColorsFromThemes(){
+        updateCorrespondances();
+        
+        var themes = {};
+        themes[0] = {'color': 'rgb(255,153,153)'}
+        themes[1] = {'color': 'rgb(255,204,153)'}
+        themes[2] = {'color': 'rgb(255,255,153)'}
+        themes[3] = {'color': 'rgb(153,255,153)'}
+        themes[4] = {'color': 'rgb(153,255,255)'}  
+        themes[5] = {'color': 'rgb(153,153,255)'}    
+        themes[6] = {'color': 'rgb(204,153,255)'}
+        themes[7] = {'color': 'rgb(255,153,255)'}
+        themes[8] = {'color': 'rgb(76,0,153)'}
+        themes[9] = {'color': 'rgb(153,0,153)'}  
+        themes[10] = {'color': 'rgb(153,0,76)'}          
+        var i = 1; 
+    
+        {%for theme in themes%}  
+            //On selectionne les bonnes lignes..
+            goodRows = $('#listFinalTable tr').filter(function () {
+                return $(this).find(".theme").eq(0).text() == '{{theme.theme}}'
+            });
+                 
+            //et pour chaque ligne, on va changer le highlight de la cell
+            goodRows.each(function(key2, val2){
+            
+                //L'id du model sur paper...
+                id = propIdCorrespondance[ $(val2).find('.propId').eq(0).text()  ];
+                   
+                //Et on change la cell..
+                cell = graph.getCell(id);
+                cell.attr('rect/stroke-width', 2);
+                cell.attr('rect/stroke', themes[i]['color']);
+            }); 
 
-	{% include "gdpcore/grapher.js" %}
+            //On change la couleur des CB aussi:
+               
+            $('#themeLabel'+i).css('color', themes[i]['color']);
+      
+            i=i+1;          
+        {%endfor%}    
+    
+    }
+
+    function testGetNumberOfRows(id_prop){
+    
+		allCells = graph.getElements();
+		allCells.forEach(function(entry) {
+            
+            word1 = $('g').filter( function(){        
+                return $(this).attr('model-id') == entry.id
+            }).eq(0).find('.word1').eq(0);            
+       
+            heightValue = word1.get(0).getBBox().height;            
+            entry.attr('rect/height', heightValue + 50);            
+            entry.attr('.word2/transform','translate(165,'+(heightValue+30)+')');
+                    
+		});
+    
+
+        
+    }
     
     $( document ).ready(function() {
 		paper = addPaper('myholder');
-		firstLoadFromShowparts('myholder');
-//		initGraph();
-
+        paper.setDimensions($('#myholder').width(), $('#myholder').height());    
+		
+        $("#myholder").resize(function(){
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		})       
+		$(window).resize(function(){
+			paper.setDimensions($('#myholder').width(), $('#myholder').height());
+		})        
+        paper.setOrigin(0,0);
         
-        setGridZoom(paper, 'myholder', 0);
+        setDrag();
+		firstLoadFromShowparts('myholder');
+		initGraphList(); 
+//      setGridZoom(paper, 'myholder', 0);
+        
+        updateColorsFromThemes()
+        
+        $("body").on("click", "#listFinalTable" ,function(event) {
+            
+            idProp = $(event.target).parent().find('.propId').eq(0).text();
+            console.log(propIdCorrespondance[idProp]);
+            
+            cell = graph.getCell( propIdCorrespondance[idProp] );
+            
+            console.log(cell.position());
+            paper.setOrigin( 
+                -cell.position()['x'] + $('#myholder').width()/2 - 100, 
+                -cell.position()['y'] + $('#myholder').height()/2 - 50
+            );
+            
+            text = cell.get("sentences");			
+			$("#detailsContent").html(text);
+            
+        });
+        
+        $("body").on("change", ".visibilityCB" ,function() {
+            updateVisibilityFromCB()
+        });
+               
+        $("body").on("click", "#whiteSwitch" ,function() {
+           $("#myholder").toggleClass('shrinked');
+           $("#myholder").toggleClass('expanded');
+           $("#listContainer").toggleClass('shrinked');
+           $("#listContainer").toggleClass('expanded');
+           paper.setDimensions($('#myholder').width(), $('#myholder').height()); 
+           
+           testGetNumberOfRows(881);
+           
+        });        
     });
+    
 
 
 </script>
 
-</body>
-</html>
 
 {% endblock %}
 

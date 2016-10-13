@@ -17,6 +17,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from datetime import datetime  
 
+@login_required
 def theater(request, id_show):
 	show = Show.objects.get(pk=id_show)
 	showparts = ShowPart.objects.filter(show = show).order_by('order')
@@ -45,7 +46,7 @@ def theater(request, id_show):
 	link_types = LinkType.objects.all()
 	return render(request,'gdpcore/theater.html',{'show': show, 'showparts':showparts, 'link_types':link_types, 'links':links });
 
-	
+@login_required	
 def puretheater(request, id_show):
 	show = Show.objects.get(pk=id_show)
 	showparts = ShowPart.objects.filter(show = show).order_by('order')
@@ -73,7 +74,8 @@ def puretheater(request, id_show):
 	
 	link_types = LinkType.objects.all()
 	return render(request,'gdpcore/puretheater.html',{'show': show, 'showparts':showparts, 'link_types':link_types, 'links':links });
-	
+
+@login_required	
 def convertTheater(request):
 	
 	# graph = Graph.objects.get(id = request.POST['id_graph'])
@@ -117,7 +119,7 @@ def convertTheater(request):
 	# show.save()			
 	return HttpResponse(show.id)	
 	
-
+@login_required
 def showAudioUpload(request):
 	
 	show = Show.objects.get(pk=request.POST['showid'])
@@ -126,7 +128,8 @@ def showAudioUpload(request):
 	show.save();
 	
 	return HttpResponseRedirect(reverse('theater', args=(show.pk,)))
-	
+
+@login_required	
 def showpartAudioUpload(request):
 	
 	show = Show.objects.get(pk=request.POST['showid'])
@@ -136,9 +139,8 @@ def showpartAudioUpload(request):
 	showpart.save();
 	
 	return HttpResponseRedirect(reverse('theater', args=(show.pk,)))	
-	
-	
-	
+
+@login_required	
 def esAddProp(request):
 	
 	indexname = 'newindex'
@@ -178,6 +180,7 @@ def esAddProp(request):
 		
 	return HttpResponse(r)
 	
+@login_required    
 @csrf_exempt	
 def getSimil(request):
 
@@ -194,7 +197,7 @@ def getSimil(request):
 	
 	return JsonResponse( r.json() )
 	
-
+@login_required
 def register(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -207,6 +210,7 @@ def register(request):
         'form': form,
     })
 	
+@login_required    
 def index(request):
 	return render(request,'gdpcore/index.html')
 	
@@ -230,7 +234,7 @@ def tobedone(request):
 	return render(request,'gdpcore/tobedone.html',{'props_precison' : props_precison,'props_supplement' : props_supplement, 'notifs' : notifs, 'last_props':last_props})
 
 	
-	
+@login_required	
 def proposition_browser(request, id_prop):
 	
 	main_prop = Proposition.objects.get(id = id_prop)
@@ -247,12 +251,13 @@ def proposition_browser(request, id_prop):
 														'links_right': links_right, 'links_left': links_left })
 	
 	
-	
+@login_required	
 def link_browser(request, id_link):
 	main_link = Link.objects.get(id = id_link)
 	implications = Implication.objects.filter(link = main_link)
 	return render(request,'gdpcore/link_browser.html',{'main_link': main_link, 'implications': implications})
-	
+
+@login_required	
 def precision_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	prop.demande_precision = True
@@ -274,6 +279,7 @@ def precision_request(request, id_prop):
 	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
+@login_required    
 def supplement_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	prop.demande_supplement = True
@@ -295,6 +301,7 @@ def supplement_request(request, id_prop):
 	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
+@login_required    
 def attention_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	prop.demande_attention = True
@@ -306,7 +313,7 @@ def attention_request(request, id_prop):
 	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
-	
+@login_required	
 def text_request(request, id_prop):
 	prop = Proposition.objects.get(id = id_prop)
 	
@@ -322,7 +329,7 @@ def text_request(request, id_prop):
 	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 
-	
+@login_required	
 def add_comment(autor, prop, nature, text):
 	comment = Comment(autor = autor,
 					  nature = nature,
@@ -333,6 +340,7 @@ def add_comment(autor, prop, nature, text):
 	comment.save()
 	return comment
 	
+@login_required    
 def generate_notification(aut, prop, nat):
 	
 	notif = Notification(autor = aut,
@@ -343,7 +351,8 @@ def generate_notification(aut, prop, nat):
 						viewed = False
 						)
 	notif.save()				
-						
+
+@login_required    
 def notif_viewer(request, id_notif):
 	notif = Notification.objects.get(id = id_notif)
 	notif.viewed = True
@@ -355,9 +364,9 @@ def notif_viewer(request, id_notif):
 #A CORRIGER ATTENTIOn	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 
-
 						
-#Ajout d'une proposition depuis le modal	
+#Ajout d'une proposition depuis le modal
+@login_required	
 def new_proposition(request, id_prop):
 	
 	initial_prop = Proposition.objects.get(id=id_prop)
@@ -419,6 +428,7 @@ def new_proposition(request, id_prop):
 	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 	
+@login_required	    
 def new_link(request, id_prop):
 	
 	initial_prop = Proposition.objects.get(id=id_prop)
@@ -467,7 +477,7 @@ def new_link(request, id_prop):
 	
 	return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))	
 	
-#Edition d'une proposition depuis le modal	
+@login_required	
 def edit_proposition(request, id_prop):
 	if request.method == 'POST':
 		prop = Proposition.objects.get(id = id_prop)
@@ -508,7 +518,7 @@ def edit_proposition(request, id_prop):
 		return HttpResponseRedirect(reverse('proposition_browser', args=(id_prop,)))
 			
 
-	
+@login_required		
 def new_cycle(request):
 	if request.method == 'POST':
 		cycle = Cycle(autor = request.user,
@@ -525,7 +535,7 @@ def new_cycle(request):
 	props = Proposition.objects.all()
 	return render(request,'gdpcore/new_cycle.html',{'props':props})
 	
-	
+@login_required		
 def new_starting_proposition(request):
 	if request.method == 'POST':
 		cycle = Cycle(autor = request.user,
@@ -560,7 +570,7 @@ def new_starting_proposition(request):
 	props = Proposition.objects.all()
 	return render(request,'gdpcore/new_cycle.html',{'props':props})		
 		
-		
+@login_required			
 def link_attack(request, id_link):
 	if request.method == 'POST':
 	
@@ -620,6 +630,7 @@ def link_attack(request, id_link):
 		
 		return HttpResponseRedirect(reverse('link_browser', args=(id_link,)))
 
+@login_required	
 def cycle_updater(id_cycle):
 	cycle = Cycle.objects.get(id = id_cycle)
 	props_cycle = Proposition.objects.filter(cycle = cycle)
@@ -628,6 +639,7 @@ def cycle_updater(id_cycle):
 		cycle.last_prop_date = datetime.now()
 	cycle.save()
 
+@login_required	    
 def tag_generator(request):
 
 	cycles = Cycle.objects.all()
@@ -667,10 +679,10 @@ def tag_generator(request):
 
 				
 	return HttpResponseRedirect(reverse('selection_cycle'))
-
+@login_required	
 def similar(a, b):
     return SequenceMatcher(None, a, b).ratio()
-	
+@login_required		
 def similar_propositions(request):
 	if request.method == 'POST':
 		
@@ -714,11 +726,11 @@ def similar_propositions(request):
 		props = Proposition.objects.order_by('-simil')[:10]		
 			
 		return render(request,'gdpcore/similar_propositions.html',{'props': props, 'text': request.POST['parameter']})
-		
+@login_required			
 def search_proposition(request):
 	props = Proposition.objects.all()
 	return render(request,'gdpcore/search_proposition.html',{'props': props})
-	
+@login_required		
 def envir_viewer(request, id_prop):
 
 	main_prop = Proposition.objects.get(id=id_prop)
@@ -751,7 +763,7 @@ def envir_viewer(request, id_prop):
 			all_links[str(more_link.id)] = more_link
 			
 	return render(request,'gdpcore/envir_viewer.html',{'main_prop':main_prop,'all_links':all_links})
-	
+@login_required		
 def env_viewer(request, id_prop):
 
 	main_prop = Proposition.objects.get(id=id_prop)
@@ -774,7 +786,7 @@ def env_viewer(request, id_prop):
 			
 	return render(request,'gdpcore/env_viewer.html',{'main_prop':main_prop,'ccrs1':ccrs1,'ccrs2':ccrs2,'cars':cars,'doncs':doncs})
 	
-	
+@login_required		
 def super_viewer(request, id_prop):
 
 	main_prop = Proposition.objects.get(id = id_prop)
@@ -782,7 +794,7 @@ def super_viewer(request, id_prop):
 	links_left = Link.objects.filter(right_prop = main_prop)
 	
 	return render(request,'gdpcore/super_viewer.html',{'main_prop': main_prop, 'links_right': links_right, 'links_left': links_left })
-	
+@login_required		
 def sv_addprop(request, id_prop, id_link):
 #	link = Link.objects.get(id = id_link)
 #	prop_ini = Proposition.objects.get(id = id_prop)
@@ -825,7 +837,7 @@ def sv_addprop(request, id_prop, id_link):
 	return HttpResponse(data)
 	
 
-	
+@login_required		
 def incremental_viewer(request, id_prop):
 
 	main_prop = Proposition.objects.get(id = id_prop)
@@ -888,7 +900,7 @@ def final_viewer(request, id_graph):
 					'links':links,
 					'implications': implications,
 					'comments_graph': comments_graph})
-	
+@login_required		
 def ajax_propenvir(request, id_prop):
 
 	main_prop = Proposition.objects.get(id = id_prop)
@@ -913,7 +925,7 @@ def ajax_propenvir(request, id_prop):
 		
 	return HttpResponse(data)
 	
-	
+@login_required		
 @csrf_exempt
 def save_graph(request):
 	if request.method == 'POST':	
@@ -964,7 +976,7 @@ def save_graph(request):
 
 	return HttpResponse('OK')
 
-	
+@login_required		
 def graph_viewer(request, id_graph):
 	graph = Graph.objects.get(id = id_graph)
 
@@ -991,12 +1003,12 @@ def graph_viewer(request, id_graph):
 	
 	
 	return render(request,'gdpcore/graph_viewer.html',{'graph': graph, 'j':props})
-	
+@login_required		
 def selection_graph(request):
 	from django.db.models import Count
 	graphs = Graph.objects.order_by('-creation_date')
 	return render(request,'gdpcore/selection_graph.html',{'graphs': graphs})
-	
+@login_required		
 @csrf_exempt	
 def ajax_newanswer(request):
 	
@@ -1074,12 +1086,12 @@ def ajax_newanswer(request):
 	cycle_updater(initial_prop.cycle.id)
 	
 	return JsonResponse(serializers.serialize('json', [prop,link]), safe = False)
-	
+@login_required		
 def ajax_getcomments(request, id_prop):
 
 	comments = Comment.objects.filter(proposition__id = id_prop).order_by('creation_date')
 	return JsonResponse(serializers.serialize('json', comments), safe = False)
-	
+@login_required		
 @csrf_exempt	
 def ajax_newcomment(request):
 	
@@ -1095,7 +1107,7 @@ def ajax_newcomment(request):
 	cycle_updater(prop.cycle.id)	
 	
 	return JsonResponse(serializers.serialize('json', [comment]), safe = False)
-
+@login_required	
 @csrf_exempt	
 def ajax_editprop(request):
 
@@ -1137,7 +1149,7 @@ def ajax_editprop(request):
 	all_items = list([prop]) + list(lefts) + list(rights)
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)
 	# return HttpResponse('lala')
-
+@login_required	
 @csrf_exempt	
 def ajax_newprop(request):
 
@@ -1168,7 +1180,7 @@ def ajax_newprop(request):
 	
 	all_items = list([prop])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
-
+@login_required	
 @csrf_exempt	
 def ajax_connect(request):
 
@@ -1202,7 +1214,7 @@ def ajax_connect(request):
 	link.save()
 	all_items = list([link])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
-
+@login_required	
 @csrf_exempt
 def ajax_linkattack(request):
 
@@ -1250,14 +1262,14 @@ def ajax_linkattack(request):
 	
 	all_items = list([main_link]) + list([propImplication]) + list([implication]) + list([prop_ccr])+ list([link])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)		
-	
+@login_required		
 @csrf_exempt	
 def ajax_linkremove(request):
 
 	main_link = Link.objects.get(id = request.POST['id_link'])	
 	main_link.delete();
 	return HttpResponse('')
-
+@login_required	
 @csrf_exempt	
 def ajax_quicksave(request):
 		
@@ -1297,7 +1309,7 @@ def ajax_quicksave(request):
 	graph.save()
 						
 	return HttpResponse('ok')
-	
+@login_required		
 def new_graph(request):
 		
 	graph = Graph(
@@ -1308,7 +1320,7 @@ def new_graph(request):
 	graph.save()
 	
 	return HttpResponseRedirect(reverse('final_viewer', args=(graph.pk,)))
-
+@login_required	
 def ajax_newsyllogism(request):
 	
 	syl = Proposition(
@@ -1363,11 +1375,11 @@ def ajax_newsyllogism(request):
 	
 	all_items = list([syl]) + list([majorLink]) + list([minorLink]) + list([conclusionLink])
 	return JsonResponse(serializers.serialize('json', all_items), safe = False)	
-
+@login_required	
 def ajax_addexistingprop(request):
 	
 	main_prop = Proposition.objects.get(pk = request.POST['id'])
-	
+@login_required		
 def	ajax_addcommentgraph(request):
 
 	prop = None
@@ -1396,7 +1408,7 @@ def	ajax_addcommentgraph(request):
 	)
 	comment.save()
 	return JsonResponse(serializers.serialize('json', [comment]), safe = False)
-	
+@login_required		
 def ajax_hidecomment(request):
 	
 	comment = CommentGraph.objects.get(pk = request.POST['comment'])
@@ -1404,7 +1416,7 @@ def ajax_hidecomment(request):
 	comment.save()
 	
 	return HttpResponse('ok')
-	
+@login_required		
 def ajax_showsave(request):
 	
 	data = request.POST['data']
@@ -1433,7 +1445,7 @@ def ajax_showsave(request):
 	
 
 	
-	
+@login_required		
 def init(request):
 
 	json_linktypes = [	

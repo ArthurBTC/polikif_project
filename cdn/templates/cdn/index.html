@@ -23,33 +23,45 @@
 	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
 	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
 	<script src="{% static 'gdpcore/joint.js' %}"></script>
-	
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
 </head>
 <body>
-	<div class="container">
-		<table class='table'>
-			<col width="130">
-			{% for event in events %}
-			<col width="40">
-			{% endfor %}
-		  <tr>
-			<th>Name</th>
-			{% for event in events %}
-			<th>{{event.id}}</th>
-			{% endfor %}
-		  </tr>
-			{% for member in members %}
-				{% if member.presenceCount > 0 %}
-		  <tr>
-			<td>{{member.name}} ({{member.presenceCount}})</td>
-			{% for event in events %}
-			<td id="{{member.id}}-{{event.id}}" class="cellPresence"></td>
-			{% endfor %}
-		  </tr>
-				{% endif %}
-			{% endfor %}
+	<div class="container-fluid">
+        <div class="row">
+        
+        <div id="chart_div"></div>
+        
+        {%for key, value in counts.items%}
+            <div>{{key}} : {{value}}</div>
+        {%endfor%}
+        </div>
+        <div class="row">
+            <table class='table'>
+                <col width="130">
+                {% for event in events %}
+                <col width="40">
+                {% endfor %}
+              <tr>
+                <th>Name</th>
+                {% for event in events %}
+                <th>{{event.id}}</th>
+                {% endfor %}
+              </tr>
+                {% for member in members %}
+                    {% if member.presenceCount > 0 %}
+              <tr>
+                <td>{{member.name}} ({{member.presenceCount}})</td>
+                {% for event in events %}
+                <td id="{{member.id}}-{{event.id}}" class="cellPresence"></td>
+                {% endfor %}
+              </tr>
+                    {% endif %}
+                {% endfor %}
 
-		</table>
+            </table>
+        </div>
 	</div>
 
 
@@ -58,5 +70,40 @@
 		{% for presence in presences %}
 			$("#{{presence.member.id}}-{{presence.event.id}}").html("OK");
 		{% endfor %}
+        
+        
+        
+    google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawStacked);
+
+    function drawStacked() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'How many times');
+      data.addColumn('number', 'How many members');
+
+      data.addRows([
+      {%for key, value in counts.items%}
+        [{{key}}, {{value}}], 
+      {% endfor %}
+      ]);
+
+      var options = {
+        isStacked: true,
+        hAxis: {
+          viewWindow: {
+            min: [7, 30, 0],
+            max: [17, 30, 0]
+          }
+        },
+        vAxis: {
+        }
+      };
+
+      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+      chart.draw(data, options);
+    }        
+        
+        
+        
 	</script>
 </body>

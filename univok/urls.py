@@ -14,7 +14,8 @@ urlpatterns = [
     url(r'^simpleGraphViewer/(?P<id_show>[0-9]+)', views.simpleGraphViewer, name='simpleGraphViewer'),
     
     url(r'^reviewAsList/(?P<id_event>[0-9]+)', views.reviewAsList, name='reviewAsList'),
+    url(r'^reviewAsListBuilder/(?P<id_event>[0-9]+)', views.reviewAsListBuilder, name='reviewAsListBuilder'),
     
     url(r'^propsAuthorGenerator', views.propsAuthorGenerator, name='propsAuthorGenerator'),
-    
+    url(r'^anim/(?P<id_event>[0-9]+)', views.animViewer, name='animViewer'),
 ]

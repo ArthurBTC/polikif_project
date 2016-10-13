@@ -17,10 +17,7 @@
 		<ul class="nav nav-pills" role="tablist">
             {% if event.displaydescription %}
 			  <li role="presentation"><a href="#descriptionSubstitle">Description</a></li>
-            {% endif %}
-            {% if event.displayinscription %}
-			  <li role="presentation"><a href="#inscriptionSubstitle">Inscription</a></li>
-            {% endif %}             
+            {% endif %}               
             {% if event.displayphoto %}
 			  <li role="presentation"><a href="#photosSubstitle">Photos</a></li>
             {% endif %} 
@@ -48,24 +45,7 @@
         </div>
     </div>	
     {% endif %}
-        
-    {% if event.displayinscription %}
-    <div class="row subtitleContainer" id="inscriptionSubtitle">
-        <div class="col-md-12">
-            <div class = 'subtitle'>Inscription</div>
-        </div>
-	</div>
-	<div class="row" id="inscriptionContent">
-        <div class="col-md-12">
-            <a id="inscriptionImg" href="{{event.inscriptionurl}}" target="_blank">
-                <img src="{% static 'univok/inscriptionFacile.png' %}" width="150" height="33" alt="">
-            </a>
-            
-            
-        </div>
-    </div>	
-    {% endif %}
-        
+    
 	{% if event.displayphoto %}
     <div class="row subtitleContainer" id="photoSubtitle">
         <div class="col-md-12">
@@ -137,28 +117,7 @@
     
 	<div class="row" id="syntheseContent">
         <div class="col-md-10 col-md-offset-1">
-           
-            <div class = 'row'>
-                <div class="col-md-2 col-md-offset-1">    
-                    <img id="videoStarter" class="starters" src = "{% static 'univok/blueVideo.png' %}" ></img>
-                </div>
-                <div class="col-md-5">
-                    <span id="videoSpan">Video explicative</span>
-                </div>
-            </div>
-            <div class = 'row'>
-                <div class="col-md-2 col-md-offset-1"> 
-                    <img id="docStarter" class="starters" src = "{% static 'univok/greenDoc.png' %}" ></img>
-                </div>
-                <div class="col-md-5"> 
-                    <span id="docSpan">Document de synthèse</span>
-                </div>
-            </div>
-            <div class = 'row'>
-                <div class="col-md-7 col-md-offset-1"> 
-                    <div id="textAdvice">Nous vous recommandons de regarder la vidéo avant de consulter le document de synthèse.</div>
-                </div>
-            </div>
+            <img id="starter" class="animPlay" src = "{% static 'univok/clickMe.png' %}" ></img>
         </div>
 	</div>
     {% endif %}
@@ -189,35 +148,27 @@
     
 </div>
 
+{% if event.displayanimation %}
+    {% include "gdpcore/showparts.html" %}
+    {% include "gdpcore/grapher.html" %}
+{% endif %}
+
+
 <script>
 
 	$('.carousel').carousel({
 		interval: false
 	});
-    
-    $( document ).ready(function() {        
-        $("#videoStarter").on('click',function(){        
-            var win = window.open('/anim/{{event.id}}', '_blank');
-            if (win) {
-                win.focus();
-            } else {
-                //Browser has blocked it
-                alert('Please allow popups for this website');
-            }      
-        });
-        
-        $("#docStarter").on('click',function(){        
-            var win = window.open('/reviewAsList/{{event.id}}', '_blank');
-            if (win) {
-                win.focus();
-            } else {
-                //Browser has blocked it
-                alert('Please allow popups for this website');
-            }        
-        });        
-        
-    });
 
+{% if event.displayanimation %}
+	{% include "gdpcore/grapher.js" %}
+    
+    $( document ).ready(function() {
+		paper = addPaper('myholder');
+		firstLoadFromShowparts('myholder');
+		initPage();
+    });
+{% endif %}
 
 </script>
 

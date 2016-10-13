@@ -1,7 +1,7 @@
-{% extends "gdpcore/base.html" %}
+{% extends "univok/base.html" %}
 
 {% block content %}
-
+<div>Dada</div>
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
@@ -32,7 +32,7 @@
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
-<p><a href="{% url 'register' %}">Pas encore inscrit ?</a></p>
+<!-- <p><a href="{% url 'register' %}">Pas encore inscrit ?</a></p> -->
 
 {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Mot de passe perdu ?</a></p>

@@ -2,13 +2,15 @@ from django.shortcuts import render
 import requests, json
 from .models import Member, Event, Place, Presence
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 
 API_BASE = "https://api.meetup.com/"
 API_KEY = "?&key=56554e2c242d6b1d61424d7e65106d0"
 URLNAME = "caf%C3%A9s-d%C3%A9bats-nantais/"
 
-
+@login_required	
 def index(request):
     
     members = Member.objects.all()
@@ -19,12 +21,19 @@ def index(request):
     members =  members.order_by('-presenceCount') 
     events = Event.objects.filter(status = 'past').order_by('time')
     presences = Presence.objects.all()
+    counts = {}
     
+    for x in range(1, 100):
+        count =  Member.objects.filter(presenceCount = x).count()
+        if count != 0:
+            counts[x] = Member.objects.filter(presenceCount = x).count()
+           
     return render(request,'cdn/index.html',{
         'members': members,
         'events':events,
-        'presences':presences});
-    
+        'presences':presences,
+        'counts':counts});
+@login_required	    
 def memberView(request, idmember):
     member = Member.objects.get(id = idmember)
     events = Event.objects.filter(status = 'past').order_by('time')
@@ -43,17 +52,17 @@ def memberView(request, idmember):
                 'member': member,
                 'events': events, 
                 'presences': presences});
-    
+@login_required	    
 def getEvent(request, idEvent):
     r = requests.get(API_BASE+URLNAME+'events/'+idEvent+API_KEY)
     data = json.loads(r.text)
     return render(request,'cdn/index.html',{'data': data});
-        
+@login_required	        
 def getAllEvents(request):
     r = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=past')
     data = json.loads(r.text)
     return render(request,'cdn/index.html',{'data': data});
-    
+@login_required	   
 def updateMembers(request):
     r = requests.get(API_BASE+URLNAME+'members'+API_KEY)
     data = json.loads(r.text)
@@ -75,7 +84,7 @@ def updateMembers(request):
             defaults = updated_values   
         )   
     return render(request,'cdn/index.html',{'data': data});
-    
+@login_required	    
 def updatePastEvents(request):
     r = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=past')
     data = json.loads(r.text)
@@ -101,7 +110,7 @@ def updatePastEvents(request):
     
     
     return render(request,'cdn/index.html',{'data': data});
-    
+@login_required	    
 def updatePresence(idEvent):
     event = Event.objects.get(idmeetup = idEvent)
 
@@ -125,7 +134,7 @@ def updatePresence(idEvent):
         )
     
     return;
-        
+@login_required	        
 def updatePresences(request):
     
     r = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=past')

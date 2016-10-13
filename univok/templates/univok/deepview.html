@@ -64,6 +64,7 @@
             
             <table class="table">
                 <tr>
+                    <th>Date</th>
                     <th>Auteur</th>
                     <th>Text</th>
                     <th>A propos</th>
@@ -73,12 +74,13 @@
                 </tr>
             {%for question in questions%}
                 <tr>
+                    <td>{{question.time|timesince}}</td>
                     <td>{{question.firstname}}</td>
                     <td>{{question.text}}</td>
                     <td>
                         {% for showpart in question.showpart.all %}
                         <div>
-                           <a href="/simpleGraphViewer/{{showpart.show.id}}"> {{ showpart.proposition.text }} {{showpart.proposition.autor}}</a>
+                           <a href="/reviewAsList/{{question.event.pk}}"> {{ showpart.proposition.text }} {{showpart.proposition.autor}}</a>
                         </div>
                         {% endfor %}                                                  
                     </td>
@@ -98,42 +100,49 @@
     
 </div>
 
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
 
-google.charts.load('current', {packages: ['corechart', 'bar']});
-google.charts.setOnLoadCallback(drawMaterial);
 
-function drawMaterial() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Nom');
-      data.addColumn('number', 'Quantité de parole');
+    
+    
+
+      // Load the Visualization API and the corechart package.
+      google.charts.load('current', {'packages':['corechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(drawChart);
+
+      // Callback that creates and populates a data table,
+      // instantiates the pie chart, passes in the data and
+      // draws it.
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Intervenant');
+        data.addColumn('number', 'Parole');
 
         {%for county in final_count %}         
             {% for key, value in county.items %}
+                {% if key != 'total' %}
                 data.addRows([
                     ['{{key}}', {{value}}]
                 ]);
+                {% endif %}
+                
             {%endfor%}
         {%endfor%}
-      var options = {
-        title: 'Motivation and Energy Level Throughout the Day',
-        hAxis: {
-          title: 'Time of Day',
-          format: 'h:mm a',
-          viewWindow: {
-            min: [7, 30, 0],
-            max: [17, 30, 0]
-          }
-        },
-        vAxis: {
-          title: 'Rating (scale of 1-10)'
-        }
-      };
+        
+        // Set chart options
+        var options = {'title':'Repartition de la parole', 'height':400};
 
-      var material = new google.charts.Bar(document.getElementById('chart_div'));
-      material.draw(data, options);
-    }
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }    
+    
+ 
+    
     </script>
 
 {% endblock %}

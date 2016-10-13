@@ -982,7 +982,7 @@
 						{{showpart.proposition.id}},
 						'{{showpart.proposition.text|escapejs}}',
 						'{{showpart.proposition.autor.username|escapejs}}',
-						"{% for sentence in showpart.proposition.sentences %}{{sentence|escapejs}}<br />{% endfor %}",
+						"{% for sentence in showpart.proposition.sentences %}{{sentence.speaker.name}} : {{sentence|escapejs}}<br /><br />{% endfor %}",
 						"{{showpart.audio}}",
 						"{{showpart.proposition.autor.userprofile.picture}}"
 						
@@ -1189,8 +1189,6 @@
 				
 			});
 			
-			
-			//console.log($("#partsMenu #showpart"+(counter)+" .audioex").text());
 
 			//Afficher le texte
 			$("#textDisplay").text( $("#partsMenu #showpart"+(counter)+" .text input").val() )
@@ -1200,11 +1198,11 @@
 			midY = $(window).height() / 2 - 50;
 
 			currentX = currentX;
-			nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX - 100;
+			nextX = -$("#partsMenu #showpart"+(counter)+" .propX").html() + midX;
 			stepX = (nextX - currentX) / 100;
 
 			currentY = currentY;
-			nextY = -$("#partsMenu #showpart"+(counter)+" .propY").html() + midY - 50;
+			nextY = -$("#partsMenu #showpart"+(counter)+" .propY").html() + midY;
 			stepY = (nextY - currentY) / 100;
 
 			var i = 1;                     //  set your counter to 1
@@ -1254,7 +1252,8 @@
 		}
 		else {
 			stopshow();
-			initCta()
+			//initCta()
+            initCtaNew()
 		}
 	}
 
@@ -1350,7 +1349,8 @@
 
         var fpw = function(){
 			stopshow();
-			initCta();                       
+			//initCta();   
+            initCtaNew()            
         }
         
 
@@ -1437,6 +1437,51 @@
         
 	}
 
+	function initCtaNew(){
+		console.log('initCtaNew');
+		$(".anim, .cta2").hide();
+		$(".cta").show();
+		$("#blackUnivok").show();
+
+		$('#myholder').removeClass('fullscreen');
+		$('#callToAction').addClass('fullscreen');
+
+		$('.ctaImg').removeClass('bounceOutLeft');
+		$('.ctaText').removeClass('bounceOutRight');
+
+		$('.ctaImg').addClass('animated bounceInLeft');
+		$('.ctaText').addClass('animated bounceInRight');
+
+
+      
+        
+
+        var fxo = function(){
+ 			selectHandlerAnim('cta','Nok');
+            to_ee = setTimeout(function(){
+                window.location.href = "/reviewAsList/{{event.pk}}"; 
+                
+            },selectTimeNext);                      
+        };
+        
+        
+        $( "#ctaNok" ).off();
+        $( "#ctaNok" ).on("click", fxo); 
+        
+        var frj= function(){
+			selectHandlerAnim('cta','Again');
+			to_ff = setTimeout(function() {
+				initAnim(false);
+			}, selectTimeNext);       
+                                  
+        }      
+        
+        $( "#ctaAgain" ).off();
+        $( "#ctaAgain" ).on("click", frj);     
+
+        
+	}
+    
 	function initCtaQuestion(){
 
 		console.log('initCtaQuestion');
@@ -1563,6 +1608,7 @@
 	function initGraph(){
 		console.log('initGraph');
 
+        
 
 		$(".anim, .graphElems").show();
 		$('.cta, .cta2').hide();
@@ -1651,9 +1697,45 @@
    
 	}
 
+    function initGraphList(){
+        console.log('initGraphList');
+        
+        $('#myholder').show();
+        $('myholder').removeClass();
+        $('myholder').addClass('shrinked');
+        $('#listMainContainer').show();
+        $("#questionContainer").addClass('down');   
+        
+		allCells.forEach(function(entry) {
+            questionsUnhightlighter(entry);
+            detailsUnhighlighter(entry);
+			entry.attr('./display','');
+            if(entry.get('type') == 'basic.twoTextRect') {
+                paper.findViewByModel(entry).options.interactive = true;
+            }
+		});
+
+        var fob = function(){
+            $("#questionContainer").toggleClass('down');  
+            if ($( "#questionContainer" ).hasClass( "down" )){
+                 unsetQuestionsList();
+            } else {
+                 setQuestionsList();
+            }             
+        };
+        
+        $( "#questionOpener" ).off();
+        $( "#questionOpener" ).on("click", fob);
+
+        
+        
+    }
+       
     function questionsHighlighter(model){
         if( model.get('type') == 'basic.twoTextRect'){
-            model.attr('rect/fill', 'rgba(46, 204, 113,1.0)');
+            //model.attr('rect/fill', 'rgba(46, 204, 113,1.0)');
+            model.attr('rect/fill', 'rgb(52, 73, 94)');
+            //rgb(52, 73, 94)
         }
     }
     
@@ -1700,8 +1782,8 @@
         $("#ctaQueAccurateAjaxMessage").hide();
         
         $("#ctaQueAccurateSelection").html(
-            "Cliquez sur la/les proposition(s) concernée(s) par votre question"
-            +"<img id='simpleClick' src='{% static 'gdpcore/simpleClick.png' %}'>"
+            "Double-cliquez sur la/les proposition(s) concernée(s) par votre question"
+            +"<img id='simpleClick' src='{% static 'gdpcore/doubleClick.png' %}'>"
             );
         
     
@@ -1735,8 +1817,8 @@
             
             if(selectedCells.length == 0) {
                 $("#ctaQueAccurateSelection").html(
-                    "Cliquez sur la/les proposition(s) concernée(s) par votre question"
-                    +"<img id='simpleClick' src='{% static 'gdpcore/simpleClick.png' %}'>"
+                    "Double-Cliquez sur la/les proposition(s) concernée(s) par votre question"
+                    +"<img id='simpleClick' src='{% static 'gdpcore/doubleClick.png' %}'>"
                 );
             } else {
                 selectedCells.forEach(function(entry) {
@@ -1821,6 +1903,7 @@
                                         email: emailVal,
                                         name: nameVal,
                                         phone: phoneVal,
+                                        event: {{event.id}},
                                         csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
                                 beforeSend: function() {
@@ -1915,6 +1998,272 @@
 
 	}
 
+    function setQuestionsList(){
+        console.log('setQuestionsList');
+        
+        $(".questionFirstStep").removeClass("animated bounceOutRight");
+        $(".questionFirstStep").show();
+        $(".questionSecondStep").hide();
+        $("#ctaQueAccurateAjaxMessage").hide();
+        
+        $("#ctaQueAccurateSelection").html(
+            "Double-Cliquez sur la/les proposition(s) concernée(s) par votre question"
+            +"<img id='simpleClick' src='{% static 'gdpcore/doubleClick.png' %}'>"
+            );        
+        selectedCells=[];
+        
+        $("#ctaQueAccurateName").val( getCookie('name') );
+        $("#ctaQueAccuratePhone").val( getCookie('phone') );
+        $("#ctaQueAccurateEmail").val( getCookie('email') );        
+ 
+        function clickOnPropEventHandler(model){
+			
+            if ($.inArray(model.id,selectedCells) == -1){
+				selectedCells.push(model.id);
+                questionsHighlighter(model);						
+			} else {
+				console.log('already in selectedCells');
+				selectedCells.splice( $.inArray(model.id, selectedCells), 1 );
+				//cellView.unhighlight();
+                questionsUnhightlighter(model);
+			}
+            
+			$("#ctaQueAccurateSelection").html('');
+            
+            if(selectedCells.length == 0) {
+                $("#ctaQueAccurateSelection").html(
+                    "Double-Cliquez sur la/les proposition(s) concernée(s) par votre question"
+                    +"<img id='simpleClick' src='{% static 'gdpcore/doubleClick.png' %}'>"
+                );
+            } else {
+                selectedCells.forEach(function(entry) {
+                    newAuthor = graph.getCell(entry).get('autorname');
+                    newText = graph.getCell(entry).get('text');
+                    $("#ctaQueAccurateSelection").html( $("#ctaQueAccurateSelection").html()+'<br />'+newAuthor+' : '+newText  );
+                });
+            }            
+            $("#listFinalTable tr").filter( function(){
+                return $(this).find('.propId').eq(0).text() == model.get('id_prop') 
+            }).find('.propText').eq(0).toggleClass('dblClicked');
+            
+           
+        
+        }
+ 
+        paper.off('cell:pointerdblclick');
+		paper.on('cell:pointerdblclick', function(cellView,evt, x, y) {
+			
+            console.log('daidui');
+            clickOnPropEventHandler(cellView.model);
+            
+/*			if ($.inArray(cellView.model.id,selectedCells) == -1){
+				selectedCells.push(cellView.model.id);
+                questionsHighlighter(cellView.model);						
+			} else {
+				console.log('already in selectedCells');
+				selectedCells.splice( $.inArray(cellView.model.id, selectedCells), 1 );
+				//cellView.unhighlight();
+                questionsUnhightlighter(cellView.model);
+			}
+            
+			$("#ctaQueAccurateSelection").html('');
+            
+            if(selectedCells.length == 0) {
+                $("#ctaQueAccurateSelection").html(
+                    "Cliquez sur la/les proposition(s) concernée(s) par votre question"
+                    +"<img id='simpleClick' src='{% static 'gdpcore/simpleClick.png' %}'>"
+                );
+            } else {
+                selectedCells.forEach(function(entry) {
+                    newAuthor = graph.getCell(entry).get('autorname');
+                    newText = graph.getCell(entry).get('text');
+                    $("#ctaQueAccurateSelection").html( $("#ctaQueAccurateSelection").html()+'<br />'+newAuthor+' : '+newText  );
+                });
+            } */
+		});        
+
+        $("#listFinalTable").off();
+        $("#listFinalTable").on('dblclick',function(event){
+            if ($(event.target).hasClass('propText')){
+               
+               
+                idProp = $(event.target).parent().find('.propId').eq(0).text();
+                console.log(propIdCorrespondance[idProp]);           
+                cell = graph.getCell( propIdCorrespondance[idProp] );
+                
+                clickOnPropEventHandler(cell);
+            };
+            
+        });
+        
+   
+        
+        var foa = function(){
+            
+            if (selectedCells.length != 0) {
+            
+                if ($("#ctaQueAccurateInput").val().length == 0){
+                    
+                    $('#ctaQueAccurateInput').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                        $(this).removeClass('animated shake');
+                    });
+                   
+
+                    $( "#ctaQueAccurateClick" ).off();
+                    $( "#ctaQueAccurateClick" ).on("click", foa);                     
+                    
+                } else {            
+                    var showpartsIds = [];
+                    selectedCells.forEach(function(entry) {
+                        showpartsIds.push(graph.getCell(entry).get('showpartId'));
+                    });
+
+                    $("#ctaQueAccurateSelection, #ctaQueAccurateInput").removeClass('animated bounceInRight shake');
+                    $("#ctaQueAccurateSelection, #ctaQueAccurateInput").addClass('animated bounceOutRight');
+
+                    $("#ctaQueAccurateClick").removeClass('animated flip');
+                    $("#ctaQueAccurateClick").addClass('animated flip');
+                              
+                    setTimeout(function () { 
+                        $("#ctaQueAccurateSelection, #ctaQueAccurateInput").hide();
+                        $(".questionSecondStep").show();
+                        $(".questionSecondStep").removeClass('animated bounceOutRight');
+                        $(".questionSecondStep").addClass('animated bounceInRight');                
+                    }, 500)
+                    
+                    paper.off('cell:pointerclick');
+                   
+                    var fmm = function(){
+                        
+                        $('.questionSecondStep').removeClass('animated bounceInRight');
+                        
+                        if ( $("#ctaQueAccurateName").val().length == 0 ) {
+                        
+                            console.log('àe');
+                            $('#ctaQueAccurateName').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                                $(this).removeClass('animated shake');
+                            });
+                   
+                            $( "#ctaQueAccurateClick" ).off();
+                            $( "#ctaQueAccurateClick" ).one("click", fmm);
+                        
+                        } else if ( $("#ctaQueAccurateEmail").val().length == 0 ) {
+                            
+                             $('#ctaQueAccurateEmail').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                                $(this).removeClass('animated shake');
+                            });
+                   
+                            $( "#ctaQueAccurateClick" ).off();
+                            $( "#ctaQueAccurateClick" ).one("click", fmm);                           
+                            
+                        } else {
+                     
+                            textVal = $("#ctaQueAccurateInput").val();
+                            emailVal = $('#ctaQueAccurateEmail').val();
+                            nameVal = $('#ctaQueAccurateName').val();
+                            phoneVal =  $('#ctaQueAccuratePhone').val();
+                        
+                            $.ajax( {
+                                type: "POST",
+                                url: '/ajax_newquestion/',
+                                data: { 
+                                        text: textVal,
+                                        'showpartIds[]': showpartsIds,
+                                        email: emailVal,
+                                        name: nameVal,
+                                        phone: phoneVal,
+                                        event: {{event.id}},
+                                        csrfmiddlewaretoken: '{{ csrf_token }}'
+                                },
+                                beforeSend: function() {
+                                    $("#ctaQueAccurateClick").removeClass('animated flip');
+                                    $("#ctaQueAccurateClick").removeClass('animated rotateIn');
+                                    $("#ctaQueAccurateClick").addClass('animated rotateIn');
+                                    
+                                    $(".questionSecondStep").removeClass('animated bounceInRight');
+                                    $(".questionSecondStep").addClass('animated bounceOutRight');
+                                    
+                                },
+                                success: function( data ) {
+                                    $("#ctaQueAccurateClick").removeClass('animated rotateIn');        
+                                    $("#ctaQueAccurateInput").addClass('animated bounceOutRight');        
+                                    $("#ctaQueAccurateAjaxMessage").css('color','white');
+                                    
+                                    $("#ctaQueAccurateAjaxMessage").removeClass('animated','bounceOutRight');
+                                    $("#ctaQueAccurateAjaxMessage").show();
+                                    $("#ctaQueAccurateAjaxMessage").addClass('animated','bounceInRight');
+                                    $("#ctaQueAccurateAjaxMessage").text("Votre question a bien été enregistrée. Nous revenons vers vous très prochainement !")
+         
+                            
+                                    document.cookie = "email="+emailVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                    document.cookie = "name="+nameVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                    document.cookie = "phone="+phoneVal+"; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+                                                  
+                                        
+/*                                    $("#blackUnivok").addClass('animated bounceOutRight');
+                                    setTimeout(function () {    
+                                        $("#blackUnivok").attr("src", "{% static 'gdpcore/merci.png' %}");
+                                    }, 500)
+                                    setTimeout(function () { 
+                                        $("#blackUnivok").removeClass('animated bounceOutRight');
+                                        $("#blackUnivok").addClass('animated bounceInRight');
+                                    }, 1000)
+                                    setTimeout(function () { 
+                                        $("#blackUnivok").removeClass('animated bounceInRight');
+                                        $("#blackUnivok").addClass('animated bounceOutRight');                               
+                                    }, 5000)
+                                    setTimeout(function () { 
+                                         $("#blackUnivok").attr("src", "{% static 'univok/univokText.png' %}");                              
+                                    }, 5500)
+                                    setTimeout(function () { 
+                                        $("#blackUnivok").removeClass('animated bounceOutRight');
+                                        $("#blackUnivok").addClass('animated bounceInRight');
+                                    }, 6000) */
+
+
+                                    setTimeout(function () { 
+                                        unsetQuestionsList();
+                                        setQuestionsList();                              
+                                    }, 6000);
+                                             
+                                },
+                                error: function(data){
+                                    $("#ctaQueAccurateAjaxMessage").css('color','red');
+                                    $("#ctaQueAccurateAjaxMessage").show();
+                                    $("#ctaQueAccurateAjaxMessage").removeClass('animated','bounceOutRight');
+                                    $("#ctaQueAccurateAjaxMessage").addClass('animated','bounceInRight');
+                                    $("#ctaQueAccurateAjaxMessage").text("Une erreur a eu lieu. Merci de vérifier votre connexion internet et de ré-essayer. Si le problème persiste, copier/coller votre question et envoyer un mail à bonjour@univok.fr")
+                                    
+                                    $("#ctaQueAccurateInput").removeClass('animated bounceOutRight');
+                                    $("#ctaQueAccurateInput").show();
+                                    
+                                    $( "#ctaQueAccurateClick" ).off();
+                                    $( "#ctaQueAccurateClick" ).one("click", fmm); 
+                                }
+                            });                   
+                        }    
+                    }
+                   
+                    $( "#ctaQueAccurateClick" ).off();
+                    $( "#ctaQueAccurateClick" ).one("click", fmm);
+                }
+                            
+            } else {
+                console.log('&')
+                $('#ctaQueAccurateSelection').removeClass('animated shake').addClass('animated shake').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+                    $(this).removeClass('animated shake');
+                });
+               
+                $( "#ctaQueAccurateClick" ).off();
+                $( "#ctaQueAccurateClick" ).on("click", foa);                 
+            }
+        }
+		
+        $( "#ctaQueAccurateClick" ).off();
+        $( "#ctaQueAccurateClick" ).on("click", foa);
+        
+    }
+    
     function unsetQuestions(){
         
         console.log('unsetQuestions..');
@@ -1939,6 +2288,31 @@
 
         $('#questionsCb > label > input').prop('checked', false);
         
+        paper.off('cell:pointerclick');
+    }
+
+    function unsetQuestionsList(){
+        
+        console.log('unsetQuestionsList..');
+        selectedCells=[];
+        
+        $("#ctaQueAccurateClick").removeClass('animated flip');      
+        $(".questionFirstStep, .questionSecondStep").removeClass('animated bounceInRight');   
+        $("#ctaQueAccurateInput, .questionSecondStep").val('');
+        $("#ctaQueAccurateSelection").html('');
+		allCells = graph.getCells();
+		allCells.forEach(function(entry) {
+            questionsUnhightlighter(entry);
+		});
+        
+        $('.dblClicked').removeClass('dblClicked');
+ 
+        clearTimeout(messageShowTimeout);
+        clearTimeout(messageHideTimeout);
+ 
+        $('#ctaQueAccurateInstruction').removeClass('animated bounceInUp'); 
+        $('#ctaQueAccurateInstruction').addClass('animated bounceOutDown');
+ 
         paper.off('cell:pointerclick');
     }
     
@@ -2053,7 +2427,42 @@
 				
 	}
 	
-    
+    function themeHighlighter(){
+        var themes = {};
+        themes[0] = {'color': ''}
+        themes[1] = {'color': 'yellow'}
+        themes[2] = {'color': 'orange'}
+        themes[3] = {'color': 'blue'}
+        themes[4] = {'color': 'green'}  
+        themes[5] = {'color': 'purple'}    
+        themes[6] = {'color': 'brown'}
+        themes[7] = {'color': 'pink'}   
+        var i = 0;
+
+        updateCorrespondances();
+        //On sélectionne chaque theme, et pour chacun...
+        $('#listThemeSelect option').each(function(key, value){
+         
+            //On selectionne les bonnes lignes..
+           goodRows = $('#listPropsTable tr').filter(function () {
+                return $(this).find(".theme").eq(0).text() == $(value).text()
+            });
+                 
+            //et pour chaque ligne, on va changer le highlight de la cell
+            goodRows.each(function(key2, val2){
+            
+                //L'id du model sur paper...
+                id = propIdCorrespondance[ $(val2).find('.propId').eq(0).text()  ];
+                   
+                //Et on change la cell..
+                cell = graph.getCell(id);
+                cell.attr('rect/stroke-width', 3);
+                cell.attr('rect/stroke', themes[i]['color']);
+            });       
+        i=i+1;    
+        });
+      
+    }     
     
 /*	$( document ).ready(function() {
 		paper = addPaper('myholder');

@@ -31,6 +31,8 @@ class Event(models.Model):
     description = models.CharField(max_length=2000)
     date = models.DateTimeField()
     place = models.CharField(max_length=1000)
+    
+    inscriptionurl = models.CharField(max_length=1000, default='default')
 
     STATUS_CHOICE = (
         ('0', 'à venir'),
@@ -44,6 +46,7 @@ class Event(models.Model):
     displayfacilitation = models.BooleanField(default = False)
     displayintervenant = models.BooleanField(default = False)
     displayanimation = models.BooleanField(default = False)
+    displayinscription = models.BooleanField(default = False)
     
 
     def __str__(self):
@@ -87,6 +90,8 @@ class Question(models.Model):
     email = models.CharField(max_length=100, default='', blank=True, null=True)
     phone = models.CharField(max_length=30, default='', blank=True, null=True)
     showpart = models.ManyToManyField(gdpcoreModels.ShowPart)
+    event = models.ForeignKey(Event, default = 1)
+    time = models.DateTimeField()
 
     def __str__(self):
         return str(self.text)

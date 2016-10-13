@@ -3,7 +3,7 @@
   --ral-width: 70%;
 }
  
- #myholder.listmode{
+ #myholder.shrinked{
 	display:block;
 	background-color: #1A1A1A;
     z-index: 5000; 
@@ -13,38 +13,301 @@
     bottom: 0px; 
     left: 0px; 
  } 
+ 
+  #myholder.expanded{
+	display:block;
+	background-color: #1A1A1A;
+    z-index: 5000; 
+    width: var(--ral-width); 
+    height: 100%; 
+    position: fixed; 
+    top: 0px; 
+    right: 0px; 
+ } 
+ 
 
-#listContainer{
+ #myholder.halfscreenmode{
+	display:block;
+	background-color: #1A1A1A;
+    z-index: 5000; 
+    width: 50%; 
+    height: 100%; 
+    position: fixed; 
+    top: 0px; 
+    left: 0px; 
+ }  
+ 
+#listMainContainer{
+    
+    width:100%;
+    height:100%;
+} 
+ 
+#listContainer.expanded{
 	display:block;
 	background-color: white;
     z-index: 5000; 
     width: var(--ral-width); 
-    height: var(--ral-height); 
+    height: 100%; 
     position: fixed; 
     top: 0px; 
     right: 0px;  
     overflow-y: auto;
 }
 
-#detailsContainer{
+#listContainer.shrinked{
 	display:block;
-	background-color: grey;
+	background-color: white;
     z-index: 5000; 
-    width: var(--ral-width); 
-    height: calc(100% - var(--ral-height)); 
+    width: calc(100% - var(--ral-width)); 
+    height: 30%; 
     position: fixed; 
     bottom: 0px; 
-    right: 0px;         
+    left: 0px;  
+    overflow-y: auto;
+}
+
+#detailsContainer{
+	display:block;
+	background-color: rgb(40,40,40);
+    z-index: 5000; 
+    width: 30%; 
+    height: 50%; 
+    position: fixed; 
+    top: 20%; 
+    left: 0px;
+    overflow-y: auto;
+    color:white;
+}
+
+#detailsContainer *{
+    color:white;
 }
 
 #filtersContainer{
 	display:block;
-	background-color: grey;
+	background-color: rgb(50,50,50);
     z-index: 5000; 
     width: calc(100% - var(--ral-width)); 
-    height: var(--ral-height); 
+    height: 20%; 
     position: fixed; 
     top: 0px; 
-    left: 0px;         
+    left: 0px;
+    overflow-y: auto;     
 }
 
+#filtersContainer *{
+    color:white;
+}
+
+#listEditableContainer{
+	
+    display:block;
+	background-color: white;
+    z-index: 5000; 
+    width: 50%; 
+    height: 100%; 
+    position: fixed; 
+    top: 0px; 
+    right: 0px;  
+    overflow-y: auto;      
+}
+
+#listThemeSelector{
+	display:block;
+	background-color: grey;
+    z-index: 5001;  
+    height: 50px;
+    width:50%;
+    position: fixed; 
+    top: 0px; 
+    left: 0px;     
+}
+
+#listThemeAdd{
+	position:absolute;
+	left: 10px;
+	top: 10px;
+    
+	height:30px;
+	width:30px;    
+    
+}
+
+#listThemeInput{
+	position:absolute;
+	left: 50px;
+	top: 10px;     
+    
+}
+
+#listThemeSelect{
+    position:absolute;
+    left:300px;
+    top:10px;    
+}
+
+#listSaver{
+    position:absolute;
+    right:0px;
+    top:10px;
+    width:30px;
+    height:30px;
+    
+}
+
+.listTitle{  
+    font-size: 30px;
+    color:white;
+}
+
+#questionContainer{
+    display:block;
+	background-color: rgb(52, 73, 94);
+    z-index: 5200; 
+    width: 70%; 
+    height: 30%; 
+    position: fixed; 
+    bottom: 0px; 
+    right: 0px;  
+    overflow-y: auto       
+}
+
+#questionContainer.down{
+    bottom: calc(-30% + 40px);
+}
+
+#questionOpener{
+    cursor: pointer; 
+    cursor: hand;   
+}
+
+
+#whiteSwitch{
+    position:fixed;
+    left:calc(30% - 50px);
+    bottom: 30%;
+    width:50px;
+    height:50px;
+    z-index:7000;
+}
+
+
+#ctaQueAccurateSelection{
+	position:absolute;
+    top: 50px;
+    left:10px;
+	width: 380px;
+    color: white;
+    font-size:15px;
+    text-align:left;
+}
+
+#ctaQueAccurateInput{
+	position:absolute;
+    top: 40px;
+    left: 420px;
+	width:380px;
+	height:200px;
+}
+
+#ctaQueAccurateClick{	
+	position:absolute;
+    top: 90px;
+    left: 830px;
+	width:100px;
+	height:100px;
+}
+
+
+
+#ctaQueAccurateAjaxMessage{
+ 	position: absolute;
+    display: none;
+	z-index: 5801;	
+	left: 40px;
+    top: 130px;
+    width: 380px;
+    font-size: 20px;
+}
+
+#simpleClick{
+ 	position:absolute;
+	left: 40px;
+	top: 50px;
+	z-index:5800;	
+	width:100px;
+    height:100px;
+}
+
+
+#ctaQueAccurateInstruction{
+	position:absolute;
+	left: 10px;
+	top:120px;
+	z-index:5800;
+	font-size:40px;
+	color:#2ecc71;
+	width:60vw;
+}
+
+#ctaQueAccurateContainer{
+	position:fixed;
+	z-index:5800;
+	left:10%;
+	top:40px;	
+}
+
+.questionSecondStep{
+    
+    display:none;
+}
+
+#ctaQueAccurateHowto{
+    position:absolute;
+    top: 60px;
+    left:200px;
+    width:380px; 
+    font-size: 18px;
+    color: white;
+    text-align: left;
+}
+
+#ctaQueAccurateName{
+    position:absolute;
+    left: 200px;
+    top: 120px;
+    width:380px;
+}
+#ctaQueAccurateEmail{
+    position:absolute;
+    left: 200px;    
+    top: 170px;
+    width:380px;
+}
+#ctaQueAccuratePhone{
+    position:absolute;
+    left: 200px;    
+    top: 220px;
+    width: 380px;
+}
+
+.dblClicked{   
+    background-color:rgb(52, 73, 94);
+    color:white;
+}
+
+.themeTitle{
+    
+    padding: 30px 0px 10px 20px;
+    font-size:20px;
+}
+
+#eventName{
+    font-size:30px;
+}
+
+.propText{
+    
+    padding-left:10px;
+}

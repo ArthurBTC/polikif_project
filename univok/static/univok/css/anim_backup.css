@@ -56,10 +56,10 @@
 
 #playAnim{
     position: fixed;
-    top: calc(50% - 100px);
-    left: calc(50% - 100px);
-	width:200px;
-	height:200px;
+    top: calc(50% - 150px);
+    left: calc(50% - 150px);
+	width:300px;
+	height:300px;
 	z-index: 5300;	
 }
 
@@ -91,7 +91,7 @@
 
 #soundPicture{
     position: fixed;
-    bottom: 10px;
+    top: calc(50% + 350px);
     left: calc(50% - 25px);
 	width:50px;
 	height:50px;
@@ -100,14 +100,15 @@
 
 #soundText{
     position: fixed;
-    bottom: 70px;
-    left: calc(50% - 350px);
-    width:700px;
+    top: calc(50% + 210px);
+    left: calc(50% - 250px);
+    width:500px;
 	z-index: 5300;
 	color:#2ecc71;
 	font-size:30px;
     text-align:center;
 }
+
 
 
 #stopAnim {
@@ -201,7 +202,7 @@
 
 #ctaAgainText, #ctaQueBackText{
 	top: calc(50% + 50px);
-	color: rgb(52, 152, 219);
+	color: rgb(240, 196, 25);
 }
 
 #ctaOkText{
@@ -234,7 +235,32 @@
 	z-index:5600;		
 }
 
+#simpleClick{
+ 	position:absolute;
+	left: 0px;
+	top:-110px;
+	z-index:5800;	
+	width:100px;
+    height:100px;
+}
 
+
+#ctaQueAccurateInstruction{
+	position:absolute;
+	left: 10px;
+	bottom:40px;
+	z-index:5800;
+	font-size:40px;
+	color:#2ecc71;
+	width:60vw;
+}
+
+#ctaQueAccurateContainer{
+	position:fixed;
+	z-index:5800;
+	left:10%;
+	top:40px;	
+}
 
 .element.highlighted rect {
     border-color: #2ecc71 !important;
@@ -293,8 +319,64 @@
     bottom:0px;
 }
 
+.ctaInput, .ctaInput2{
+	position:absolute;
+    display:none;
+	z-index:5801;	
+	left:10px;		
+}
 
+#ctaQueAccurateSelection{
+	bottom:360px;
+	width: 380px;
+    color: white;
+    font-size:15px;
+    text-align:left;
+}
 
+#ctaQueAccurateInput{
+	bottom: 140px;
+	width:380px;
+	height:200px;
+}
+
+#ctaQueAccurateClick{	
+	bottom: 20px;
+    left: 240px;
+	width:100px;
+	height:100px;
+}
+
+#ctaQueAccurateHowto{
+    bottom: 340px;
+    width:380px; 
+    font-size: 18px;
+    color: white;
+    text-align: right;
+}
+
+#ctaQueAccurateName{
+    bottom: 240px;
+    width:380px;
+}
+#ctaQueAccurateEmail{
+    bottom: 190px;
+    width:380px;
+}
+#ctaQueAccuratePhone{
+    bottom: 140px;
+    width: 380px;
+}
+
+#ctaQueAccurateAjaxMessage{
+ 	position: absolute;
+    display: none;
+	z-index: 5801;	
+	left: 10px;
+    bottom: 140px;
+    widht: 380px;
+    font-size: 20px;
+}
 
 #detailsSentences{
 	position:absolute;
