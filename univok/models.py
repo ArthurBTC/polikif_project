@@ -16,6 +16,7 @@ class Speaker(models.Model):
     account = models.ForeignKey(django.contrib.auth.models.User, blank=True, null=True)
     description = models.CharField(max_length=1000)
     picture = models.ImageField(upload_to='speakers')
+    status = models.CharField(max_length=10, default = 'default')
 
     def __str__(self):
         return str(self.name)

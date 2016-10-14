@@ -57,11 +57,11 @@
 	</div>
 	<div class="row" id="inscriptionContent">
         <div class="col-md-12">
+            <div>Lieu : {{event.place}}</div>
+            <div>Date et heure : {{event.date | date:'d M Y à H:i'}}</div>
             <a id="inscriptionImg" href="{{event.inscriptionurl}}" target="_blank">
-                <img src="{% static 'univok/inscriptionFacile.png' %}" width="150" height="33" alt="">
-            </a>
-            
-            
+                <img src="{% static 'univok/inscriptionButton.png' %}" width="200" alt="">
+            </a>      
         </div>
     </div>	
     {% endif %}
@@ -172,7 +172,15 @@
 	
     <div class="row" id="intervenantContent"> 
         <div class="col-md-10 col-md-offset-1">
+          
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class='intervenantTitle'>Intervenants invités</div>
+                </div>
+            </div>
             {% for speaker in event.speakers.all %}
+            {% if speaker.status == 'default'  %}  
             <div class="row">
                 <div class="col-md-3">
                     <img class = "speakerPicture" src = "/media/{{speaker.picture}}">
@@ -182,7 +190,51 @@
                     <div class = "speakerDescription">{{ speaker.description }}</div>
                 </div>
             </div>
+            {% endif %}
             {% endfor %}
+            
+ 
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class='intervenantTitle'>Intervenants du public {{forloop.counter}}</div>
+                </div>
+            </div>
+            {% for speaker in event.speakers.all %}
+            {% if speaker.status == 'public'  %}  
+            <div class="row">
+                <div class="col-md-3">
+                    <img class = "speakerPicture" src = "/media/{{speaker.picture}}">
+                </div>
+                <div class="col-md-9">
+                    <div class = "speakerName">{{ speaker.name }}</div>
+                    <div class = "speakerDescription">{{ speaker.description }}</div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            
+
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class='intervenantTitle'>Animateurs de la rencontre</div>
+                </div>
+            </div>
+            {% for speaker in event.speakers.all %}
+            {% if speaker.status == 'animation'  %} 
+            <div class="row">
+                <div class="col-md-3">
+                    <img class = "speakerPicture" src = "/media/{{speaker.picture}}">
+                </div>
+                <div class="col-md-9">
+                    <div class = "speakerName">{{ speaker.name }}</div>
+                    <div class = "speakerDescription">{{ speaker.description }}</div>
+                </div>
+            </div>
+            {% endif%}
+            {% endfor %}            
+            
         </div>
     </div>
     {% endif %}

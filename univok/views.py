@@ -20,7 +20,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 def index(request):
-    events = Event.objects.all()
+    events = Event.objects.all().order_by('date')
     return render(request, 'univok/eventsViewer.html', {'events': events});
     
 
@@ -531,7 +531,7 @@ def reviewAsListBuilder(request, id_event):
     show.seconds = seconds
     show.minutes = minutes
  #   show.showlength.minutes = minutes
-    themes = ShowPart.objects.order_by('theme').values('theme').distinct()
+    themes = ShowPart.objects.filter(show=show).order_by('theme').values('theme').distinct()
     
     return render(request, 'univok/reviewAsListBuilder.html', {'event': event,
                                                            'photos': photos,
