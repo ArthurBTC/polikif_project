@@ -7,11 +7,7 @@
 <div id="myholder" class = "anim shrinked"></div> 
 
 <div id = "listMainContainer">
-    <div id = "detailsContainer">
-    <div class='listTitle'>Citations exactes : </div>
-    <div id='detailsContent'></div>
-</div>   
-    <div id = "listContainer" class="expanded">
+    <div id = "listContainer" class="expandedfull">
 
         <table id="listFinalTable" border="0">
             <tr style="display:none;">
@@ -47,24 +43,7 @@
                 
         </table>
     </div>
-    <div id = "filtersContainer">
-
-    <div class='listTitle'>Themes : </div>
-    {% for theme in themes %}
-    <div>
-        <label class="checkbox-inline"><input class="visibilityCB themeCB" type="checkbox" value="{{theme.theme}}" checked><span id="themeLabel{{forloop.counter}}">{{theme.theme}}</span></label>
-    </div>
-    {% endfor %}
-<!--
-    
-    <div class='listTitle'> Auteurs : </div>
-    {% for name in names %}
-    <div>
-        <label class="checkbox-inline"><input class="visibilityCB nameCB" type="checkbox" value="{{name.proposition__autor__username}}" checked>{{name.proposition__autor__username}}</label>
-    </div>    
-    {% endfor %}  -->
-</div>
-    <div id = "questionContainer" class="down">
+    <div id = "questionContainer" class="">
 
         <div id ="questionOpener" class="listTitle">J'ai des questions</div>
                
@@ -83,7 +62,7 @@
         
     </div>
 </div>
-    <img id="whiteSwitch" class='hvr-grow' src = "{% static 'univok/whiteSwitch.png' %}"></img>
+    <img id="whiteSwitch" class='hvr-grow' src = "{% static 'univok/greySwitch.png' %}"></img>
     {% include "gdpcore/showparts.html" %}
 <!--    {% include "gdpcore/grapher.html" %} -->
 </div>
@@ -190,8 +169,6 @@
         {%endfor%}    
     
     }
-
-
     
     $( document ).ready(function() {
 		paper = addPaper('myholder');
@@ -207,10 +184,13 @@
         
         setDrag();
 		firstLoadFromShowparts('myholder');
-		initGraphList(); 
+		initGraphList();
+         $( "#questionOpener" ).off();
+         $( "#questionContainer" ).removeClass('down');
+        setQuestionsList();        
 //      setGridZoom(paper, 'myholder', 0);
         
-        updateColorsFromThemes()
+//        updateColorsFromThemes()
         
         $("body").on("click", "#listFinalTable" ,function(event) {
             
@@ -236,9 +216,9 @@
                
         $("body").on("click", "#whiteSwitch" ,function() {
            $("#myholder").toggleClass('shrinked');
-           $("#myholder").toggleClass('expanded');
+           $("#myholder").toggleClass('expandedfull');
            $("#listContainer").toggleClass('shrinked');
-           $("#listContainer").toggleClass('expanded');
+           $("#listContainer").toggleClass('expandedfull');
            paper.setDimensions($('#myholder').width(), $('#myholder').height()); 
            
         });        

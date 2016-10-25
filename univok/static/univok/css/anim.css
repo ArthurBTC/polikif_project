@@ -54,14 +54,7 @@
 	z-index: 5300;	
 } 
 
-#playAnim{
-    position: fixed;
-    top: calc(50% - 100px);
-    left: calc(50% - 100px);
-	width:200px;
-	height:200px;
-	z-index: 5300;	
-}
+
 
 #audioSender{
     position: absolute;
@@ -91,7 +84,7 @@
 
 #soundPicture{
     position: fixed;
-    bottom: 10px;
+    top: calc(50% + 90px);
     left: calc(50% - 25px);
 	width:50px;
 	height:50px;
@@ -100,7 +93,7 @@
 
 #soundText{
     position: fixed;
-    bottom: 70px;
+    top: 50%;
     left: calc(50% - 350px);
     width:700px;
 	z-index: 5300;
@@ -110,14 +103,25 @@
 }
 
 
-#stopAnim {
+#stopAnim , #playAnim{
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: calc(50% - 50px);
 	width:100px;
 	height:100px;
 	z-index: 5300;	
 }
+
+#prevAnim{
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+	width:100px;
+	height:100px;
+	z-index: 5300;	
+}
+    
+   
 
 #closeCross {
     position: fixed;

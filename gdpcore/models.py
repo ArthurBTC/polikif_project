@@ -226,5 +226,7 @@ class ShowPart(models.Model):
     themeOrder = models.IntegerField(default = 0)
     themePrefix = models.CharField(max_length=100, default = '')
     
+    synthese = models.IntegerField(default = 0)
+    
     def __str__(self):
         return str(self.id)     

@@ -21,8 +21,7 @@ from email.mime.text import MIMEText
 
 def index(request):
     events = Event.objects.all().order_by('date')
-    return render(request, 'univok/eventsViewer.html', {'events': events});
-    
+    return render(request, 'univok/eventsViewer.html', {'events': events});  
 
 def eventViewer(request, id_event):
     event = Event.objects.get(id=id_event)
@@ -479,6 +478,50 @@ def reviewAsList(request, id_event):
                                                            'themes': themes,
                                                            'names':names})   
 
+def reviewSimple(request, id_show):
+    show = Show.objects.get(pk = id_show)
+    showparts = ShowPart.objects.filter(show=show).filter(synthese = 0).order_by('themeOrder')
+
+    props = []
+    links = []
+    showlength = 0
+    
+    for showpart in showparts:
+        showpart.proposition.timediff = showpart.proposition.videoEnd - showpart.proposition.videoBeginning
+        props.append(showpart.proposition)
+        showlength = showlength + showpart.duration
+
+        showpart.proposition.sentences = Sentence.objects.filter(proposition = showpart.proposition)
+
+    for prop in props:
+        rightLinks = Link.objects.filter(right_prop=prop)
+        leftLinks = Link.objects.filter(left_prop=prop)
+
+        for rightLink in rightLinks:
+            if rightLink.left_prop in props:
+                links.append(rightLink)
+
+        for leftLink in leftLinks:
+            if leftLink.right_prop in props:
+                links.append(leftLink)
+
+    links = list(set(links))
+    
+    minutes = int(float(showlength) // 60)
+    seconds = int(showlength - minutes*60)
+    show.seconds = seconds
+    show.minutes = minutes
+ #   show.showlength.minutes = minutes
+ 
+    themes = ShowPart.objects.filter(show=show).order_by('theme').values('theme').distinct()
+    names = ShowPart.objects.filter(show=show).order_by('proposition__autor__username').values('proposition__autor__username').distinct()
+    
+    return render(request, 'univok/reviewSimple.html', {   'show': show,
+                                                           'showparts': showparts,
+                                                           'links': links,
+                                                           'themes': themes,
+                                                           'names':names})  
+                                                           
 @login_required                                                           
 def reviewAsListBuilder(request, id_event):
     
@@ -539,4 +582,37 @@ def reviewAsListBuilder(request, id_event):
                                                            'showparts': showparts,
                                                            'links': links,
                                                            'sentences':sentences,
-                                                           'themes': themes})                                                            
+                                                           'themes': themes})  
+
+@login_required 
+def duplicateShow(request, id_show):
+
+    show = Show.objects.get(pk = id_show)
+    newshow = Show(
+        author = show.author,
+        title = show.title,
+        description = show.description,
+        audio = show.audio    
+    )  
+    newshow.save()
+    
+    showparts = ShowPart.objects.filter(show = show)
+    for showpart in showparts:
+        newshowpart = ShowPart(
+            show = newshow,
+            order = showpart.order,
+            text = showpart.text,
+            proposition = showpart.proposition,
+            x = showpart.x,
+            y = showpart.y,
+            link = showpart.link,
+            duration = showpart.duration,
+            audio = showpart.audio,
+            
+            theme = showpart.theme,
+            themeOrder = showpart.themeOrder,
+            themePrefix = showpart.themePrefix      
+        )
+        newshowpart.save()
+        
+    return HttpResponse(newshow.pk)

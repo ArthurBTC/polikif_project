@@ -18,4 +18,8 @@ urlpatterns = [
     
     url(r'^propsAuthorGenerator', views.propsAuthorGenerator, name='propsAuthorGenerator'),
     url(r'^anim/(?P<id_event>[0-9]+)', views.animViewer, name='animViewer'),
+    
+    url(r'^duplicateShow/(?P<id_show>[0-9]+)', views.duplicateShow, name='duplicateShow'),
+    url(r'^reviewSimple/(?P<id_show>[0-9]+)', views.reviewSimple, name='reviewSimple'),
+    
 ]

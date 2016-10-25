@@ -803,8 +803,7 @@
 
 		return paper;
 	};
-    
-    
+       
 	//Doesn't work with the player... better use setDrag()
 	function setGridZoom(paper, holder, gridOrNot) {
 		holder = $('#'+holder);
@@ -1112,6 +1111,18 @@
     
 	function readshow() {
 
+        $('#playAnim').hide();
+        $('#prevAnim').show();
+    
+        //Display pause
+        $("#stopAnim").show();
+        $("#stopAnim").off();
+        $("#stopAnim").on('click', function(){
+            
+            pauseshow();
+            
+        });
+    
 		//start the clock
         clockGoing = 0;
         clockInterval = setInterval(updateClock, 1000);
@@ -1155,7 +1166,6 @@
 		clearTimeout(videoTimeOut);
         clearInterval(clockInterval);
         
-	//	$("#ytshow").hide();
 		if (typeof player !== 'undefined'){
 			player.stopVideo();
 		}
@@ -1164,6 +1174,40 @@
 
 	}
 
+    function pauseshow(){
+        console.log('pause du show');
+		audioplayer.pause();
+        
+        counter = counter - 1;
+
+		clearTimeout(timeOut);
+		clearTimeout(moveTimeOut);
+		clearTimeout(videoTimeOut);
+        clearInterval(clockInterval);
+        
+		if (typeof player !== 'undefined'){
+			player.stopVideo();
+		} 
+
+        $('#stopAnim').hide();
+        $('#playAnim').show();
+        $('#playAnim').off();
+        $('#playAnim').on("click", function() {
+            
+            readshow();
+            
+        });
+    }
+  
+    function previouspart(){        
+        pauseshow();
+        counter = counter - 1;
+        if (counter<1) {
+            counter = 1;           
+        }
+        readshow();               
+    }
+  
 	function readpart(){
 
 		//Si on n'est pas au bout, on va lire...
@@ -1296,8 +1340,7 @@
         while (id--) {
             window.clearTimeout(id); // will do nothing if no timeout with id is present
         }
-        
-        
+               
 		counter = 1;
         clockGoing = 0;
         updateClock();
@@ -1317,7 +1360,7 @@
 		$(".anim").show();
 		$('.cta, .cta2').hide();
 		$("#blackUnivok").show();
-		$("#stopAnim").hide();
+		$("#stopAnim, #prevAnim").hide();
 
         $("#closeCross").removeClass('openPan');
         
@@ -1338,24 +1381,31 @@
 			paper.setDimensions($('#myholder').width(), $('#myholder').height());
 		})
         
-		$("#playAnim, #soundPicture, #soundText").removeClass('animated bounceOutRight');
-		$("#playAnim, #soundPicture, #soundText").addClass('animated bounceInLeft');
+		$("#soundPicture, #soundText").removeClass('animated bounceOutRight');
+		$("#soundPicture, #soundText").addClass('animated bounceInLeft');
 
         var fkq = function(){
-			$("#playAnim, #soundPicture, #soundText").removeClass('animated bounceInLeft');
-			$("#playAnim, #soundPicture, #soundText").addClass('animated bounceOutRight');
+			$("#soundPicture, #soundText").removeClass('animated bounceInLeft');
+			$("#soundPicture, #soundText").addClass('animated bounceOutRight');
 			to_aa = setTimeout(readshow,2000);                     
         };
         
         
         $( "#playAnim" ).off();
-        $( "#playAnim" ).on("click", fkq);
+        $( "#playAnim" ).one("click", fkq);
 
         var fpw = function(){
 			stopshow();
 			//initCta();   
             initCtaNew()            
         }
+        
+        $( "#prevAnim" ).off();
+        $( "#prevAnim" ).on('click', function(){
+            
+            previouspart();
+            
+        });
         
 
         $( "#closeCross" ).off();
@@ -1907,7 +1957,7 @@
                                         email: emailVal,
                                         name: nameVal,
                                         phone: phoneVal,
-                                        event: {% if event.id %}{{event.id}}{%else%}0{%endif%},
+                                        event: {% if event.id %}{{event.id}}{%else%}1{%endif%},
                                         csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
                                 beforeSend: function() {
@@ -2176,7 +2226,7 @@
                                         email: emailVal,
                                         name: nameVal,
                                         phone: phoneVal,
-                                        event: {% if event.id %}{{event.id}}{%else%}0{%endif%},
+                                        event: {% if event.id %}{{event.id}}{%else%}1{%endif%},
                                         csrfmiddlewaretoken: '{{ csrf_token }}'
                                 },
                                 beforeSend: function() {
@@ -2480,12 +2530,15 @@
                 return $(this).attr('model-id') == entry.id
             }).eq(0).find('.word1').eq(0);            
        
-            console.log(word1);
-       
-            heightValue = word1.get(0).getBBox().height;       
-            console.log(heightValue);            
-            entry.attr('rect/height', heightValue + 50);            
-            entry.attr('.word2/transform','translate(165,'+(heightValue+30)+')');   
+        
+            console.log('word1' + word1);
+            
+            if(typeof(word1.get(0)) != 'undefined') {
+                heightValue = word1.get(0).getBBox().height;       
+                console.log(heightValue);            
+                entry.attr('rect/height', heightValue + 50);            
+                entry.attr('.word2/transform','translate(165,'+(heightValue+30)+')');   
+            }
         });
     }
  
