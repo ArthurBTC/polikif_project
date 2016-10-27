@@ -4,7 +4,7 @@ from django.core import serializers
 from django.shortcuts import render
 
 from gdpcore.models import *
-from .models import Event, Record, Photo, Sentence, Question, Converter, Speaker, Photo
+from .models import Event, Record, Photo, Sentence, Question, Converter, Speaker, Photo, Conseil
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from datetime import datetime 
@@ -341,6 +341,7 @@ def deepview(request, id_event):
     
     photos = Photo.objects.filter(event = event)
     records = Record.objects.filter(event = event)
+    conseils = Conseil.objects.filter(event = event)
     questions = Question.objects.all().order_by('-time')
     sentences = Sentence.objects.filter(event = event)
     
@@ -372,6 +373,7 @@ def deepview(request, id_event):
     return render(request, 'univok/deepview.html', {'event': event, 
                                     'photos':photos, 
                                     'records':records,
+                                    'conseils':conseils,
                                     'questions':questions,
                                     'final_count': final_count, 
                                     'wordCount': wordCount});

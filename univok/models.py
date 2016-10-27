@@ -24,12 +24,13 @@ class Speaker(models.Model):
 
 class Event(models.Model):
     organisation = models.ForeignKey(Organisation)
-    speakers = models.ManyToManyField(Speaker)
-    graph = models.ForeignKey(gdpcoreModels.Graph)
-    show = models.ForeignKey(gdpcoreModels.Show)
+    speakers = models.ManyToManyField(Speaker, blank=True, null=True)
+    graph = models.ForeignKey(gdpcoreModels.Graph, blank=True, null=True)
+    show = models.ForeignKey(gdpcoreModels.Show, related_name="show", blank=True, null=True)
+    show2 = models.ForeignKey(gdpcoreModels.Show, related_name="show2", blank=True, null=True)
 
-    name = models.CharField(max_length=1000)
-    description = models.CharField(max_length=2000)
+    name = models.CharField(max_length=1000, default = 'default')
+    description = models.CharField(max_length=2000, default = 'default')
     date = models.DateTimeField()
     place = models.CharField(max_length=1000)
     
@@ -103,3 +104,8 @@ class Converter(models.Model):
     
     def __str__(self):
         return str(self.id)
+        
+class Conseil(models.Model):
+    conseil = models.FileField(upload_to='conseils')
+    event = models.ForeignKey(Event)
+    

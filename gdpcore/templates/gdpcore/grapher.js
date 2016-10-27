@@ -1513,8 +1513,7 @@
         var fxo = function(){
  			selectHandlerAnim('cta','Nok');
             to_ee = setTimeout(function(){
-                window.location.href = "/reviewAsList/{{event.pk}}"; 
-                
+                window.location.href = "/reviewSimple/{{event.show2.pk}}";                
             },selectTimeNext);                      
         };
         

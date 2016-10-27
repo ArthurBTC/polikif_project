@@ -3,7 +3,8 @@ import requests, json
 from .models import Member, Event, Place, Presence
 from datetime import datetime
 from django.contrib.auth.decorators import login_required
-
+from django.http import HttpResponse
+from django.http import JsonResponse
 # Create your views here.
 
 API_BASE = "https://api.meetup.com/"
@@ -14,10 +15,10 @@ URLNAME = "caf%C3%A9s-d%C3%A9bats-nantais/"
 def index(request):
     
     members = Member.objects.all()
-    # for member in members:
-        # firstevent = Presence.objects.filter(member = member).order_by('event.time')[0]
-        # member.presenceCount = Presence.objects.filter(member = member).count()
-        # member.save()
+    for member in members:
+        #firstevent = Presence.objects.filter(member = member).order_by('event.time')[0]
+        member.presenceCount = Presence.objects.filter(member = member).count()
+        member.save()
     members =  members.order_by('-presenceCount') 
     events = Event.objects.filter(status = 'past').order_by('time')
     presences = Presence.objects.all()
@@ -110,7 +111,8 @@ def updatePastEvents(request):
     
     
     return render(request,'cdn/index.html',{'data': data});
-@login_required	    
+
+    
 def updatePresence(idEvent):
     event = Event.objects.get(idmeetup = idEvent)
 
@@ -139,9 +141,11 @@ def updatePresences(request):
     
     r = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=past')
     data = json.loads(r.text)
-    
-    for event in data:
+    ala = ''
+    for event in data:     
+        ala = ala+ event['id']
         updatePresence( event['id'] )
-            
-    return render(request,'cdn/index.html',{'data': data});
+  
+    return HttpResponse(ala)  
+    # return render(request,'cdn/index.html',{'data': data});
     

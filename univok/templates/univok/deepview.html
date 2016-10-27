@@ -14,6 +14,42 @@
 	</div>
     <div class="row subtitleContainer" id="descriptionSubtitle">
         <div class="col-md-12">
+            <div class = 'subtitle'>Synthèse</div>
+        </div>
+	</div>
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+             
+            <div class = 'row'>
+                <div class="col-md-2 col-md-offset-1"> 
+                    <img id="docAccurateStarter" class="starters" src = "{% static 'univok/greenDoc.png' %}" ></img>
+                </div>
+                <div class="col-md-5"> 
+                    <span id="docSpan">Document de synthèse amélioré</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
+            <div class = 'subtitle'>Conseils</div>
+        </div>
+	</div>
+	<div class="row" id="descriptionContent">
+        <div class="col-md-12">
+            {%for conseil in conseils%}               
+            <button type="button" class="btn btn-default" aria-label="Left Align">
+                <span class="glyphicon glyphicon-education" aria-hidden="true"></span> <a href="/media/{{conseil.conseil}}">{{conseil.conseil}}</a>
+            </button>
+            {%endfor%}                      
+        </div>
+    </div>
+
+
+    
+    <div class="row subtitleContainer" id="descriptionSubtitle">
+        <div class="col-md-12">
             <div class = 'subtitle'>Statistiques</div>
         </div>
 	</div>
@@ -103,7 +139,17 @@
     <script type="text/javascript">
 
 
-    
+     $( document ).ready(function() {        
+        $("#docAccurateStarter").on('click',function(){        
+            var win = window.open('/reviewAsList/{{event.id}}', '_blank');
+            if (win) {
+                win.focus();
+            } else {
+                //Browser has blocked it
+                alert('Please allow popups for this website');
+            }      
+        });
+    });
     
 
       // Load the Visualization API and the corechart package.
