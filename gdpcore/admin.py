@@ -42,7 +42,7 @@ class ShowAdmin(admin.ModelAdmin):
 	list_display = ('id', 'title', 'description', 'author')
 
 class ShowPartAdmin(admin.ModelAdmin):
-	list_display = ('id', 'show', 'proposition', 'x', 'y')	
+	list_display = ('id', 'show', 'theme', 'proposition', 'x', 'y')	
 	
 admin.site.register(Cycle, CycleAdmin)
 admin.site.register(Proposition, PropositionAdmin)

@@ -20,7 +20,7 @@ from datetime import datetime
 @login_required
 def theater(request, id_show):
 	show = Show.objects.get(pk=id_show)
-	showparts = ShowPart.objects.filter(show = show).order_by('order')
+	showparts = ShowPart.objects.filter(show = show).filter(synthese = 0).order_by('order')
 	
 	props = []
 	links = []
