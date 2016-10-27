@@ -515,7 +515,7 @@ def reviewSimple(request, id_show):
     show.minutes = minutes
  #   show.showlength.minutes = minutes
  
-    themes = ShowPart.objects.filter(show=show).order_by('theme').values('theme').distinct()
+    themes = ShowPart.objects.filter(show=show).filter(synthese = 0).order_by('theme').values('theme').distinct()
     names = ShowPart.objects.filter(show=show).order_by('proposition__autor__username').values('proposition__autor__username').distinct()
     
     return render(request, 'univok/reviewSimple.html', {   'show': show,
