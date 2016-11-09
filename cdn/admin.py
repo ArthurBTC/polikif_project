@@ -15,7 +15,7 @@ class PlaceAdmin(admin.ModelAdmin):
 
 class PresenceAdmin(admin.ModelAdmin):
     # ...
-    list_display = ('id','member','event','guest')
+    list_display = ('id','member','event','status')
 
 admin.site.register(Member, MemberAdmin)
 admin.site.register(Event, EventAdmin)

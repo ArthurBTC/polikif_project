@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+{% load staticfiles %}
+
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/anim.css' %}"> 
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'univok/css/hover-min.css' %}" />
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'cdn/members.css' %}">
+    
+	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
+<!--	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	-->
+	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+</head>
+<body>
+	<div class="container-fluid">
+
+
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+  
+  
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Création du Café-Débat sur la plateforme Meetup
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        
+        <div class="row task">
+            Commencer à créer un événement 
+        </div>        
+        <div class="row description">
+            Pour commencer à créer votre Café-Débat, cliquez sur <a href = "https://www.meetup.com/fr-FR/Cafes-debats-nantais/events/?action=new" target='_blank'>ce lien</a><br />
+            (Vous devez au préalable être organisateur du groupe. Pour demander à être organisateur, contactez <a target = '_blank' href = "https://www.meetup.com/fr-FR/Cafes-debats-nantais/members/201199341/">Arthur Oug</a>)            
+        </div>        
+        
+        <div class="row task">
+            Choisir un sujet (case "Que va-t-on faire")
+        </div>
+        <div class="row description">
+            Le choix de sujet est libre. Vous pouvez vous inspirer des événements précédents si vous le souhaitez.
+        </div>        
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Sujets précédents
+            </a>
+            <div class="collapse" id="collapseExample">
+              <div class="well">
+                {% for event in events %}
+                    <a class = "eventLink" target="_blank" href = "http://www.meetup.com/cafés-débats-nantais/events/{{event.idmeetup}}">{{event.name}}</a>
+                {% endfor %}
+              </div>
+            </div>
+        </div>        
+        
+        <div class="row task">           
+            Choisir une date et un lieu
+        </div>
+        <div class="row description">
+            Le choix du lieu et de la date est libre.<br />
+            Vous pouvez aller dans un lieu où un Café-Débat a déjà été organisé, ou non. Le choix est libre. Il faut cependant privilégié des endroits calmes, pour le confort de discussion<br />
+            La durée recommandée est 1h30 / 2h.
+        </div>   
+        
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseDatePlace" aria-expanded="false" aria-controls="collapseExample">
+                Cafés-Débats passés
+            </a>
+            <div class="collapse" id="collapseDatePlace">
+              <div class="well">
+                <div class="row">
+                    <div>Ce tableau indique à quels moments de la semaine les Cafés-Débats passés ont été organisés. Vous pouvez filtrer par lieux, en utilisant les cases</div>
+                    {% for place in places %}
+                      <div class="checkbox">
+                        <label>
+                          <input class ="cbplace" type="checkbox" id = "cbplace{{place.pk}}" checked> 
+                          <a target = '_blank' href="https://www.meetup.com/fr-FR/Cafes-debats-nantais/venue/{{place.idmeetup}}">{{place.name}}</a>
+                        </label>
+                      </div>
+
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <table class="table table-bordered">
+                        <colgroup>
+                            <col span="1" style="width: 16%;">
+                            <col span="1" style="width: 12%;">
+                            <col span="1" style="width: 12%;">
+                            <col span="1" style="width: 12%;">
+                            <col span="1" style="width: 12%;">
+                            <col span="1" style="width: 12%;">
+                            <col span="1" style="width: 12%;">
+                            <col span="1" style="width: 12%;">
+                        </colgroup>
+                        <tr>
+                            <th>Heure de début</th>
+                            <th>Lundi</th>
+                            <th>Mardi</th>
+                            <th>Mercredi</th>
+                            <th>Jeudi</th>
+                            <th>Vendredi</th>
+                            <th>Samedi</th>
+                            <th>Dimanche</th>
+                        </tr>
+                    {% for i in "xxxxxxxxxxxxxxxxxx" %}
+                        <tr>
+                            <td>{{ forloop.counter0|add:"6" }}h00</td>
+                            <td class='countCell' id="Monday-{{ forloop.counter0|add:'6' }}"></td>
+                            <td class='countCell' id="Tuesday-{{ forloop.counter0|add:'6' }}"></td>
+                            <td class='countCell' id="Wednesday-{{ forloop.counter0|add:'6' }}"></td>
+                            <td class='countCell' id="Thursday-{{ forloop.counter0|add:'6' }}"></td>
+                            <td class='countCell' id="Friday-{{ forloop.counter0|add:'6' }}"></td>
+                            <td class='countCell' id="Sathurday-{{ forloop.counter0|add:'6' }}"></td>
+                            <td class='countCell' id="Sunday-{{ forloop.counter0|add:'6' }}"></td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </div>      
+                    
+              </div>
+            </div>
+        </div>       
+        
+        <div class="row task">
+            Rédiger texte de présentation (case "Détails")
+        </div>
+        <div class="row description">
+            Vous pouvez personnaliser le texte de présentation si vous le souhaitez. Un modèle standard est également disponible.
+        </div>        
+        
+         
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapsePresentation" aria-expanded="false" aria-controls="collapseExample">
+                Modèle standard
+            </a>
+            <div class="collapse" id="collapsePresentation">
+              <div class="well">
+                Ouverts à tous, les cafés-débats nantais sont un lieu d'échange et de partage d'opinions, dans l'entente et dans la bonne humeur ;-)<br />
+                Toutes les opinions sont bienvenues. Une seule règle : pas de monologues interminables et du respect :-)<br />
+                Vous pouvez préparer des choses à dire si vous le souhaitez, mais c'est tout à fait facultatif. Et si vous ne souhaitez pas vous exprimer, vous pouvez vous contenter d'écouter.<br />
+                Pour éviter les malentendus : ce n'est PAS une conférence. D'où le nombre limité de places.<br />
+              </div>
+            </div>
+        </div>        
+        <div class="row task">
+            Ajouter vidéos / textes / image / graphiques etc. de présentation (Case Détails) (optionnel)
+        </div>
+        <div class="row description">
+            Vous pouvez ajouter des éléments dans votre description, pour nourrir le débat. Evitez les documents trop longs / fastidieux / compliqués etc.
+        </div> 
+        
+        <div class="row task">
+            Configurer les RSVP
+        </div>        
+        <div class="row description">
+            Les "Paramètres des RSVP" doivent être configurés comme sur l'image suivante
+        </div>         
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseRsvp" aria-expanded="false" aria-controls="collapseExample">
+                Paramètres RSVP
+            </a>
+            <div class="collapse" id="collapseRsvp">
+              <div class="well">
+                <img src = "{% static 'cdn/rsvp.jpg' %}"
+              </div>
+            </div>
+        </div>       
+      </div>
+    </div>
+  </div>
+  
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingTwo">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          Trois jours avant le Café-Débat
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+      <div class="panel-body">
+        <div class="row task">
+           Envoyer un message de rappel
+        </div>          
+        <div class="row description">
+            Si l'événement est complet, il est fortement recommandé d'envoyer un message de rappel 3 jours avant l'événement pour que les personnes inscrites s'assurent de leurs disponibilités.<br />
+            Vous pouvez écrire ce message en commentaire de l'événement, ou écrire directement aux gens inscrits.
+        </div> 
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseRappel" aria-expanded="false" aria-controls="collapseExample">
+                Modèle standard
+            </a>
+            <div class="collapse" id="collapseRappel">
+              <div class="well">
+                Bonjour à tous, <br />
+                Les Cafés-débats nantais se font en petit comité (c'est voulu ainsi), donc il est important pour l'équilibre que toutes les personnes inscrites soient présentes.<br />
+                Donc vous ne pouvez finalement pas être des nôtres, je vous invite à mettre à jour votre réponse, afin de laisser la place aux personnes en liste d'attente :)<br />
+                Merci à tous et à très bientôt ! <br />
+                <br />
+                (S'il y a des documents à consulter :)<br />
+                Si ce n'est déjà fait, pouvez-vous svp regarder les documents présentés sur la page xxx. Ne vous inquiétez pas, c'est très rapide. Comme ça tout le monde les aura en tête, ça rendra la discussion encore plus intéressante ! <br />
+                
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingThree">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          Pendant le Café-Débat
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+      <div class="panel-body">
+        <div class="row task">
+            Démarrer le Café-Débat
+        </div>   
+
+        <div class="row description">
+            L'animateur est libre de démarrer son Café-Débat comme il le souhaite. Il peut cependant s'inspirer de la méthode standard
+        </div> 
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseDemarrage" aria-expanded="false" aria-controls="collapseExample">
+                Méthode standard
+            </a>
+            <div class="collapse" id="collapseDemarrage">
+              <div class="well">
+                L'animateur débute par une présentation des Cafés-Débats Nantais :<br />
+                - Initiative lancée en Juin 2016<br />
+                - Constat de départ : abondance de l'offre "magistrale" (radio, conférences, télévision, youtube...), mais peu de lieux qui permettent de s'exprimer directement<br />
+                - Objectif : Créer un espace d'échange unique.<br />
+                - Pour ce faire, créer un réseau de participants, de lieux de rencontres et d'organisateurs<br />
+                - Ambition : Rendre les questions de sociétés "fun". Toucher un maximum de gens. Générer des groupes de réfléxions sur des sujets variés avec des profils variés<br />
+                <br />
+                Ensuite, l'animateur explique le déroulement du café-débat :<br />
+                - 1er tour de table : Chacun va se présenter brievement, et s'il le souhaite va donner une première opinion sur la question. Pendant ce 1er tour de table, les participants n'ont pas le droit de réagir à ce qui est dit<br />
+                - Discussion libre pendant 1h30<br />
+                - 2ème tour de table : Chacun, s'il le souhaite, va revenir sur ce qu'il a entendu / compris / aimé etc.<br />
+                - Ouverture de la café-boite<br />
+                - Présentation de la Café-Boite<br />
+                - Présentation de la modération : Discussion libre, avec possibilité de réserver la parole en levant la main<br />
+                <br />
+                Ensuite, l'animateur présente pourquoi le sujet du Café-Débat l'intéresse personnellement<br />
+                <br />
+                Ensuite, l'animateur lance le 1er tour de table.<br />
+                <br />
+                A la fin du tour de table, soit la discussion se lance d'elle même, soit l'animateur invite les gens à réagir à ce qui vient d'être dit, soit l'animateur pose des questions lui-même en fonction de ce qui a été dit<br />
+              </div>
+            </div>
+        </div>        
+        
+        <div class="row task">
+            Modérer le Café-Débat
+        </div>
+        
+        <div class="row description">
+            L'animateur est libre de modérer son Café-Débat comme il le souhaite. Il peut cependant s'inspirer de la méthode standard
+        </div>  
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseModeration" aria-expanded="false" aria-controls="collapseExample">
+                Méthode standard
+            </a>
+            <div class="collapse" id="collapseModeration">
+              <div class="well">
+                La majorité du temps, la discussion est libre. L'animateur n'intervient pas beaucoup.<br />
+                Un participant peut lever la main pour réserver le tour de parole (pour ne pas avoir à s'imposer pour parler). L'animateur doit alors activement lui donner la parole lorsque le moment est adapté.<br />
+                L'animateur peut aussi "recadrer" le débat lorsqu'il estime qu'un petit groupe de participants discute de choses éloignées du sujet et qui n'intéressent pas la majorité des participants.<br />
+              </div>
+            </div>
+        </div> 
+        
+        
+        <div class="row task">
+            Finaliser le Café-Débat
+        </div> 
+        <div class="row description">
+            L'animateur est libre de finaliser son Café-Débat comme il le souhaite. Il peut cependant s'inspirer de la méthode standard
+        </div>         
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseFinalisation" aria-expanded="false" aria-controls="collapseExample">
+                Méthode standard
+            </a>
+            <div class="collapse" id="collapseFinalisation">
+              <div class="well">
+                L'animateur, au bout de 1h30 de discussion libre, va lancer annoncer la fin des échanges.<br />
+                L'animateur lance un second tour de parole, en invitant les participants à revenir sur les échanges.<br />
+                Après le tour, l'animateur invite les participants à ouvrir la café-boite et à lire les messages.<br />
+                <br />
+                Ensuite, l'animateur invite les participants à :<br />
+                - Parler des Cafés-Débats autour d'eux<br />
+                - Organiser des Cafés-Débats s'ils le souhaitent. Il leur parle de cet outil qui facilite la création<br />
+                - Poster des commentaires sur la page meetup de l'événement<br />
+              </div>
+            </div>
+        </div>        
+      </div>
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading" role="tab" id="headingFour">
+      <h4 class="panel-title">
+        <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+          Après le Café-Débat
+        </a>
+      </h4>
+    </div>
+    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+      <div class="panel-body">
+        <div class="row task">
+            Rapporter le contenu de la café-boite
+        </div>
+        <div class="row description">
+            L'animateur doit écrire le contenu de la Café-Boite en commentaire de son événement
+        </div>
+        
+        <div class="row task">
+            Noter les absents
+        </div>
+        <div class="row description">
+            L'animateur doit utiliser la plateforme Meetup pour indiquer les éventuels absents.
+        </div>
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseAbsents" aria-expanded="false" aria-controls="collapseExample">
+                Comment faire ?
+            </a>
+            <div class="collapse" id="collapseAbsents">
+              <div class="well">
+                 <img src = "{% static 'cdn/absents.jpg'%}"></img>
+              </div>
+            </div>
+        </div>        
+        
+      </div>
+    </div>
+  </div>
+
+    
+  
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+	</div>
+
+
+
+	<script>
+        function updateCalendar(){
+            $(".countCell").text('');
+            {% for event in events %}
+                
+                if( $("#cbplace{{event.place.pk}}").is(':checked') ) {
+                
+                    day='{{event.time | date:"l"}}'
+                    hour= '{{event.time | date:"H" }}'
+                    
+/*                    if ($("#"+day+'-'+hour).text() == '') {
+                        $("#"+day+'-'+hour).text(0);
+                    }                
+                    $("#"+day+'-'+hour).text(  parseInt($("#"+day+'-'+hour).text()) + 1   ); */
+                    $("#"+day+'-'+hour).append( "<img class='cofecup' src='{% static 'cdn/cofecup.png' %}' />" );
+                }
+                
+            {% endfor %}       
+        }
+        
+        updateCalendar();
+        
+        $(".cbplace").on('change', function(){       
+            updateCalendar();
+        })
+        
+	</script>
+</body>

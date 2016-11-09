@@ -12,5 +12,6 @@ urlpatterns = [
 	url(r'^updatePresences', views.updatePresences, name='updatePresences'),
 	url(r'^memberView/(?P<idmember>[0-9]+)', views.memberView, name='memberView'),	
 	
-	
+	url(r'^organisation', views.organisation, name='organisation'),
+    url(r'^cafeines', views.cafeines, name='cafeines'),
 ]

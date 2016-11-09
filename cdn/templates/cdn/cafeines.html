@@ -30,45 +30,7 @@
 </head>
 <body>
 	<div class="container-fluid">
-        <div class="row">
-        
-        <div id="chart_div"></div>
-        
-        {%for key, value in counts.items%}
-            <div>{{key}} : {{value}}</div>
-        {%endfor%}
-        </div>
-        {% for event in events %}
-        <div>
-            {{event.id}} : {{event.name}}
-        </div>
-        {% endfor %}
-        
-        <div class="row">
-            <table class='table'>
-                <col width="130">
-                {% for event in events %}
-                <col width="40">
-                {% endfor %}
-              <tr>
-                <th>Name</th>
-                {% for event in events %}
-                <th>{{event.id}}</th>
-                {% endfor %}
-              </tr>
-                {% for member in members %}
-                    {% if member.presenceCount > 0 %}
-              <tr>
-                <td>{{member.name}} ({{member.presenceCount}})</td>
-                {% for event in events %}
-                <td id="{{member.id}}-{{event.id}}" class="cellPresence"></td>
-                {% endfor %}
-              </tr>
-                    {% endif %}
-                {% endfor %}
 
-            </table>
-        </div>
         <div class="row">
             {% for member in members %}
                 {% if member.presenceCount > 0 %}
@@ -78,7 +40,7 @@
                         </div>
                         <div class = "memberName">
                             {% if member.organisationCount > 0 %}
-                        <img class="imgStar2" src="{% static 'cdn/star.png' %}" data-toggle="tooltip" data-placement="bottom" title="{{member.name}} a organisé un Café-Débat ! Organisez le votre pour obtenir cette superbe étoile, dont vous pourrez vous venter auprès de vos amis !"></img>
+                        <img class="imgStar2" src="{% static 'cdn/star.png' %}" data-toggle="tooltip" data-placement="bottom" title="{{member.name}} a organisé un Café-Débat. Organisez le votre pour obtenir cette superbe étoile qui apporte paix et bonheur à ses possesseurs !"></img>
                             {% endif %}
                         {{member.name}} 
                         </div>
@@ -91,53 +53,8 @@
 
 
 
-	<script>
-		{% for presence in presences %}
-            if ("{{presence.status}}" == "attended") {
-                statusText = "OK"
-                color = "green"
-            } else {
-                statusText = "NOK"
-                color = "red"
-            }
-            
-			$("#{{presence.member.id}}-{{presence.event.id}}").html(statusText);
-            $("#{{presence.member.id}}-{{presence.event.id}}").css('color', color);
-		{% endfor %}
-        
-        
-        
-    google.charts.load('current', {packages: ['corechart', 'bar']});
-    google.charts.setOnLoadCallback(drawStacked);
-
-    function drawStacked() {
-      var data = new google.visualization.DataTable();
-      data.addColumn('number', 'How many times');
-      data.addColumn('number', 'How many members');
-
-      data.addRows([
-      {%for key, value in counts.items%}
-        [{{key}}, {{value}}], 
-      {% endfor %}
-      ]);
-
-      var options = {
-        isStacked: true,
-        hAxis: {
-          viewWindow: {
-            min: [7, 30, 0],
-            max: [17, 30, 0]
-          }
-        },
-        vAxis: {
-        }
-      };
-
-      var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-      chart.draw(data, options);
-    }        
-        
-        
+<script>
+  
     $(document).ready(function() {
         $('.imgPhoto').each(function() {
             console.log('test');

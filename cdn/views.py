@@ -15,10 +15,6 @@ URLNAME = "caf%C3%A9s-d%C3%A9bats-nantais/"
 def index(request):
     
     members = Member.objects.all()
-    for member in members:
-        #firstevent = Presence.objects.filter(member = member).order_by('event.time')[0]
-        member.presenceCount = Presence.objects.filter(member = member).count()
-        member.save()
     members =  members.order_by('-presenceCount') 
     events = Event.objects.filter(status = 'past').order_by('time')
     presences = Presence.objects.all()
@@ -77,30 +73,55 @@ def updateMembers(request):
         updated_values = {
             'name' : member['name'],
             'role' : role,
+            'photo': member['photo']['photo_link'],
             'status' : member['group_profile']['status']    
         }
     
         obj, created = Member.objects.update_or_create(
             idmeetup = member['id'],
             defaults = updated_values   
-        )   
+        )  
+
+    members = Member.objects.all()    
+    for member in members:
+        #firstevent = Presence.objects.filter(member = member).order_by('event.time')[0]
+        member.presenceCount = Presence.objects.filter(member = member).filter(status = "attended").count()
+        member.organisationCount = Event.objects.filter(organisator = member).count()
+        member.save()
+        
     return render(request,'cdn/index.html',{'data': data});
 @login_required	    
 def updatePastEvents(request):
-    r = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=past')
+    r = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=past&fields=event_hosts')
     data = json.loads(r.text)
     
-    r2 = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=upcoming')
+    # return HttpResponse(data[6]['event_hosts'][0]['id'])
+    
+    r2 = requests.get(API_BASE+URLNAME+'events'+API_KEY+'&status=upcoming&fields=event_hosts')
     data.extend(json.loads(r2.text))
     
     for event in data:
         
+        updated_values = {
+            'name' : event['venue']['name'],
+            'adress' : event['venue']['address_1']
+        }
+        
+        obj, created = Place.objects.update_or_create(
+            idmeetup = event['venue']['id'],
+            defaults = updated_values
+        )        
+        
+        place_id = obj.pk
+        
         eventTime = datetime.fromtimestamp(int(event['time'])/1000)
+        organisator_id = Member.objects.get(idmeetup = event['event_hosts'][0]['id']).pk
         
         updated_values = {
             'name' : event['name'],
             'status' : event['status'],
-            'organisator_id' : 1,
+            'organisator_id' : organisator_id,
+            'place_id' : place_id,
             'time': eventTime
         }
     
@@ -112,16 +133,16 @@ def updatePastEvents(request):
     
     return render(request,'cdn/index.html',{'data': data});
 
-    
 def updatePresence(idEvent):
     event = Event.objects.get(idmeetup = idEvent)
 
-    r = requests.get(API_BASE+URLNAME+'events/'+idEvent+'/attendance'+API_KEY)
+    r = requests.get(API_BASE+URLNAME+'events/'+idEvent+'/attendance'+API_KEY+"&filter=yes")
     data = json.loads(r.text)
     
     for presence in data:
         updated_values = {
-            'guest': False
+            'guest': False,
+            'status': presence['status']
         }
         
         try:
@@ -133,7 +154,7 @@ def updatePresence(idEvent):
             member = memb,
             event = event,
             defaults = updated_values   
-        )
+        )    
     
     return;
 @login_required	        
@@ -149,3 +170,30 @@ def updatePresences(request):
     return HttpResponse(ala)  
     # return render(request,'cdn/index.html',{'data': data});
     
+@login_required
+def organisation(request):
+    events = Event.objects.all()
+    places = Place.objects.all()
+    return render(request,'cdn/organisation.html',{'events': events, 
+                                                    'places': places});
+                                                    
+@login_required	
+def cafeines(request):
+    
+    members = Member.objects.all()
+    members =  members.order_by('?') 
+    events = Event.objects.filter(status = 'past').order_by('time')
+    presences = Presence.objects.all()
+    counts = {}
+    
+    for x in range(1, 100):
+        count =  Member.objects.filter(presenceCount = x).count()
+        if count != 0:
+            counts[x] = Member.objects.filter(presenceCount = x).count()
+           
+    return render(request,'cdn/cafeines.html',{
+        'members': members,
+        'events':events,
+        'presences':presences,
+        'counts':counts});                                                    
+                                                    
