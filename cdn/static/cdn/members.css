@@ -2,9 +2,10 @@
 	display: inline-block;
     z-index: 1; 
     width: 200px; 
-    height: 300px; 
+    height: 250px; 
     top:0px;
     margin: 0px 10px 0px 10px;
+ 
  }
  
 .memberPhoto{
@@ -30,6 +31,7 @@
 
 .memberName{
     text-align:center;
+    margin-top: 5px;
 }
 
 
@@ -55,4 +57,50 @@
 .cofecup{
     height:20px;
     width:15px;
+}
+
+.bigText{
+    font-size:30px;
+    margin: 30px 0px 30px 0px; 
+}
+
+body{
+    background: white url("nature.jpg") no-repeat right bottom;
+}
+
+#mainContainer{
+    background-color: rgb(245,245,245);
+}
+
+#logoCDN{
+    height:35px;
+    wdith:35px;
+    top:-7px;
+    position:relative;
+}
+
+#firstPannel{
+    
+    margin-top:20px
+}
+
+#navBarCDN, #navBarContainer{
+    background-color: rgb(245,245,245);
+}
+
+#alpha{
+    position:absolute;
+    top:0px;
+    right:0px;
+    
+}
+
+.formrow{
+    margin-top:20px;
+}
+
+.postMessage{
+    color:green;
+    font-size:20px;
+    margin-left:30px;
 }

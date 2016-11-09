@@ -7,6 +7,11 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 # Create your views here.
 
+import re
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 API_BASE = "https://api.meetup.com/"
 API_KEY = "?&key=56554e2c242d6b1d61424d7e65106d0"
 URLNAME = "caf%C3%A9s-d%C3%A9bats-nantais/"
@@ -174,6 +179,8 @@ def updatePresences(request):
 def organisation(request):
     events = Event.objects.all()
     places = Place.objects.all()
+    for place in places:
+        place.count = Event.objects.filter(place = place).count()
     return render(request,'cdn/organisation.html',{'events': events, 
                                                     'places': places});
                                                     
@@ -195,5 +202,31 @@ def cafeines(request):
         'members': members,
         'events':events,
         'presences':presences,
-        'counts':counts});                                                    
-                                                    
+        'counts':counts});
+
+@login_required	
+def question(request):  
+
+    indic = False
+    if request.method == 'POST':
+        indic=True
+        
+        fromaddr = "polikif@gmail.com"
+        toaddr = "gouriten.arthur@gmail.com"
+        msg = MIMEMultipart()
+        msg['From'] = fromaddr
+        msg['To'] = toaddr
+        msg['Subject'] = "Nouvelle question sur CDN"
+         
+        body = "Question :"+request.POST['inputQuestion']+' - Coordonnées : '+request.POST['inputName']+' - '+request.POST['inputEmail']
+        msg.attach(MIMEText(body, 'plain'))
+         
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(fromaddr, "tabouret")
+        text = msg.as_string()
+        server.sendmail(fromaddr, toaddr, text)
+        server.quit()         
+        
+        
+    return render(request,'cdn/question.html',{'indic': indic });

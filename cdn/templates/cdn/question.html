@@ -1,0 +1,51 @@
+{% extends "cdn/base.html" %}
+
+{% block content %}
+{% load staticfiles %}
+<div class="container-fluid">
+
+    <div class="row formrow">
+        <form class="form-horizontal" action="/cdn/question" method="post">
+        {% csrf_token %}
+          <div class="form-group">
+            <label for="inputQuestion" class="col-sm-2 control-label">Texte</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="inputQuestion" id="inputQuestion" placeholder="Entrez votre question, remarque, suggestion...">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label">Nom Prénom (facultatif)</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="inputName" id="inputName" placeholder="Nom Prénom">
+            </div>
+          </div>  
+ 
+        <form class="form-horizontal">
+          <div class="form-group">
+            <label for="inputEmail" class="col-sm-2 control-label">Email (facultatif)</label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="submit" class="btn btn-default">Envoyer</button>
+            </div>
+          </div>
+        </form>
+    </div>
+    {% if indic %}
+    <div class ="row postMessage">
+       Votre message a bien été enregistré, merci ! N'hésitez pas à envoyer plusieurs questions / remarques / suggestions..
+    </div>
+    {% endif %}
+  
+</div>
+
+
+
+	<script>       
+	</script>
+{% endblock %}

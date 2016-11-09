@@ -14,4 +14,5 @@ urlpatterns = [
 	
 	url(r'^organisation', views.organisation, name='organisation'),
     url(r'^cafeines', views.cafeines, name='cafeines'),
+    url(r'^question', views.question, name='question'),
 ]

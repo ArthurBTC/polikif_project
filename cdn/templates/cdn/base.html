@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+{% load staticfiles %}
+    <title>Les Cafés-Débats Nantais</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'cdn/logoCDN.png' %}"
+
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	
+
+
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/style.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/anim.css' %}"> 
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'univok/css/hover-min.css' %}" />
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
+<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
+	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'cdn/members.css' %}">
+    
+	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
+<!--	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	-->
+	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
+	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
+	<script src="{% static 'gdpcore/joint.js' %}"></script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    
+</head>
+<body>
+
+<nav id="navBarCDN" class="navbar navbar-default">
+  <div class="container-fluid" id="navBarContainer">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/cdn/cafeines"><img id = "logoCDN" src="{% static 'cdn/logoCDN.png' %}"></a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="/cdn/cafeines">Les Caféïnés</a></li>
+        <li><a href="/cdn/organisation">Organiser un Café-Débat</a></li>
+        <li><a target="_blank" href="http://www.meetup.com/fr-FR/Cafes-debats-nantais/">La page Meetup</a></li>
+        <li><a href="/cdn/question">Suggestions, Questions, Remarques</a></li>
+      </ul>
+  
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<!-- <img id="alpha" src="{% static 'cdn/alpha.png' %}"></img>-->
+
+
+    
+    
+			{% block content %}
+			{% endblock %}
+        
+
+</body>

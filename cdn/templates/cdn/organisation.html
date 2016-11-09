@@ -1,42 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "cdn/base.html" %}
 
-	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	
+{% block content %}
 {% load staticfiles %}
-
-	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/style.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'univok/css/anim.css' %}"> 
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/joint.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'univok/css/hover-min.css' %}" />
-<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/nopadding.css' %}">	 -->
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/css/bootstrap.min.css' %}">
-<!--	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.css' %}"> -->
-	<link rel="stylesheet" type="text/css" href="{% static 'gdpcore/animate.css' %}">
-	<link rel="stylesheet" type="text/css" href="{% static 'cdn/members.css' %}">
-    
-	<script src="{% static 'gdpcore/jquery.min.js' %}"></script>
-<!--	<script src="{% static 'gdpcore/jquery-ui-1.11/jquery-ui.min.js' %}"></script>	-->
-	<script src="{% static 'gdpcore/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'gdpcore/lodash.min.js' %}"></script>
-	<script src="{% static 'gdpcore/backbone-min.js' %}"></script>
-	<script src="{% static 'gdpcore/joint.js' %}"></script>
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    
-</head>
-<body>
-	<div class="container-fluid">
+<div class="container-fluid">
 
 
 
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
   
   
-  <div class="panel panel-default">
+  <div id = 'firstPannel' class="panel panel-default">
+    
     <div class="panel-heading" role="tab" id="headingOne">
       <h4 class="panel-title">
         <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
@@ -44,6 +18,7 @@
         </a>
       </h4>
     </div>
+    
     <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
       <div class="panel-body">
         
@@ -52,7 +27,7 @@
         </div>        
         <div class="row description">
             Pour commencer à créer votre Café-Débat, cliquez sur <a href = "https://www.meetup.com/fr-FR/Cafes-debats-nantais/events/?action=new" target='_blank'>ce lien</a><br />
-            (Vous devez au préalable être organisateur du groupe. Pour demander à être organisateur, contactez <a target = '_blank' href = "https://www.meetup.com/fr-FR/Cafes-debats-nantais/members/201199341/">Arthur Oug</a>)            
+            (Vous devez au préalable être organisateur du groupe. Pour demander à être organisateur, contactez <a target = '_blank' href = "https://www.meetup.com/fr-FR/Cafes-debats-nantais/members/201199341/">Arthur</a>)            
         </div>        
         
         <div class="row task">
@@ -79,7 +54,7 @@
         </div>
         <div class="row description">
             Le choix du lieu et de la date est libre.<br />
-            Vous pouvez aller dans un lieu où un Café-Débat a déjà été organisé, ou non. Le choix est libre. Il faut cependant privilégié des endroits calmes, pour le confort de discussion<br />
+            Vous pouvez aller dans un lieu où un Café-Débat a déjà été organisé, ou non. Le choix est libre. Cependant, il faut privilégier des endroits calmes, pour le confort de discussion.<br />
             La durée recommandée est 1h30 / 2h.
         </div>   
         
@@ -95,7 +70,7 @@
                       <div class="checkbox">
                         <label>
                           <input class ="cbplace" type="checkbox" id = "cbplace{{place.pk}}" checked> 
-                          <a target = '_blank' href="https://www.meetup.com/fr-FR/Cafes-debats-nantais/venue/{{place.idmeetup}}">{{place.name}}</a>
+                          <a target = '_blank' href="https://www.meetup.com/fr-FR/Cafes-debats-nantais/venue/{{place.idmeetup}}">{{place.name}} ( {{place.count}} Café(s)-Débat(s) organisé(s) )</a>
                         </label>
                       </div>
 
@@ -169,6 +144,18 @@
         <div class="row description">
             Vous pouvez ajouter des éléments dans votre description, pour nourrir le débat. Evitez les documents trop longs / fastidieux / compliqués etc.
         </div> 
+        <div class="row help">
+            <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseVideo" aria-expanded="false" aria-controls="collapseVideo">
+                Exemples
+            </a>
+            <div class="collapse" id="collapseVideo">
+              <div class="well">
+                <a class = "eventLink" target="_blank" href="https://www.meetup.com/fr-FR/Cafes-debats-nantais/events/234399306/">Le couple limite-t-il nos potentialités ?</a>
+                <a class = "eventLink" target="_blank" href="http://www.meetup.com/fr-FR/caf%C3%A9s-d%C3%A9bats-nantais/events/234060554/">Et si le libre arbitre n'existait pas ?</a>
+              </div>
+            </div>
+        </div>         
+        
         
         <div class="row task">
             Configurer les RSVP
@@ -182,7 +169,7 @@
             </a>
             <div class="collapse" id="collapseRsvp">
               <div class="well">
-                <img src = "{% static 'cdn/rsvp.jpg' %}"
+                <img src = "{% static 'cdn/rsvp.jpg' %}">
               </div>
             </div>
         </div>       
@@ -253,13 +240,12 @@
               <div class="well">
                 L'animateur débute par une présentation des Cafés-Débats Nantais :<br />
                 - Initiative lancée en Juin 2016<br />
-                - Constat de départ : abondance de l'offre "magistrale" (radio, conférences, télévision, youtube...), mais peu de lieux qui permettent de s'exprimer directement<br />
-                - Objectif : Créer un espace d'échange unique.<br />
-                - Pour ce faire, créer un réseau de participants, de lieux de rencontres et d'organisateurs<br />
-                - Ambition : Rendre les questions de sociétés "fun". Toucher un maximum de gens. Générer des groupes de réfléxions sur des sujets variés avec des profils variés<br />
+                - Constat de départ : abondance de l'offre "magistrale" (radio, conférences, télévision, youtube...), mais peu de lieux qui permettent d'échanger directement entre citoyens<br />
+                - Objectif : Créer un espace d'échange ouvert à tous, et à tous types de sujets, et qui soit pratique.<br />
+                - Pour ce faire, créer un réseau de participants, de lieux de rencontres et d'organisateurs. Remarque : TOUT LE MONDE PEUT CREER SON CAFE-DEBAT<br />
                 <br />
                 Ensuite, l'animateur explique le déroulement du café-débat :<br />
-                - 1er tour de table : Chacun va se présenter brievement, et s'il le souhaite va donner une première opinion sur la question. Pendant ce 1er tour de table, les participants n'ont pas le droit de réagir à ce qui est dit<br />
+                - 1er tour de table : Chacun va se présenter brievement, et, s'il le souhaite, va donner une première opinion sur la question. Pendant ce 1er tour de table, les participants n'ont pas le droit de réagir à ce qui est dit<br />
                 - Discussion libre pendant 1h30<br />
                 - 2ème tour de table : Chacun, s'il le souhaite, va revenir sur ce qu'il a entendu / compris / aimé etc.<br />
                 - Ouverture de la café-boite<br />
@@ -280,7 +266,7 @@
         </div>
         
         <div class="row description">
-            L'animateur est libre de modérer son Café-Débat comme il le souhaite. Il peut cependant s'inspirer de la méthode standard
+            L'animateur est libre de modérer son Café-Débat comme il le souhaite. Il peut cependant s'inspirer de la méthode standard.
         </div>  
         <div class="row help">
             <a class="btn btn-info" role="button" data-toggle="collapse" href="#collapseModeration" aria-expanded="false" aria-controls="collapseExample">
@@ -308,8 +294,8 @@
             </a>
             <div class="collapse" id="collapseFinalisation">
               <div class="well">
-                L'animateur, au bout de 1h30 de discussion libre, va lancer annoncer la fin des échanges.<br />
-                L'animateur lance un second tour de parole, en invitant les participants à revenir sur les échanges.<br />
+                L'animateur, au bout de 1h30 de discussion libre, va annoncer la fin des échanges.<br />
+                L'animateur lance un second tour de table, en invitant les participants à revenir sur les échanges.<br />
                 Après le tour, l'animateur invite les participants à ouvrir la café-boite et à lire les messages.<br />
                 <br />
                 Ensuite, l'animateur invite les participants à :<br />
@@ -337,7 +323,7 @@
             Rapporter le contenu de la café-boite
         </div>
         <div class="row description">
-            L'animateur doit écrire le contenu de la Café-Boite en commentaire de son événement
+            L'animateur doit rapporter le contenu de la Café-Boite, sous forme de commentaire sur son événement
         </div>
         
         <div class="row task">
@@ -361,35 +347,12 @@
     </div>
   </div>
 
-    
-  
-  
+
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         
-	</div>
+</div>
 
 
 
@@ -420,4 +383,4 @@
         })
         
 	</script>
-</body>
+{% endblock %}
